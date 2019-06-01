@@ -46,20 +46,20 @@
                                 <div class="product">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.html">
+                                            <div class="front"><a href="detail.aspx">
                                                 <img src="img/product1.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.html">
+                                            <div class="back"><a href="detail.aspx">
                                                 <img src="img/product1_2.jpg" alt="" class="img-fluid"></a></div>
                                         </div>
                                     </div>
-                                    <a href="detail.html" class="invisible">
+                                    <a href="detail.aspx" class="invisible">
                                         <img src="img/product1.jpg" alt="" class="img-fluid"></a>
                                     <div class="text">
-                                        <h3><a href="detail.html">Fur coat with very but very very long name</a></h3>
+                                        <h3><a href="detail.aspx">Fur coat with very but very very long name</a></h3>
                                         <p class="price">
                                             <del></del>$143.00
                                         </p>
-                                        <p class="buttons"><a href="detail.html" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
+                                        <p class="buttons"><a href="detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
                                     </div>
                                     <!-- /.text-->
                                 </div>
@@ -69,20 +69,20 @@
                                 <div class="product">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.html">
+                                            <div class="front"><a href="detail.aspx">
                                                 <img src="img/product2.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.html">
+                                            <div class="back"><a href="detail.aspx">
                                                 <img src="img/product2_2.jpg" alt="" class="img-fluid"></a></div>
                                         </div>
                                     </div>
-                                    <a href="detail.html" class="invisible">
+                                    <a href="detail.aspx" class="invisible">
                                         <img src="img/product2.jpg" alt="" class="img-fluid"></a>
                                     <div class="text">
-                                        <h3><a href="detail.html">White Blouse Armani</a></h3>
+                                        <h3><a href="detail.aspx">White Blouse Armani</a></h3>
                                         <p class="price">
                                             <del>$280</del>$143.00
                                         </p>
-                                        <p class="buttons"><a href="detail.html" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
+                                        <p class="buttons"><a href="detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
                                     </div>
                                     <!-- /.text-->
                                     <div class="ribbon sale">
@@ -107,20 +107,20 @@
                                 <div class="product">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.html">
+                                            <div class="front"><a href="detail.aspx">
                                                 <img src="img/product3.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.html">
+                                            <div class="back"><a href="detail.aspx">
                                                 <img src="img/product3_2.jpg" alt="" class="img-fluid"></a></div>
                                         </div>
                                     </div>
-                                    <a href="detail.html" class="invisible">
+                                    <a href="detail.aspx" class="invisible">
                                         <img src="img/product3.jpg" alt="" class="img-fluid"></a>
                                     <div class="text">
-                                        <h3><a href="detail.html">Black Blouse Versace</a></h3>
+                                        <h3><a href="detail.aspx">Black Blouse Versace</a></h3>
                                         <p class="price">
                                             <del></del>$143.00
                                         </p>
-                                        <p class="buttons"><a href="detail.html" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
+                                        <p class="buttons"><a href="detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
                                     </div>
                                     <!-- /.text-->
                                 </div>
@@ -130,20 +130,20 @@
                                 <div class="product">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.html">
+                                            <div class="front"><a href="detail.aspx">
                                                 <img src="img/product3.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.html">
+                                            <div class="back"><a href="detail.aspx">
                                                 <img src="img/product3_2.jpg" alt="" class="img-fluid"></a></div>
                                         </div>
                                     </div>
-                                    <a href="detail.html" class="invisible">
+                                    <a href="detail.aspx" class="invisible">
                                         <img src="img/product3.jpg" alt="" class="img-fluid"></a>
                                     <div class="text">
-                                        <h3><a href="detail.html">Black Blouse Versace</a></h3>
+                                        <h3><a href="detail.aspx">Black Blouse Versace</a></h3>
                                         <p class="price">
                                             <del></del>$143.00
                                         </p>
-                                        <p class="buttons"><a href="detail.html" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
+                                        <p class="buttons"><a href="detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
                                     </div>
                                     <!-- /.text-->
                                 </div>
@@ -153,20 +153,20 @@
                                 <div class="product">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.html">
+                                            <div class="front"><a href="detail.aspx">
                                                 <img src="img/product2.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.html">
+                                            <div class="back"><a href="detail.aspx">
                                                 <img src="img/product2_2.jpg" alt="" class="img-fluid"></a></div>
                                         </div>
                                     </div>
-                                    <a href="detail.html" class="invisible">
+                                    <a href="detail.aspx" class="invisible">
                                         <img src="img/product2.jpg" alt="" class="img-fluid"></a>
                                     <div class="text">
-                                        <h3><a href="detail.html">White Blouse Versace</a></h3>
+                                        <h3><a href="detail.aspx">White Blouse Versace</a></h3>
                                         <p class="price">
                                             <del></del>$143.00
                                         </p>
-                                        <p class="buttons"><a href="detail.html" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
+                                        <p class="buttons"><a href="detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
                                     </div>
                                     <!-- /.text-->
                                     <div class="ribbon new">
@@ -181,20 +181,20 @@
                                 <div class="product">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.html">
+                                            <div class="front"><a href="detail.aspx">
                                                 <img src="img/product1.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.html">
+                                            <div class="back"><a href="detail.aspx">
                                                 <img src="img/product1_2.jpg" alt="" class="img-fluid"></a></div>
                                         </div>
                                     </div>
-                                    <a href="detail.html" class="invisible">
+                                    <a href="detail.aspx" class="invisible">
                                         <img src="img/product1.jpg" alt="" class="img-fluid"></a>
                                     <div class="text">
-                                        <h3><a href="detail.html">Fur coat</a></h3>
+                                        <h3><a href="detail.aspx">Fur coat</a></h3>
                                         <p class="price">
                                             <del></del>$143.00
                                         </p>
-                                        <p class="buttons"><a href="detail.html" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
+                                        <p class="buttons"><a href="detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
                                     </div>
                                     <!-- /.text-->
                                     <div class="ribbon gift">

@@ -1,8 +1,4 @@
-﻿<%@ Page Title="" Language="VB" MasterPageFile="~/MasterPage.master" %>
-
-<script runat="server">
-
-</script>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="basket.aspx.cs" Inherits="basket" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div id="all">
@@ -20,7 +16,7 @@
                     </div>
                     <div id="basket" class="col-lg-9">
                         <div class="box">
-                            <form method="post" action="checkout1.html">
+                            <form method="post" action="checkout1.aspx">
                                 <h1>Shopping cart</h1>
                                 <p class="text-muted">You currently have 3 item(s) in your cart.</p>
                                 <div class="table-responsive">
@@ -89,13 +85,13 @@
                                 <div class="product same-height">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.html">
+                                            <div class="front"><a href="detail.aspx">
                                                 <img src="img/product2.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.html">
+                                            <div class="back"><a href="detail.aspx">
                                                 <img src="img/product2_2.jpg" alt="" class="img-fluid"></a></div>
                                         </div>
                                     </div>
-                                    <a href="detail.html" class="invisible">
+                                    <a href="detail.aspx" class="invisible">
                                         <img src="img/product2.jpg" alt="" class="img-fluid"></a>
                                     <div class="text">
                                         <h3>Fur coat</h3>
@@ -108,13 +104,13 @@
                                 <div class="product same-height">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.html">
+                                            <div class="front"><a href="detail.aspx">
                                                 <img src="img/product1.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.html">
+                                            <div class="back"><a href="detail.aspx">
                                                 <img src="img/product1_2.jpg" alt="" class="img-fluid"></a></div>
                                         </div>
                                     </div>
-                                    <a href="detail.html" class="invisible">
+                                    <a href="detail.aspx" class="invisible">
                                         <img src="img/product1.jpg" alt="" class="img-fluid"></a>
                                     <div class="text">
                                         <h3>Fur coat</h3>
@@ -127,13 +123,13 @@
                                 <div class="product same-height">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.html">
+                                            <div class="front"><a href="detail.aspx">
                                                 <img src="img/product3.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.html">
+                                            <div class="back"><a href="detail.aspx">
                                                 <img src="img/product3_2.jpg" alt="" class="img-fluid"></a></div>
                                         </div>
                                     </div>
-                                    <a href="detail.html" class="invisible">
+                                    <a href="detail.aspx" class="invisible">
                                         <img src="img/product3.jpg" alt="" class="img-fluid"></a>
                                     <div class="text">
                                         <h3>Fur coat</h3>

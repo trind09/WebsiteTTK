@@ -1,8 +1,4 @@
-﻿<%@ Page Title="" Language="VB" MasterPageFile="~/MasterPage.master" %>
-
-<script runat="server">
-
-</script>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="blog.aspx.cs" Inherits="blog" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div id="all">
@@ -31,25 +27,25 @@
                         </div>
                         <!-- post-->
                         <div class="post">
-                            <h2><a href="post.html">Fashion now</a></h2>
+                            <h2><a href="post.aspx">Fashion now</a></h2>
                             <p class="author-category">By <a href="#">John Slim</a> in <a href="">Fashion and style</a></p>
                             <hr>
-                            <p class="date-comments"><a href="post.html"><i class="fa fa-calendar-o"></i>June 20, 2013</a><a href="post.html"><i class="fa fa-comment-o"></i> 8 Comments</a></p>
-                            <div class="image"><a href="post.html">
+                            <p class="date-comments"><a href="post.aspx"><i class="fa fa-calendar-o"></i>June 20, 2013</a><a href="post.aspx"><i class="fa fa-comment-o"></i> 8 Comments</a></p>
+                            <div class="image"><a href="post.aspx">
                                 <img src="img/blog2.jpg" alt="Example blog post alt" class="img-fluid"></a></div>
                             <p class="intro">Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
-                            <p class="read-more"><a href="post.html" class="btn btn-primary">Continue reading</a></p>
+                            <p class="read-more"><a href="post.aspx" class="btn btn-primary">Continue reading</a></p>
                         </div>
                         <!-- post        -->
                         <div class="post">
-                            <h2><a href="post.html">Who is who - example blog post</a></h2>
+                            <h2><a href="post.aspx">Who is who - example blog post</a></h2>
                             <p class="author-category">By <a href="#">John Slim</a> in <a href="">About Minimal</a></p>
                             <hr>
-                            <p class="date-comments"><a href="post.html"><i class="fa fa-calendar-o"></i>June 20, 2013</a><a href="post.html"><i class="fa fa-comment-o"></i> 8 Comments</a></p>
-                            <div class="image"><a href="post.html">
+                            <p class="date-comments"><a href="post.aspx"><i class="fa fa-calendar-o"></i>June 20, 2013</a><a href="post.aspx"><i class="fa fa-comment-o"></i> 8 Comments</a></p>
+                            <div class="image"><a href="post.aspx">
                                 <img src="img/blog.jpg" alt="Example blog post alt" class="img-fluid"></a></div>
                             <p class="intro">Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
-                            <p class="read-more"><a href="post.html" class="btn btn-primary">Continue reading</a></p>
+                            <p class="read-more"><a href="post.aspx" class="btn btn-primary">Continue reading</a></p>
                         </div>
                         <div class="pager d-flex justify-content-between">
                             <div class="previous"><a href="#" class="btn btn-outline-primary">← Older</a></div>

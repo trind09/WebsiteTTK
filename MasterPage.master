@@ -41,8 +41,8 @@
                     <div class="col-lg-6 text-center text-lg-right">
                         <ul class="menu list-inline mb-0">
                             <li class="list-inline-item"><a href="#" data-toggle="modal" data-target="#login-modal">Login</a></li>
-                            <li class="list-inline-item"><a href="register.html">Register</a></li>
-                            <li class="list-inline-item"><a href="contact.html">Contact</a></li>
+                            <li class="list-inline-item"><a href="register.aspx">Register</a></li>
+                            <li class="list-inline-item"><a href="contact.aspx">Contact</a></li>
                             <li class="list-inline-item"><a href="#">Recently viewed</a></li>
                         </ul>
                     </div>
@@ -56,7 +56,7 @@
                             <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                         </div>
                         <div class="modal-body">
-                            <form action="customer-orders.html" method="post">
+                            <form action="customer-orders.aspx" method="post">
                                 <div class="form-group">
                                     <input id="email-modal" type="text" placeholder="email" class="form-control">
                                 </div>
@@ -68,7 +68,7 @@
                                 </p>
                             </form>
                             <p class="text-center text-muted">Not registered yet?</p>
-                            <p class="text-center text-muted"><a href="register.html"><strong>Register now</strong></a>! It is easy and done in 1 minute and gives you access to special discounts and much more!</p>
+                            <p class="text-center text-muted"><a href="register.aspx"><strong>Register now</strong></a>! It is easy and done in 1 minute and gives you access to special discounts and much more!</p>
                         </div>
                     </div>
                 </div>
@@ -203,39 +203,39 @@
                                                 <li class="nav-item"><a href="category.aspx" class="nav-link">Category - sidebar left</a></li>
                                                 <li class="nav-item"><a href="category-right.aspx" class="nav-link">Category - sidebar right</a></li>
                                                 <li class="nav-item"><a href="category-full.aspx" class="nav-link">Category - full width</a></li>
-                                                <li class="nav-item"><a href="detail.html" class="nav-link">Product detail</a></li>
+                                                <li class="nav-item"><a href="detail.aspx" class="nav-link">Product detail</a></li>
                                             </ul>
                                         </div>
                                         <div class="col-md-6 col-lg-3">
                                             <h5>User</h5>
                                             <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="register.html" class="nav-link">Register / login</a></li>
-                                                <li class="nav-item"><a href="customer-orders.html" class="nav-link">Orders history</a></li>
-                                                <li class="nav-item"><a href="customer-order.html" class="nav-link">Order history detail</a></li>
-                                                <li class="nav-item"><a href="customer-wishlist.html" class="nav-link">Wishlist</a></li>
-                                                <li class="nav-item"><a href="customer-account.html" class="nav-link">Customer account / change password</a></li>
+                                                <li class="nav-item"><a href="register.aspx" class="nav-link">Register / login</a></li>
+                                                <li class="nav-item"><a href="customer-orders.aspx" class="nav-link">Orders history</a></li>
+                                                <li class="nav-item"><a href="customer-order.aspx" class="nav-link">Order history detail</a></li>
+                                                <li class="nav-item"><a href="customer-wishlist.aspx" class="nav-link">Wishlist</a></li>
+                                                <li class="nav-item"><a href="customer-account.aspx" class="nav-link">Customer account / change password</a></li>
                                             </ul>
                                         </div>
                                         <div class="col-md-6 col-lg-3">
                                             <h5>Order process</h5>
                                             <ul class="list-unstyled mb-3">
                                                 <li class="nav-item"><a href="basket.aspx" class="nav-link">Shopping cart</a></li>
-                                                <li class="nav-item"><a href="checkout1.html" class="nav-link">Checkout - step 1</a></li>
-                                                <li class="nav-item"><a href="checkout2.html" class="nav-link">Checkout - step 2</a></li>
-                                                <li class="nav-item"><a href="checkout3.html" class="nav-link">Checkout - step 3</a></li>
-                                                <li class="nav-item"><a href="checkout4.html" class="nav-link">Checkout - step 4</a></li>
+                                                <li class="nav-item"><a href="checkout1.aspx" class="nav-link">Checkout - step 1</a></li>
+                                                <li class="nav-item"><a href="checkout2.aspx" class="nav-link">Checkout - step 2</a></li>
+                                                <li class="nav-item"><a href="checkout3.aspx" class="nav-link">Checkout - step 3</a></li>
+                                                <li class="nav-item"><a href="checkout4.aspx" class="nav-link">Checkout - step 4</a></li>
                                             </ul>
                                         </div>
                                         <div class="col-md-6 col-lg-3">
                                             <h5>Pages and blog</h5>
                                             <ul class="list-unstyled mb-3">
                                                 <li class="nav-item"><a href="blog.aspx" class="nav-link">Blog listing</a></li>
-                                                <li class="nav-item"><a href="post.html" class="nav-link">Blog Post</a></li>
-                                                <li class="nav-item"><a href="faq.html" class="nav-link">FAQ</a></li>
+                                                <li class="nav-item"><a href="post.aspx" class="nav-link">Blog Post</a></li>
+                                                <li class="nav-item"><a href="faq.aspx" class="nav-link">FAQ</a></li>
                                                 <li class="nav-item"><a href="text.html" class="nav-link">Text page</a></li>
-                                                <li class="nav-item"><a href="text-right.html" class="nav-link">Text page - right sidebar</a></li>
+                                                <li class="nav-item"><a href="text-right.aspx" class="nav-link">Text page - right sidebar</a></li>
                                                 <li class="nav-item"><a href="404.aspx" class="nav-link">404 page</a></li>
-                                                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                                                <li class="nav-item"><a href="contact.aspx" class="nav-link">Contact</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -265,12 +265,8 @@
             </div>
         </div>
     </header>
-    <form id="form1" runat="server">
-        <div>
-            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-            </asp:ContentPlaceHolder>
-        </div>
-    </form>
+    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+    </asp:ContentPlaceHolder>
     <!--
     *** FOOTER ***
     _________________________________________________________
@@ -283,14 +279,14 @@
                     <ul class="list-unstyled">
                         <li><a href="text.html">About us</a></li>
                         <li><a href="text.html">Terms and conditions</a></li>
-                        <li><a href="faq.html">FAQ</a></li>
-                        <li><a href="contact.html">Contact us</a></li>
+                        <li><a href="faq.aspx">FAQ</a></li>
+                        <li><a href="contact.aspx">Contact us</a></li>
                     </ul>
                     <hr>
                     <h4 class="mb-3">User section</h4>
                     <ul class="list-unstyled">
                         <li><a href="#" data-toggle="modal" data-target="#login-modal">Login</a></li>
-                        <li><a href="register.html">Regiter</a></li>
+                        <li><a href="register.aspx">Regiter</a></li>
                     </ul>
                 </div>
                 <!-- /.col-lg-3-->
@@ -319,7 +315,7 @@
                         45Y 73J<br>
                         England<br>
                         <strong>Great Britain</strong></p>
-                    <a href="contact.html">Go to contact page</a>
+                    <a href="contact.aspx">Go to contact page</a>
                     <hr class="d-block d-md-none">
                 </div>
                 <!-- /.col-lg-3-->
