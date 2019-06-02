@@ -1,8 +1,4 @@
-﻿<%@ Page Title="" Language="VB" MasterPageFile="~/MasterPage.master" %>
-
-<script runat="server">
-
-</script>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="category-right.aspx.cs" Inherits="category_right" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div id="all">
@@ -46,10 +42,14 @@
                                 <div class="product">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.aspx">
-                                                <img src="img/product1.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.aspx">
-                                                <img src="img/product1_2.jpg" alt="" class="img-fluid"></a></div>
+                                            <div class="front">
+                                                <a href="detail.aspx">
+                                                    <img src="img/product1.jpg" alt="" class="img-fluid"></a>
+                                            </div>
+                                            <div class="back">
+                                                <a href="detail.aspx">
+                                                    <img src="img/product1_2.jpg" alt="" class="img-fluid"></a>
+                                            </div>
                                         </div>
                                     </div>
                                     <a href="detail.aspx" class="invisible">
@@ -69,10 +69,14 @@
                                 <div class="product">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.aspx">
-                                                <img src="img/product2.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.aspx">
-                                                <img src="img/product2_2.jpg" alt="" class="img-fluid"></a></div>
+                                            <div class="front">
+                                                <a href="detail.aspx">
+                                                    <img src="img/product2.jpg" alt="" class="img-fluid"></a>
+                                            </div>
+                                            <div class="back">
+                                                <a href="detail.aspx">
+                                                    <img src="img/product2_2.jpg" alt="" class="img-fluid"></a>
+                                            </div>
                                         </div>
                                     </div>
                                     <a href="detail.aspx" class="invisible">
@@ -107,10 +111,14 @@
                                 <div class="product">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.aspx">
-                                                <img src="img/product3.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.aspx">
-                                                <img src="img/product3_2.jpg" alt="" class="img-fluid"></a></div>
+                                            <div class="front">
+                                                <a href="detail.aspx">
+                                                    <img src="img/product3.jpg" alt="" class="img-fluid"></a>
+                                            </div>
+                                            <div class="back">
+                                                <a href="detail.aspx">
+                                                    <img src="img/product3_2.jpg" alt="" class="img-fluid"></a>
+                                            </div>
                                         </div>
                                     </div>
                                     <a href="detail.aspx" class="invisible">
@@ -130,10 +138,14 @@
                                 <div class="product">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.aspx">
-                                                <img src="img/product3.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.aspx">
-                                                <img src="img/product3_2.jpg" alt="" class="img-fluid"></a></div>
+                                            <div class="front">
+                                                <a href="detail.aspx">
+                                                    <img src="img/product3.jpg" alt="" class="img-fluid"></a>
+                                            </div>
+                                            <div class="back">
+                                                <a href="detail.aspx">
+                                                    <img src="img/product3_2.jpg" alt="" class="img-fluid"></a>
+                                            </div>
                                         </div>
                                     </div>
                                     <a href="detail.aspx" class="invisible">
@@ -153,10 +165,14 @@
                                 <div class="product">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.aspx">
-                                                <img src="img/product2.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.aspx">
-                                                <img src="img/product2_2.jpg" alt="" class="img-fluid"></a></div>
+                                            <div class="front">
+                                                <a href="detail.aspx">
+                                                    <img src="img/product2.jpg" alt="" class="img-fluid"></a>
+                                            </div>
+                                            <div class="back">
+                                                <a href="detail.aspx">
+                                                    <img src="img/product2_2.jpg" alt="" class="img-fluid"></a>
+                                            </div>
                                         </div>
                                     </div>
                                     <a href="detail.aspx" class="invisible">
@@ -181,10 +197,14 @@
                                 <div class="product">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.aspx">
-                                                <img src="img/product1.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.aspx">
-                                                <img src="img/product1_2.jpg" alt="" class="img-fluid"></a></div>
+                                            <div class="front">
+                                                <a href="detail.aspx">
+                                                    <img src="img/product1.jpg" alt="" class="img-fluid"></a>
+                                            </div>
+                                            <div class="back">
+                                                <a href="detail.aspx">
+                                                    <img src="img/product1_2.jpg" alt="" class="img-fluid"></a>
+                                            </div>
                                         </div>
                                     </div>
                                     <a href="detail.aspx" class="invisible">
@@ -335,13 +355,14 @@
                             </div>
                         </div>
                         <!-- *** MENUS AND FILTERS END ***-->
-                        <div class="banner"><a href="#">
-                            <img src="img/banner.jpg" alt="sales 2014" class="img-fluid"></a></div>
+                        <div class="banner">
+                            <a href="#">
+                                <img src="img/banner.jpg" alt="sales 2014" class="img-fluid"></a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </asp:Content>
 

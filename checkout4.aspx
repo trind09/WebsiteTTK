@@ -1,8 +1,5 @@
-﻿<%@ Page Title="" Language="VB" MasterPageFile="~/MasterPage.master" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="checkout4.aspx.cs" Inherits="checkout4" %>
 
-<script runat="server">
-
-</script>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div id="all">
