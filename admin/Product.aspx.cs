@@ -15,4 +15,10 @@ public partial class admin_Product :  System.Web.UI.Page
             Server_Data.InnerText = json;
         }
     }
+
+    protected void btnApplyAllChanges_Click(object sender, EventArgs e)
+    {
+        var text = Server_Data1.InnerText;
+        string a = "a";
+    }
 }

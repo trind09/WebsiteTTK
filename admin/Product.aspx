@@ -1,11 +1,13 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/admin/admin.master" AutoEventWireup="true" CodeFile="Product.aspx.cs" Inherits="admin_Product" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
+    <%--<form id="form1" runat="server">
+        <asp:Button ID="btnApplyAllChanges" runat="server" Text="Apply all changes"" CssClass="btn btn-success" OnClientClick="return AskForApplyAllChange();" OnClick="btnApplyAllChanges_Click"/>
+    </form>--%>
     <link rel="stylesheet" href="AngularJS/css/toastr.css">
     <link rel="stylesheet" href="AngularJS/css/application.css">
     <div>
         <div class="container" ng-app="app" ng-controller="TodoController">
-
             <div class="row">
                 <div class="page-header">
                     <div class="span9">
@@ -153,7 +155,7 @@
             </form>
         </div>
         <script>
-            var Server_Data = "";
+            var Server_Data = {};
             $(document).ready(function () {
                 var data = $("#<%=Server_Data.ClientID%>").text();
                 Server_Data = jQuery.parseJSON(data);
@@ -180,10 +182,21 @@
 
                 scope.$apply();
             });
+
+            function AskForApplyAllChange() {
+                if (confirm('Are you sure to apply all change?')) {
+                    var TodoController = 'div[ng-controller="TodoController"]';
+                    var scope = angular.element(TodoController).scope();
+                    $("#<%=Server_Data1.ClientID%>").text(JSON.stringify(scope.copyOfItems));
+                    return true;
+                }
+                return false;
+            }
         </script>
         <script src="AngularJS/lib/toastr.min.js"></script>
         <script src="AngularJS/app/controllers.js"></script>
         <div runat="server" id="Server_Data" style="display: none;"></div>
+        <div runat="server" id="Server_Data1" style="display: none;"></div>
     </div>
 </asp:Content>
 

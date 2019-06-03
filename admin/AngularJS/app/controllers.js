@@ -14,6 +14,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
     $scope.checkall = false;
 
     //Manual functions
+    //Add new item function
     $scope.adicionaItem = function () {
         var newGeneratedID = Math.random().toString(36).substr(2, 9);
         var today = $filter('date')(new Date(), 'dd/MM/yyyy HH:mm:ss');
@@ -32,12 +33,14 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         toastr.success("Item added successful.");
     };
 
+    //Set item to be updated
     $scope.editarItem = function (id) {
         var index = $scope.items.findIndex(x => x.ID === id);
         $scope.item = $scope.items[index];
         $scope.edit = true;
     };
 
+    //Apply item update function
     $scope.applyChanges = function (index) {
         var item = $scope.item;
 
@@ -57,6 +60,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         toastr.success("Item updated successful.");
     };
 
+    //Delete item function
     $scope.deleteItem = function (id) {
         if (confirm('Are you sure to delete?')) {
             var index = $scope.items.findIndex(x => x.ID === id);
