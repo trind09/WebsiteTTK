@@ -219,3 +219,4 @@ src/Merchello.FastTrack.Ui/App_Data/umbraco.config
 src/Merchello.Core/App_Data/NuGetBackup/
 src/Merchello.Web/App_Data/NuGetBackup/
 src/Merchello.FastTrack.Ui/App_Data/TEMP/ClientDependency/*
+Web.config
