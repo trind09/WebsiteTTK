@@ -138,14 +138,6 @@
                                 <li>
                                     <div class="row">
                                         <div class="col-md-6 col-lg-12">
-                                            <h5>Hello Meo</h5>
-                                            <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a target="_blank" href="http://www.hellomeo.net">http://www.hellomeo.net</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 col-lg-12">
                                             <h5>E-Learning Course Portal</h5>
                                             <ul class="list-unstyled mb-3">
                                                 <li class="nav-item"><a class="nav-link" target="_blank" href="http://www.elearning-medvnu.edu.vn">http://www.elearning-medvnu.edu.vn</a></li>
@@ -165,6 +157,14 @@
                                             <h5>Khoa Y ĐHQG-HCM - INFO</h5>
                                             <ul class="list-unstyled mb-3">
                                                 <li class="nav-item"><a class="nav-link" target="_blank" href="http://www.pdt-medvnu.info">http://www.pdt-medvnu.info</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-lg-12">
+                                            <h5>Hello Meo</h5>
+                                            <ul class="list-unstyled mb-3">
+                                                <li class="nav-item"><a target="_blank" href="http://www.hellomeo.net">http://www.hellomeo.net</a></li>
                                             </ul>
                                         </div>
                                     </div>
