@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
     <!-- Font Awesome CSS-->
     <link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
+    <!-- Choose Icons: https://www.w3schools.com/icons/fontawesome_icons_webapp.asp -->
     <!-- Google fonts - Roboto -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700">
     <!-- owl carousel-->
@@ -88,154 +89,82 @@
                 <div id="navigation" class="collapse navbar-collapse">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item"><a href="#" class="nav-link active">Home</a></li>
-                        <li class="nav-item dropdown menu-large"><a href="#" data-toggle="dropdown" data-hover="dropdown" data-delay="200" class="dropdown-toggle nav-link">Men<b class="caret"></b></a>
+                        <li class="nav-item dropdown menu-large"><a href="#" data-toggle="dropdown" data-hover="dropdown" data-delay="200" class="dropdown-toggle nav-link">Website Development<b class="caret"></b></a>
                             <ul class="dropdown-menu megamenu">
                                 <li>
                                     <div class="row">
                                         <div class="col-md-6 col-lg-3">
-                                            <h5>Clothing</h5>
+                                            <h5>E-Commerce</h5>
                                             <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">T-shirts</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Shirts</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Pants</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Accessories</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">WordPress</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">DotNetNuke</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Moodle</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Merchello</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Customs</a></li>
                                             </ul>
                                         </div>
                                         <div class="col-md-6 col-lg-3">
-                                            <h5>Shoes</h5>
+                                            <h5>Education</h5>
                                             <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Trainers</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Sandals</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Hiking shoes</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Casual</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Moodle</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">DotNetNuke</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Customs</a></li>
                                             </ul>
                                         </div>
                                         <div class="col-md-6 col-lg-3">
-                                            <h5>Accessories</h5>
+                                            <h5>Frameworks</h5>
                                             <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Trainers</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Sandals</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Hiking shoes</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Casual</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Hiking shoes</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Casual</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">ASP.NET Web Forms</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">ASP.NET MVC</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">HTML5</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Angular JS</a></li>
                                             </ul>
                                         </div>
                                         <div class="col-md-6 col-lg-3">
-                                            <h5>Featured</h5>
+                                            <h5>Languages</h5>
                                             <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Trainers</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Sandals</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Hiking shoes</a></li>
-                                            </ul>
-                                            <h5>Looks and trends</h5>
-                                            <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Trainers</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Sandals</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Hiking shoes</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">C#</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">PHP</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Javascript</a></li>
+                                                <li class="nav-item"><a href="category.aspx" class="nav-link">CSS + HTML</a></li>
                                             </ul>
                                         </div>
                                     </div>
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item dropdown menu-large"><a href="#" data-toggle="dropdown" data-hover="dropdown" data-delay="200" class="dropdown-toggle nav-link">Ladies<b class="caret"></b></a>
+                        <li class="nav-item dropdown menu-large"><a href="#" data-toggle="dropdown" data-hover="dropdown" data-delay="200" class="dropdown-toggle nav-link">Demo<b class="caret"></b></a>
                             <ul class="dropdown-menu megamenu">
                                 <li>
                                     <div class="row">
-                                        <div class="col-md-6 col-lg-3">
-                                            <h5>Clothing</h5>
+                                        <div class="col-md-6 col-lg-12">
+                                            <h5>Hello Meo</h5>
                                             <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">T-shirts</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Shirts</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Pants</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Accessories</a></li>
+                                                <li class="nav-item"><a target="_blank" href="http://www.hellomeo.net">http://www.hellomeo.net</a></li>
                                             </ul>
-                                        </div>
-                                        <div class="col-md-6 col-lg-3">
-                                            <h5>Shoes</h5>
-                                            <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Trainers</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Sandals</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Hiking shoes</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Casual</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="col-md-6 col-lg-3">
-                                            <h5>Accessories</h5>
-                                            <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Trainers</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Sandals</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Hiking shoes</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Casual</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Hiking shoes</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Casual</a></li>
-                                            </ul>
-                                            <h5>Looks and trends</h5>
-                                            <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Trainers</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Sandals</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Hiking shoes</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="col-md-6 col-lg-3">
-                                            <div class="banner">
-                                                <a href="#">
-                                                    <img src="img/banner.jpg" alt="" class="img img-fluid"></a>
-                                            </div>
-                                            <div class="banner">
-                                                <a href="#">
-                                                    <img src="img/banner2.jpg" alt="" class="img img-fluid"></a>
-                                            </div>
                                         </div>
                                     </div>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown menu-large"><a href="#" data-toggle="dropdown" data-hover="dropdown" data-delay="200" class="dropdown-toggle nav-link">Template<b class="caret"></b></a>
-                            <ul class="dropdown-menu megamenu">
-                                <li>
                                     <div class="row">
-                                        <div class="col-md-6 col-lg-3">
-                                            <h5>Shop</h5>
+                                        <div class="col-md-6 col-lg-12">
+                                            <h5>E-Learning Course Portal</h5>
                                             <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="Default.aspx" class="nav-link">Homepage</a></li>
-                                                <li class="nav-item"><a href="category.aspx" class="nav-link">Category - sidebar left</a></li>
-                                                <li class="nav-item"><a href="category-right.aspx" class="nav-link">Category - sidebar right</a></li>
-                                                <li class="nav-item"><a href="category-full.aspx" class="nav-link">Category - full width</a></li>
-                                                <li class="nav-item"><a href="detail.aspx" class="nav-link">Product detail</a></li>
+                                                <li class="nav-item"><a class="nav-link" target="_blank" href="http://www.elearning-medvnu.edu.vn">http://www.elearning-medvnu.edu.vn</a></li>
                                             </ul>
                                         </div>
-                                        <div class="col-md-6 col-lg-3">
-                                            <h5>User</h5>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-lg-12">
+                                            <h5>Khoa Y - ĐHQG TPHCM</h5>
                                             <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="register.aspx" class="nav-link">Register / login</a></li>
-                                                <li class="nav-item"><a href="customer-orders.aspx" class="nav-link">Orders history</a></li>
-                                                <li class="nav-item"><a href="customer-order.aspx" class="nav-link">Order history detail</a></li>
-                                                <li class="nav-item"><a href="customer-wishlist.aspx" class="nav-link">Wishlist</a></li>
-                                                <li class="nav-item"><a href="customer-account.aspx" class="nav-link">Customer account / change password</a></li>
+                                                <li class="nav-item"><a class="nav-link" target="_blank" href="http://www.medvnu.edu.vn">http://www.medvnu.edu.vn</a></li>
                                             </ul>
                                         </div>
-                                        <div class="col-md-6 col-lg-3">
-                                            <h5>Order process</h5>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-lg-12">
+                                            <h5>Khoa Y ĐHQG-HCM - INFO</h5>
                                             <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="basket.aspx" class="nav-link">Shopping cart</a></li>
-                                                <li class="nav-item"><a href="checkout1.aspx" class="nav-link">Checkout - step 1</a></li>
-                                                <li class="nav-item"><a href="checkout2.aspx" class="nav-link">Checkout - step 2</a></li>
-                                                <li class="nav-item"><a href="checkout3.aspx" class="nav-link">Checkout - step 3</a></li>
-                                                <li class="nav-item"><a href="checkout4.aspx" class="nav-link">Checkout - step 4</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="col-md-6 col-lg-3">
-                                            <h5>Pages and blog</h5>
-                                            <ul class="list-unstyled mb-3">
-                                                <li class="nav-item"><a href="blog.aspx" class="nav-link">Blog listing</a></li>
-                                                <li class="nav-item"><a href="post.aspx" class="nav-link">Blog Post</a></li>
-                                                <li class="nav-item"><a href="faq.aspx" class="nav-link">FAQ</a></li>
-                                                <li class="nav-item"><a href="text.html" class="nav-link">Text page</a></li>
-                                                <li class="nav-item"><a href="text-right.aspx" class="nav-link">Text page - right sidebar</a></li>
-                                                <li class="nav-item"><a href="404.aspx" class="nav-link">404 page</a></li>
-                                                <li class="nav-item"><a href="contact.aspx" class="nav-link">Contact</a></li>
+                                                <li class="nav-item"><a class="nav-link" target="_blank" href="http://www.pdt-medvnu.info">http://www.pdt-medvnu.info</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -309,12 +238,12 @@
                 <!-- /.col-lg-3-->
                 <div class="col-lg-3 col-md-6">
                     <h4 class="mb-3">Where to find us</h4>
-                    <p><strong>Obaju Ltd.</strong><br>
-                        13/25 New Avenue<br>
-                        New Heaven<br>
-                        45Y 73J<br>
-                        England<br>
-                        <strong>Great Britain</strong></p>
+                    <p><strong>TTK TECHNOLOGY SERVICES COMPANY Ltd.</strong><br>
+                        40 TK20, KDC Hoàng Hải<br>
+                        Ấp Tiền Lân<br>
+                        Xã Bà Điểm<br>
+                        Huyện Hóc Môn<br>
+                        <strong>Thành phố Hồ Chí Minh</strong></p>
                     <a href="contact.aspx">Go to contact page</a>
                     <hr class="d-block d-md-none">
                 </div>
@@ -348,7 +277,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 mb-2 mb-lg-0">
-                    <p class="text-center text-lg-left">©2019 Your name goes here.</p>
+                    <p class="text-center text-lg-left">©2019 CÔNG TY TNHH DỊCH VỤ CÔNG NGHỆ THÔNG TIN TTK</p>
                 </div>
                 <div class="col-lg-6">
                     <p class="text-center text-lg-right">

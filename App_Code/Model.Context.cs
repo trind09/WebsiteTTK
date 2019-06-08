@@ -24,4 +24,5 @@ public partial class WebsiteTTKEntities : DbContext
     }
 
     public virtual DbSet<Product> Products { get; set; }
+    public virtual DbSet<Order> Orders { get; set; }
 }

@@ -7,14 +7,15 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div id="main-slider" class="owl-carousel owl-theme">
-                            <div class="item">
-                                <img src="img/main-slider1.jpg" alt="" class="img-fluid"></div>
-                            <div class="item">
-                                <img src="img/main-slider2.jpg" alt="" class="img-fluid"></div>
-                            <div class="item">
-                                <img src="img/main-slider3.jpg" alt="" class="img-fluid"></div>
-                            <div class="item">
-                                <img src="img/main-slider4.jpg" alt="" class="img-fluid"></div>
+                            <div class="item" style="background: url('img/main-slider2.jpg'); height: 520px; text-align: center;
+vertical-align: middle; color: #a53f3f; text-shadow: #DA7A7A 1px 0 10px; padding: 150px; font-family: 'Pacifico script=latin rev=2';">
+                                </div>
+                            <div class="item" style="background: url('img/main-slider3.jpg'); height: 520px; text-align: center;
+vertical-align: middle; color: #a53f3f; text-shadow: #DA7A7A 1px 0 10px; padding: 150px; font-family: 'Pacifico script=latin rev=2';">
+                                </div>
+                            <div class="item" style="background: url('img/main-slider1.jpg'); height: 520px; text-align: center;
+vertical-align: middle; color: #a53f3f; text-shadow: #DA7A7A 1px 0 10px; padding: 150px; font-family: 'Pacifico script=latin rev=2';">
+                                </div>
                         </div>
                         <!-- /#main-slider-->
                     </div>
@@ -28,24 +29,24 @@
                 <div class="container">
                     <div class="row mb-4">
                         <div class="col-md-4">
-                            <div class="box clickable d-flex flex-column justify-content-center mb-0 h-100">
-                                <div class="icon"><i class="fa fa-heart"></i></div>
-                                <h3><a href="#">We love our customers</a></h3>
-                                <p class="mb-0">We are known to provide best possible service ever</p>
+                            <div class="box clickable d-flex flex-column justify-content-center mb-0 h-100" style="vertical-align: top;">
+                                <div class="icon"><i class="fa fa-magic"></i></div>
+                                <h3><a href="#">Design</a></h3>
+                                <p class="mb-0">We strategically design websites that elevate your brand and communicate your message effectively.</p>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="box clickable d-flex flex-column justify-content-center mb-0 h-100">
-                                <div class="icon"><i class="fa fa-tags"></i></div>
-                                <h3><a href="#">Best prices</a></h3>
-                                <p class="mb-0">You can check that the height of the boxes adjust when longer text like this one is used in one of them.</p>
+                            <div class="box clickable d-flex flex-column justify-content-center mb-0 h-100" style="vertical-align: top;">
+                                <div class="icon"><i class="fa fa-cogs"></i></div>
+                                <h3><a href="#">Development</a></h3>
+                                <p class="mb-0">We develop fast and effective websites that speech up your business to sell your products and services online.</p>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="box clickable d-flex flex-column justify-content-center mb-0 h-100">
-                                <div class="icon"><i class="fa fa-thumbs-up"></i></div>
-                                <h3><a href="#">100% satisfaction guaranteed</a></h3>
-                                <p class="mb-0">Free returns on everything for 3 months.</p>
+                            <div class="box clickable d-flex flex-column justify-content-center mb-0 h-100" style="vertical-align: top;">
+                                <div class="icon"><i class="fa fa-bullhorn"></i></div>
+                                <h3><a href="#">Online Marketing</a></h3>
+                                <p class="mb-0">We provide SEO service includes Facebook ads, Google ads, Fanpage, Email Marketing or advertising apps on online games.</p>
                             </div>
                         </div>
                     </div>
@@ -64,7 +65,7 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-md-12">
-                                <h2 class="mb-0">Hot this week</h2>
+                                <h2 class="mb-0">TTK Shop</h2>
                             </div>
                         </div>
                     </div>
@@ -316,8 +317,8 @@
             <div class="container">
                 <div class="col-md-12">
                     <div class="box slideshow">
-                        <h3>Get Inspired</h3>
-                        <p class="lead">Get the inspiration from our world class designers</p>
+                        <h3>Thien Kim Collections</h3>
+                        <p class="lead">Get the inspiration from our Thien Kim Fashion</p>
                         <div id="get-inspired" class="owl-carousel owl-theme">
                             <div class="item"><a href="#">
                                 <img src="img/getinspired1.jpg" alt="Get inspired" class="img-fluid"></a></div>
