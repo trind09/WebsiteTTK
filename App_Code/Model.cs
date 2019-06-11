@@ -13,9 +13,10 @@ using System.Collections.Generic;
 public partial class Order
 {
     public int ID { get; set; }
-    public Nullable<int> ProductID { get; set; }
+    public string ProductID { get; set; }
+    public string CreatedBy { get; set; }
     public Nullable<System.DateTime> CreatedDate { get; set; }
-    public Nullable<double> PriceTotal { get; set; }
+    public Nullable<decimal> PriceTotal { get; set; }
 }
 
 public partial class Product

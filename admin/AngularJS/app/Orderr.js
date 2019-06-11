@@ -20,7 +20,8 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         var today = $filter('date')(new Date(), 'dd/MM/yyyy HH:mm:ss');
 
         $scope.items.push({
-            ID: newGeneratedID, ProductID: $scope.item.ProductID, CreatedDate: today, PriceTotal: $scope.item.PriceTotal, IsDelete: false
+            ID: newGeneratedID, ProductID: $scope.item.ProductID, CreatedBy: $scope.item.CreatedBy,
+            PriceTotal: $scope.item.PriceTotal, CreatedDate: today, IsDelete: false
         });
         $scope.item.ID = $scope.item.ID = '';
 
@@ -45,7 +46,10 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         //Update source item
         var item1 = $scope.copyOfItems.find(x => x.ID == item.ID);
         item1.ProductID = item.ProductID;
+        item1.CreatedBy = item.CreatedBy;
         item1.PriceTotal = item.PriceTotal;
+        
+
         $scope.item = {};
         $scope.edit = false;
         toastr.success("Item updated successful.");

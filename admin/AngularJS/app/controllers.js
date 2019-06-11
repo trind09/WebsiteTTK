@@ -3,7 +3,7 @@ var app = angular.module('app', ['ui.bootstrap']);
 app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter) {
     $scope.filteredItems = [];
     $scope.currentPage = 0;
-    $scope.numPerPage = 10;
+    $scope.numPerPage = 10;a
     $scope.currentNumPerPage = 0;
     $scope.item = {};
     $scope.items = [];

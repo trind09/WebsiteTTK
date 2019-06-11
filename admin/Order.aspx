@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/admin/admin.master" AutoEventWireup="true" CodeFile="Order.aspx.cs" Inherits="admin_Order" %>
+﻿<%@ Page Title="Order" Language="C#" MasterPageFile="~/admin/admin.master" AutoEventWireup="true" CodeFile="Order.aspx.cs" Inherits="admin_Order" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <%--<form id="form1" runat="server">
@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="page-header">
                     <div class="span9">
-                        <h1>List of products</h1>
+                        <h1>List of Orders</h1>
                     </div>
                     <div class="span3">
                         <table>
@@ -47,30 +47,31 @@
                             <th><input type='checkbox' value='' ng-model='checkall'></th>
                             <th>ID</th>
                             <th>ProductID</th>
-                            <th>CreatedDate</th>
+                            <th>CreatedBy</th>
                             <th>PriceTotal</th>
+                            <th>CreatedDate</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="item in filteredItems | filter:searchValue | startFrom:(currentPage - 1) * numPerPage | limitTo:numPerPage" class="comprado-{{ item.ProductID}}">
+                        <tr ng-repeat="item in filteredItems | filter:searchValue | startFrom:(currentPage - 1) * numPerPage | limitTo:numPerPage" class="comprado-{{ item.Title }}">
                             <td><input type='checkbox' ng-checked="checkall" id="item-{{ item.ID }}" value="{{ item.ID }}"></td>
                             <td><strong>{{ item.ID }}</strong></td>
                             <td>{{ item.ProductID }}</td>
-                            <td>{{ item.CreatedDate | filterdate | date:'dd/MM/yyyy hh:mm:ss' }}</td>
+                            <td>{{ item.CreatedBy }}</td>
                             <td>{{ item.PriceTotal }}</td>
+                            <td>{{ item.CreatedDate | filterdate | date:'dd/MM/yyyy hh:mm:ss' }}</td>
                             <td>
                                 <button class="btn btn-warning btn-small" ng-click="editarItem(item.ID)">
-                                    <i class="icon-pencil icon-white"></i>Edit</button>    
-                            </td> 
-                            <td>
+                                    <i class="icon-pencil icon-white"></i>Edit
+                                </button>
                                 <button class="btn btn-danger btn-small" ng-click="deleteItem(item.ID)">
                                     <i class="icon-trash icon-white"></i>Delete
                                 </button>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="7">
+                            <td colspan="12">
                                 <h4>{{filteredItems.length}} total</h4>
                                 <!-- pager -->
                                 <pagination 
@@ -99,13 +100,16 @@
                         </tr>
                         <tr>
                             <td>ProductID: </td>
-                            <td><input type="text" ng-model="item.ProductID" placeholder="ProductID" class="input-small"  required style="width: 500px;"></td>
+                            <td><input type="text" ng-model="item.ProductID" placeholder="ProductID" required style="width: 500px;"></td>
+                        </tr>
+                        <tr>
+                            <td>CreatedBy: </td>
+                            <td><textarea type="text" ng-model="item.CreatedBy" placeholder="CreatedBy" class="input-small" cols="69" rows="1"></textarea></td>
                         </tr>
                         <tr>
                             <td>PriceTotal: </td>
                             <td><input type="number" ng-model="item.PriceTotal" placeholder="PriceTotal" class="input-small" required style="width: 500px;"></td>
                         </tr>
-                        
                         <tr>
                             <td colspan="2">
                                 <button ng-hide="edit" class="btn btn-success" ng-disabled="validarValoresPreenchidos.$invalid" ng-click="adicionaItem()">
@@ -121,7 +125,7 @@
             </form>
         </div>
         <script>
-            var Server_Data = {};
+            var Server_Daa = {};
             $(document).ready(function () {
                 var data = $("#<%=Server_Data.ClientID%>").text();
                 Server_Data = jQuery.parseJSON(data);
@@ -160,7 +164,7 @@
             }
         </script>
         <script src="AngularJS/lib/toastr.min.js"></script>
-        <script src="AngularJS/app/controllers.js"></script>
+        <script src="AngularJS/app/Orderr.js"></script>
         <div runat="server" id="Server_Data" style="display: none;"></div>
         <div runat="server" id="Server_Data1" style="display: none;"></div>
     </div>

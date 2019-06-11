@@ -5,16 +5,15 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="WebsiteTTKModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'WebsiteTTK.dbo.Order' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Order">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ProductID" Type="int" />
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ProductID" Type="nvarchar" MaxLength="50" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="150" />
           <Property Name="CreatedDate" Type="datetime" />
-          <Property Name="PriceTotal" Type="float" />
+          <Property Name="PriceTotal" Type="decimal" Precision="18" Scale="0" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'WebsiteTTK.dbo.Product' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -40,14 +39,7 @@ warning 6002: The table/view 'WebsiteTTK.dbo.Product' does not have a primary ke
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityContainer Name="WebsiteTTKModelStoreContainer">
-          <EntitySet Name="Order" EntityType="Self.Order" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [Order].[ID] AS [ID], 
-    [Order].[ProductID] AS [ProductID], 
-    [Order].[CreatedDate] AS [CreatedDate], 
-    [Order].[PriceTotal] AS [PriceTotal]
-    FROM [dbo].[Order] AS [Order]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="Order" EntityType="Self.Order" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Product" EntityType="Self.Product" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [Product].[ID] AS [ID], 
@@ -96,10 +88,11 @@ warning 6002: The table/view 'WebsiteTTK.dbo.Product' does not have a primary ke
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ProductID" Type="Int32" />
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="ProductID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedBy" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="PriceTotal" Type="Double" />
+          <Property Name="PriceTotal" Type="Decimal" Precision="18" Scale="0" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -128,6 +121,7 @@ warning 6002: The table/view 'WebsiteTTK.dbo.Product' does not have a primary ke
               <MappingFragment StoreEntitySet="Order">
                 <ScalarProperty Name="PriceTotal" ColumnName="PriceTotal" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="ProductID" ColumnName="ProductID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
