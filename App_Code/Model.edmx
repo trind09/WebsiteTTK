@@ -5,125 +5,791 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="WebsiteTTKModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Order">
+        <EntityType Name="brands">
           <Key>
-            <PropertyRef Name="ID" />
+            <PropertyRef Name="brand_id" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
-          <Property Name="ProductID" Type="nvarchar" MaxLength="50" />
-          <Property Name="CreatedBy" Type="nvarchar" MaxLength="150" />
-          <Property Name="CreatedDate" Type="datetime" />
-          <Property Name="PriceTotal" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="brand_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="brand_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="brand_description" Type="nvarchar" MaxLength="555" />
+          <Property Name="images" Type="nvarchar" MaxLength="155" />
+          <Property Name="create_date" Type="datetime" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'WebsiteTTK.dbo.Product' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="Product">
+        <EntityType Name="categories">
           <Key>
-            <PropertyRef Name="ID" />
-            <PropertyRef Name="Title" />
-            <PropertyRef Name="Status" />
-            <PropertyRef Name="Publish" />
-            <PropertyRef Name="Price" />
-            <PropertyRef Name="Currency" />
-            <PropertyRef Name="CreatedDate" />
+            <PropertyRef Name="category_id" />
           </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Title" Type="nvarchar" MaxLength="150" Nullable="false" />
-          <Property Name="Description" Type="nvarchar" MaxLength="2000" />
-          <Property Name="Status" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="Publish" Type="bit" Nullable="false" />
-          <Property Name="Images" Type="nvarchar" MaxLength="200" />
-          <Property Name="RelativeProductIds" Type="int" />
-          <Property Name="Price" Type="decimal" Precision="18" Scale="2" Nullable="false" />
-          <Property Name="Currency" Type="nchar" MaxLength="10" Nullable="false" />
-          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="category_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="category_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="category_description" Type="nvarchar" MaxLength="555" />
+          <Property Name="images" Type="nvarchar" MaxLength="155" />
+          <Property Name="create_date" Type="datetime" />
+          <Property Name="parent_id" Type="int" />
         </EntityType>
+        <EntityType Name="products">
+          <Key>
+            <PropertyRef Name="product_id" />
+          </Key>
+          <Property Name="product_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="product_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="product_description" Type="nvarchar(max)" />
+          <Property Name="product_images" Type="nvarchar" MaxLength="250" />
+          <Property Name="brand_id" Type="int" Nullable="false" />
+          <Property Name="category_id" Type="int" Nullable="false" />
+          <Property Name="model_year" Type="smallint" Nullable="false" />
+          <Property Name="list_price" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="create_date" Type="datetime" />
+          <Property Name="create_by" Type="nvarchar" MaxLength="250" />
+          <Property Name="is_publish" Type="bit" />
+        </EntityType>
+        <EntityType Name="stocks">
+          <Key>
+            <PropertyRef Name="store_id" />
+            <PropertyRef Name="product_id" />
+          </Key>
+          <Property Name="store_id" Type="int" Nullable="false" />
+          <Property Name="product_id" Type="int" Nullable="false" />
+          <Property Name="quantity" Type="int" />
+        </EntityType>
+        <EntityType Name="customers">
+          <Key>
+            <PropertyRef Name="customer_id" />
+          </Key>
+          <Property Name="customer_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="first_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="last_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="phone" Type="nvarchar" MaxLength="50" />
+          <Property Name="email" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="street" Type="nvarchar" MaxLength="255" />
+          <Property Name="city" Type="nvarchar" MaxLength="50" />
+          <Property Name="state" Type="nvarchar" MaxLength="50" />
+          <Property Name="zip_code" Type="nvarchar" MaxLength="50" />
+          <Property Name="address" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="order_items">
+          <Key>
+            <PropertyRef Name="order_id" />
+            <PropertyRef Name="item_id" />
+          </Key>
+          <Property Name="order_id" Type="int" Nullable="false" />
+          <Property Name="item_id" Type="int" Nullable="false" />
+          <Property Name="product_id" Type="int" Nullable="false" />
+          <Property Name="quantity" Type="int" Nullable="false" />
+          <Property Name="list_price" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="discount" Type="decimal" Precision="4" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="orders">
+          <Key>
+            <PropertyRef Name="order_id" />
+          </Key>
+          <Property Name="order_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="customer_id" Type="int" />
+          <Property Name="order_status" Type="tinyint" Nullable="false" />
+          <Property Name="order_date" Type="date" Nullable="false" />
+          <Property Name="required_date" Type="date" Nullable="false" />
+          <Property Name="shipped_date" Type="date" />
+          <Property Name="store_id" Type="int" Nullable="false" />
+          <Property Name="staff_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="staffs">
+          <Key>
+            <PropertyRef Name="staff_id" />
+          </Key>
+          <Property Name="staff_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="first_name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="last_name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="email" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="phone" Type="nvarchar" MaxLength="50" />
+          <Property Name="active" Type="tinyint" Nullable="false" />
+          <Property Name="store_id" Type="int" Nullable="false" />
+          <Property Name="manager_id" Type="int" />
+          <Property Name="address" Type="nvarchar" MaxLength="350" />
+        </EntityType>
+        <EntityType Name="stores">
+          <Key>
+            <PropertyRef Name="store_id" />
+          </Key>
+          <Property Name="store_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="store_name" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="phone" Type="varchar" MaxLength="25" />
+          <Property Name="email" Type="varchar" MaxLength="255" />
+          <Property Name="street" Type="varchar" MaxLength="255" />
+          <Property Name="city" Type="varchar" MaxLength="255" />
+          <Property Name="state" Type="varchar" MaxLength="10" />
+          <Property Name="zip_code" Type="varchar" MaxLength="5" />
+        </EntityType>
+        <Association Name="FK__order_ite__order__4E88ABD4">
+          <End Role="orders" Type="Self.orders" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="order_items" Type="Self.order_items" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="orders">
+              <PropertyRef Name="order_id" />
+            </Principal>
+            <Dependent Role="order_items">
+              <PropertyRef Name="order_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__order_ite__produ__4F7CD00D">
+          <End Role="products" Type="Self.products" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="order_items" Type="Self.order_items" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="products">
+              <PropertyRef Name="product_id" />
+            </Principal>
+            <Dependent Role="order_items">
+              <PropertyRef Name="product_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__orders__customer__48CFD27E">
+          <End Role="customers" Type="Self.customers" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="orders" Type="Self.orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="customers">
+              <PropertyRef Name="customer_id" />
+            </Principal>
+            <Dependent Role="orders">
+              <PropertyRef Name="customer_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__orders__staff_id__4AB81AF0">
+          <End Role="staffs" Type="Self.staffs" Multiplicity="1" />
+          <End Role="orders" Type="Self.orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="staffs">
+              <PropertyRef Name="staff_id" />
+            </Principal>
+            <Dependent Role="orders">
+              <PropertyRef Name="staff_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__orders__store_id__49C3F6B7">
+          <End Role="stores" Type="Self.stores" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="orders" Type="Self.orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="stores">
+              <PropertyRef Name="store_id" />
+            </Principal>
+            <Dependent Role="orders">
+              <PropertyRef Name="store_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__products__brand___3D5E1FD2">
+          <End Role="brands" Type="Self.brands" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="products" Type="Self.products" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="brands">
+              <PropertyRef Name="brand_id" />
+            </Principal>
+            <Dependent Role="products">
+              <PropertyRef Name="brand_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__products__catego__3C69FB99">
+          <End Role="categories" Type="Self.categories" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="products" Type="Self.products" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="categories">
+              <PropertyRef Name="category_id" />
+            </Principal>
+            <Dependent Role="products">
+              <PropertyRef Name="category_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__staffs__manager___45F365D3">
+          <End Role="staffs" Type="Self.staffs" Multiplicity="0..1" />
+          <End Role="staffs1" Type="Self.staffs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="staffs">
+              <PropertyRef Name="staff_id" />
+            </Principal>
+            <Dependent Role="staffs1">
+              <PropertyRef Name="manager_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__staffs__store_id__44FF419A">
+          <End Role="stores" Type="Self.stores" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="staffs" Type="Self.staffs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="stores">
+              <PropertyRef Name="store_id" />
+            </Principal>
+            <Dependent Role="staffs">
+              <PropertyRef Name="store_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__stocks__product___534D60F1">
+          <End Role="products" Type="Self.products" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="stocks" Type="Self.stocks" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="products">
+              <PropertyRef Name="product_id" />
+            </Principal>
+            <Dependent Role="stocks">
+              <PropertyRef Name="product_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__stocks__store_id__52593CB8">
+          <End Role="stores" Type="Self.stores" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="stocks" Type="Self.stocks" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="stores">
+              <PropertyRef Name="store_id" />
+            </Principal>
+            <Dependent Role="stocks">
+              <PropertyRef Name="store_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="WebsiteTTKModelStoreContainer">
-          <EntitySet Name="Order" EntityType="Self.Order" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Product" EntityType="Self.Product" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [Product].[ID] AS [ID], 
-    [Product].[Title] AS [Title], 
-    [Product].[Description] AS [Description], 
-    [Product].[Status] AS [Status], 
-    [Product].[Publish] AS [Publish], 
-    [Product].[Images] AS [Images], 
-    [Product].[RelativeProductIds] AS [RelativeProductIds], 
-    [Product].[Price] AS [Price], 
-    [Product].[Currency] AS [Currency], 
-    [Product].[CreatedDate] AS [CreatedDate]
-    FROM [dbo].[Product] AS [Product]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="brands" EntityType="Self.brands" Schema="production" store:Type="Tables" />
+          <EntitySet Name="categories" EntityType="Self.categories" Schema="production" store:Type="Tables" />
+          <EntitySet Name="products" EntityType="Self.products" Schema="production" store:Type="Tables" />
+          <EntitySet Name="stocks" EntityType="Self.stocks" Schema="production" store:Type="Tables" />
+          <EntitySet Name="customers" EntityType="Self.customers" Schema="sales" store:Type="Tables" />
+          <EntitySet Name="order_items" EntityType="Self.order_items" Schema="sales" store:Type="Tables" />
+          <EntitySet Name="orders" EntityType="Self.orders" Schema="sales" store:Type="Tables" />
+          <EntitySet Name="staffs" EntityType="Self.staffs" Schema="sales" store:Type="Tables" />
+          <EntitySet Name="stores" EntityType="Self.stores" Schema="sales" store:Type="Tables" />
+          <AssociationSet Name="FK__order_ite__order__4E88ABD4" Association="Self.FK__order_ite__order__4E88ABD4">
+            <End Role="orders" EntitySet="orders" />
+            <End Role="order_items" EntitySet="order_items" />
+          </AssociationSet>
+          <AssociationSet Name="FK__order_ite__produ__4F7CD00D" Association="Self.FK__order_ite__produ__4F7CD00D">
+            <End Role="products" EntitySet="products" />
+            <End Role="order_items" EntitySet="order_items" />
+          </AssociationSet>
+          <AssociationSet Name="FK__orders__customer__48CFD27E" Association="Self.FK__orders__customer__48CFD27E">
+            <End Role="customers" EntitySet="customers" />
+            <End Role="orders" EntitySet="orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK__orders__staff_id__4AB81AF0" Association="Self.FK__orders__staff_id__4AB81AF0">
+            <End Role="staffs" EntitySet="staffs" />
+            <End Role="orders" EntitySet="orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK__orders__store_id__49C3F6B7" Association="Self.FK__orders__store_id__49C3F6B7">
+            <End Role="stores" EntitySet="stores" />
+            <End Role="orders" EntitySet="orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK__products__brand___3D5E1FD2" Association="Self.FK__products__brand___3D5E1FD2">
+            <End Role="brands" EntitySet="brands" />
+            <End Role="products" EntitySet="products" />
+          </AssociationSet>
+          <AssociationSet Name="FK__products__catego__3C69FB99" Association="Self.FK__products__catego__3C69FB99">
+            <End Role="categories" EntitySet="categories" />
+            <End Role="products" EntitySet="products" />
+          </AssociationSet>
+          <AssociationSet Name="FK__staffs__manager___45F365D3" Association="Self.FK__staffs__manager___45F365D3">
+            <End Role="staffs" EntitySet="staffs" />
+            <End Role="staffs1" EntitySet="staffs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__staffs__store_id__44FF419A" Association="Self.FK__staffs__store_id__44FF419A">
+            <End Role="stores" EntitySet="stores" />
+            <End Role="staffs" EntitySet="staffs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__stocks__product___534D60F1" Association="Self.FK__stocks__product___534D60F1">
+            <End Role="products" EntitySet="products" />
+            <End Role="stocks" EntitySet="stocks" />
+          </AssociationSet>
+          <AssociationSet Name="FK__stocks__store_id__52593CB8" Association="Self.FK__stocks__store_id__52593CB8">
+            <End Role="stores" EntitySet="stores" />
+            <End Role="stocks" EntitySet="stocks" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="WebsiteTTKModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="WebsiteTTKEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Products" EntityType="WebsiteTTKModel.Product" />
-          <EntitySet Name="Orders" EntityType="WebsiteTTKModel.Order" />
-        </EntityContainer>
-        <EntityType Name="Product">
+          <EntitySet Name="brands" EntityType="WebsiteTTKModel.brand" />
+          <EntitySet Name="categories" EntityType="WebsiteTTKModel.category" />
+          <EntitySet Name="stocks" EntityType="WebsiteTTKModel.stock" />
+          <EntitySet Name="customers" EntityType="WebsiteTTKModel.customer" />
+          <EntitySet Name="order_items" EntityType="WebsiteTTKModel.order_items" />
+          <EntitySet Name="order1" EntityType="WebsiteTTKModel.order1" />
+          <EntitySet Name="staffs" EntityType="WebsiteTTKModel.staff" />
+          <EntitySet Name="stores" EntityType="WebsiteTTKModel.store" />
+          <AssociationSet Name="FK__stocks__store_id__52593CB8" Association="WebsiteTTKModel.FK__stocks__store_id__52593CB8">
+            <End Role="store" EntitySet="stores" />
+            <End Role="stock" EntitySet="stocks" />
+          </AssociationSet>
+          <AssociationSet Name="FK__orders__customer__48CFD27E" Association="WebsiteTTKModel.FK__orders__customer__48CFD27E">
+            <End Role="customer" EntitySet="customers" />
+            <End Role="order1" EntitySet="order1" />
+          </AssociationSet>
+          <AssociationSet Name="FK__order_ite__order__4E88ABD4" Association="WebsiteTTKModel.FK__order_ite__order__4E88ABD4">
+            <End Role="order1" EntitySet="order1" />
+            <End Role="order_items" EntitySet="order_items" />
+          </AssociationSet>
+          <AssociationSet Name="FK__orders__staff_id__4AB81AF0" Association="WebsiteTTKModel.FK__orders__staff_id__4AB81AF0">
+            <End Role="staff" EntitySet="staffs" />
+            <End Role="order1" EntitySet="order1" />
+          </AssociationSet>
+          <AssociationSet Name="FK__orders__store_id__49C3F6B7" Association="WebsiteTTKModel.FK__orders__store_id__49C3F6B7">
+            <End Role="store" EntitySet="stores" />
+            <End Role="order1" EntitySet="order1" />
+          </AssociationSet>
+          <AssociationSet Name="FK__staffs__manager___45F365D3" Association="WebsiteTTKModel.FK__staffs__manager___45F365D3">
+            <End Role="staff" EntitySet="staffs" />
+            <End Role="staff1" EntitySet="staffs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__staffs__store_id__44FF419A" Association="WebsiteTTKModel.FK__staffs__store_id__44FF419A">
+            <End Role="store" EntitySet="stores" />
+            <End Role="staff" EntitySet="staffs" />
+          </AssociationSet>
+          <EntitySet Name="products" EntityType="WebsiteTTKModel.product" />
+          <AssociationSet Name="FK__products__brand___3D5E1FD2" Association="WebsiteTTKModel.FK__products__brand___3D5E1FD2">
+            <End Role="brand" EntitySet="brands" />
+            <End Role="product" EntitySet="products" />
+          </AssociationSet>
+          <AssociationSet Name="FK__products__catego__3C69FB99" Association="WebsiteTTKModel.FK__products__catego__3C69FB99">
+            <End Role="category" EntitySet="categories" />
+            <End Role="product" EntitySet="products" />
+          </AssociationSet>
+          <AssociationSet Name="FK__order_ite__produ__4F7CD00D" Association="WebsiteTTKModel.FK__order_ite__produ__4F7CD00D">
+            <End Role="product" EntitySet="products" />
+            <End Role="order_items" EntitySet="order_items" />
+          </AssociationSet>
+          <AssociationSet Name="FK__stocks__product___534D60F1" Association="WebsiteTTKModel.FK__stocks__product___534D60F1">
+            <End Role="product" EntitySet="products" />
+            <End Role="stock" EntitySet="stocks" />
+          </AssociationSet>
+          </EntityContainer>
+        <EntityType Name="brand">
           <Key>
-            <PropertyRef Name="ID" />
-            <PropertyRef Name="Title" />
-            <PropertyRef Name="Status" />
-            <PropertyRef Name="Publish" />
-            <PropertyRef Name="Price" />
-            <PropertyRef Name="Currency" />
-            <PropertyRef Name="CreatedDate" />
+            <PropertyRef Name="brand_id" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
-          <Property Name="Status" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Publish" Type="Boolean" Nullable="false" />
-          <Property Name="Images" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="RelativeProductIds" Type="Int32" />
-          <Property Name="Price" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <Property Name="Currency" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="brand_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="brand_name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="brand_description" Type="String" MaxLength="555" FixedLength="false" Unicode="true" />
+          <Property Name="images" Type="String" MaxLength="155" FixedLength="false" Unicode="true" />
+          <Property Name="create_date" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="products" Relationship="WebsiteTTKModel.FK__products__brand___3D5E1FD2" FromRole="brand" ToRole="product" />
         </EntityType>
-        <EntityType Name="Order">
+        <EntityType Name="category">
           <Key>
-            <PropertyRef Name="ID" />
+            <PropertyRef Name="category_id" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="ProductID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedBy" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="PriceTotal" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="category_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="category_name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="category_description" Type="String" MaxLength="555" FixedLength="false" Unicode="true" />
+          <Property Name="images" Type="String" MaxLength="155" FixedLength="false" Unicode="true" />
+          <Property Name="create_date" Type="DateTime" Precision="3" />
+          <Property Name="parent_id" Type="Int32" />
+          <NavigationProperty Name="products" Relationship="WebsiteTTKModel.FK__products__catego__3C69FB99" FromRole="category" ToRole="product" />
         </EntityType>
-      </Schema>
+        <EntityType Name="stock">
+          <Key>
+            <PropertyRef Name="store_id" />
+            <PropertyRef Name="product_id" />
+          </Key>
+          <Property Name="store_id" Type="Int32" Nullable="false" />
+          <Property Name="product_id" Type="Int32" Nullable="false" />
+          <Property Name="quantity" Type="Int32" />
+          <NavigationProperty Name="store" Relationship="WebsiteTTKModel.FK__stocks__store_id__52593CB8" FromRole="stock" ToRole="store" />
+          <NavigationProperty Name="product" Relationship="WebsiteTTKModel.FK__stocks__product___534D60F1" FromRole="stock" ToRole="product" />
+        </EntityType>
+        <EntityType Name="customer">
+          <Key>
+            <PropertyRef Name="customer_id" />
+          </Key>
+          <Property Name="customer_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="first_name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="last_name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="street" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="city" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="state" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="zip_code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="orders" Relationship="WebsiteTTKModel.FK__orders__customer__48CFD27E" FromRole="customer" ToRole="order1" />
+        </EntityType>
+        <EntityType Name="order_items">
+          <Key>
+            <PropertyRef Name="order_id" />
+            <PropertyRef Name="item_id" />
+          </Key>
+          <Property Name="order_id" Type="Int32" Nullable="false" />
+          <Property Name="item_id" Type="Int32" Nullable="false" />
+          <Property Name="product_id" Type="Int32" Nullable="false" />
+          <Property Name="quantity" Type="Int32" Nullable="false" />
+          <Property Name="list_price" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="discount" Type="Decimal" Nullable="false" Precision="4" Scale="2" />
+          <NavigationProperty Name="order" Relationship="WebsiteTTKModel.FK__order_ite__order__4E88ABD4" FromRole="order_items" ToRole="order1" />
+          <NavigationProperty Name="product" Relationship="WebsiteTTKModel.FK__order_ite__produ__4F7CD00D" FromRole="order_items" ToRole="product" />
+        </EntityType>
+        <EntityType Name="order1">
+          <Key>
+            <PropertyRef Name="order_id" />
+          </Key>
+          <Property Name="order_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="customer_id" Type="Int32" />
+          <Property Name="order_status" Type="Byte" Nullable="false" />
+          <Property Name="order_date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="required_date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="shipped_date" Type="DateTime" Precision="0" />
+          <Property Name="store_id" Type="Int32" Nullable="false" />
+          <Property Name="staff_id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="customer" Relationship="WebsiteTTKModel.FK__orders__customer__48CFD27E" FromRole="order1" ToRole="customer" />
+          <NavigationProperty Name="order_items" Relationship="WebsiteTTKModel.FK__order_ite__order__4E88ABD4" FromRole="order1" ToRole="order_items" />
+          <NavigationProperty Name="staff" Relationship="WebsiteTTKModel.FK__orders__staff_id__4AB81AF0" FromRole="order1" ToRole="staff" />
+          <NavigationProperty Name="store" Relationship="WebsiteTTKModel.FK__orders__store_id__49C3F6B7" FromRole="order1" ToRole="store" />
+        </EntityType>
+        <EntityType Name="staff">
+          <Key>
+            <PropertyRef Name="staff_id" />
+          </Key>
+          <Property Name="staff_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="first_name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="last_name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="active" Type="Byte" Nullable="false" />
+          <Property Name="store_id" Type="Int32" Nullable="false" />
+          <Property Name="manager_id" Type="Int32" />
+          <Property Name="address" Type="String" MaxLength="350" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="orders" Relationship="WebsiteTTKModel.FK__orders__staff_id__4AB81AF0" FromRole="staff" ToRole="order1" />
+          <NavigationProperty Name="staffs1" Relationship="WebsiteTTKModel.FK__staffs__manager___45F365D3" FromRole="staff" ToRole="staff1" />
+          <NavigationProperty Name="staff1" Relationship="WebsiteTTKModel.FK__staffs__manager___45F365D3" FromRole="staff1" ToRole="staff" />
+          <NavigationProperty Name="store" Relationship="WebsiteTTKModel.FK__staffs__store_id__44FF419A" FromRole="staff" ToRole="store" />
+        </EntityType>
+        <EntityType Name="store">
+          <Key>
+            <PropertyRef Name="store_id" />
+          </Key>
+          <Property Name="store_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="store_name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="phone" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="email" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="street" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="city" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="state" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="zip_code" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="stocks" Relationship="WebsiteTTKModel.FK__stocks__store_id__52593CB8" FromRole="store" ToRole="stock" />
+          <NavigationProperty Name="orders" Relationship="WebsiteTTKModel.FK__orders__store_id__49C3F6B7" FromRole="store" ToRole="order1" />
+          <NavigationProperty Name="staffs" Relationship="WebsiteTTKModel.FK__staffs__store_id__44FF419A" FromRole="store" ToRole="staff" />
+        </EntityType>
+        <Association Name="FK__stocks__store_id__52593CB8">
+          <End Type="WebsiteTTKModel.store" Role="store" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WebsiteTTKModel.stock" Role="stock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="store">
+              <PropertyRef Name="store_id" />
+            </Principal>
+            <Dependent Role="stock">
+              <PropertyRef Name="store_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__orders__customer__48CFD27E">
+          <End Type="WebsiteTTKModel.customer" Role="customer" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WebsiteTTKModel.order1" Role="order1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="customer">
+              <PropertyRef Name="customer_id" />
+            </Principal>
+            <Dependent Role="order1">
+              <PropertyRef Name="customer_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__order_ite__order__4E88ABD4">
+          <End Type="WebsiteTTKModel.order1" Role="order1" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WebsiteTTKModel.order_items" Role="order_items" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="order1">
+              <PropertyRef Name="order_id" />
+            </Principal>
+            <Dependent Role="order_items">
+              <PropertyRef Name="order_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__orders__staff_id__4AB81AF0">
+          <End Type="WebsiteTTKModel.staff" Role="staff" Multiplicity="1" />
+          <End Type="WebsiteTTKModel.order1" Role="order1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="staff">
+              <PropertyRef Name="staff_id" />
+            </Principal>
+            <Dependent Role="order1">
+              <PropertyRef Name="staff_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__orders__store_id__49C3F6B7">
+          <End Type="WebsiteTTKModel.store" Role="store" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WebsiteTTKModel.order1" Role="order1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="store">
+              <PropertyRef Name="store_id" />
+            </Principal>
+            <Dependent Role="order1">
+              <PropertyRef Name="store_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__staffs__manager___45F365D3">
+          <End Type="WebsiteTTKModel.staff" Role="staff" Multiplicity="0..1" />
+          <End Type="WebsiteTTKModel.staff" Role="staff1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="staff">
+              <PropertyRef Name="staff_id" />
+            </Principal>
+            <Dependent Role="staff1">
+              <PropertyRef Name="manager_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__staffs__store_id__44FF419A">
+          <End Type="WebsiteTTKModel.store" Role="store" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WebsiteTTKModel.staff" Role="staff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="store">
+              <PropertyRef Name="store_id" />
+            </Principal>
+            <Dependent Role="staff">
+              <PropertyRef Name="store_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="product">
+          <Key>
+            <PropertyRef Name="product_id" />
+          </Key>
+          <Property Name="product_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="product_name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="product_description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="product_images" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="brand_id" Type="Int32" Nullable="false" />
+          <Property Name="category_id" Type="Int32" Nullable="false" />
+          <Property Name="model_year" Type="Int16" Nullable="false" />
+          <Property Name="list_price" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="create_date" Type="DateTime" Precision="3" />
+          <Property Name="create_by" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="is_publish" Type="Boolean" />
+          <NavigationProperty Name="brand" Relationship="WebsiteTTKModel.FK__products__brand___3D5E1FD2" FromRole="product" ToRole="brand" />
+          <NavigationProperty Name="category" Relationship="WebsiteTTKModel.FK__products__catego__3C69FB99" FromRole="product" ToRole="category" />
+          <NavigationProperty Name="order_items" Relationship="WebsiteTTKModel.FK__order_ite__produ__4F7CD00D" FromRole="product" ToRole="order_items" />
+          <NavigationProperty Name="stocks" Relationship="WebsiteTTKModel.FK__stocks__product___534D60F1" FromRole="product" ToRole="stock" />
+        </EntityType>
+        <Association Name="FK__products__brand___3D5E1FD2">
+          <End Type="WebsiteTTKModel.brand" Role="brand" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WebsiteTTKModel.product" Role="product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="brand">
+              <PropertyRef Name="brand_id" />
+            </Principal>
+            <Dependent Role="product">
+              <PropertyRef Name="brand_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__products__catego__3C69FB99">
+          <End Type="WebsiteTTKModel.category" Role="category" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WebsiteTTKModel.product" Role="product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="category">
+              <PropertyRef Name="category_id" />
+            </Principal>
+            <Dependent Role="product">
+              <PropertyRef Name="category_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__order_ite__produ__4F7CD00D">
+          <End Type="WebsiteTTKModel.product" Role="product" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WebsiteTTKModel.order_items" Role="order_items" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="product">
+              <PropertyRef Name="product_id" />
+            </Principal>
+            <Dependent Role="order_items">
+              <PropertyRef Name="product_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__stocks__product___534D60F1">
+          <End Type="WebsiteTTKModel.product" Role="product" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WebsiteTTKModel.stock" Role="stock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="product">
+              <PropertyRef Name="product_id" />
+            </Principal>
+            <Dependent Role="stock">
+              <PropertyRef Name="product_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="WebsiteTTKModelStoreContainer" CdmEntityContainer="WebsiteTTKEntities">
-          <EntitySetMapping Name="Products">
-            <EntityTypeMapping TypeName="WebsiteTTKModel.Product">
-              <MappingFragment StoreEntitySet="Product">
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="Currency" ColumnName="Currency" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="RelativeProductIds" ColumnName="RelativeProductIds" />
-                <ScalarProperty Name="Images" ColumnName="Images" />
-                <ScalarProperty Name="Publish" ColumnName="Publish" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
+        <EntitySetMapping Name="brands">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.brand">
+              <MappingFragment StoreEntitySet="brands">
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="images" ColumnName="images" />
+                <ScalarProperty Name="brand_description" ColumnName="brand_description" />
+                <ScalarProperty Name="brand_name" ColumnName="brand_name" />
+                <ScalarProperty Name="brand_id" ColumnName="brand_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Orders">
-            <EntityTypeMapping TypeName="WebsiteTTKModel.Order">
-              <MappingFragment StoreEntitySet="Order">
-                <ScalarProperty Name="PriceTotal" ColumnName="PriceTotal" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
+          <EntitySetMapping Name="categories">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.category">
+              <MappingFragment StoreEntitySet="categories">
+                <ScalarProperty Name="parent_id" ColumnName="parent_id" />
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="images" ColumnName="images" />
+                <ScalarProperty Name="category_description" ColumnName="category_description" />
+                <ScalarProperty Name="category_name" ColumnName="category_name" />
+                <ScalarProperty Name="category_id" ColumnName="category_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="stocks">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.stock">
+              <MappingFragment StoreEntitySet="stocks">
+                <ScalarProperty Name="quantity" ColumnName="quantity" />
+                <ScalarProperty Name="product_id" ColumnName="product_id" />
+                <ScalarProperty Name="store_id" ColumnName="store_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="customers">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.customer">
+              <MappingFragment StoreEntitySet="customers">
+                <ScalarProperty Name="address" ColumnName="address" />
+                <ScalarProperty Name="zip_code" ColumnName="zip_code" />
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="city" ColumnName="city" />
+                <ScalarProperty Name="street" ColumnName="street" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="phone" ColumnName="phone" />
+                <ScalarProperty Name="last_name" ColumnName="last_name" />
+                <ScalarProperty Name="first_name" ColumnName="first_name" />
+                <ScalarProperty Name="customer_id" ColumnName="customer_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="order_items">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.order_items">
+              <MappingFragment StoreEntitySet="order_items">
+                <ScalarProperty Name="discount" ColumnName="discount" />
+                <ScalarProperty Name="list_price" ColumnName="list_price" />
+                <ScalarProperty Name="quantity" ColumnName="quantity" />
+                <ScalarProperty Name="product_id" ColumnName="product_id" />
+                <ScalarProperty Name="item_id" ColumnName="item_id" />
+                <ScalarProperty Name="order_id" ColumnName="order_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="order1">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.order1">
+              <MappingFragment StoreEntitySet="orders">
+                <ScalarProperty Name="staff_id" ColumnName="staff_id" />
+                <ScalarProperty Name="store_id" ColumnName="store_id" />
+                <ScalarProperty Name="shipped_date" ColumnName="shipped_date" />
+                <ScalarProperty Name="required_date" ColumnName="required_date" />
+                <ScalarProperty Name="order_date" ColumnName="order_date" />
+                <ScalarProperty Name="order_status" ColumnName="order_status" />
+                <ScalarProperty Name="customer_id" ColumnName="customer_id" />
+                <ScalarProperty Name="order_id" ColumnName="order_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="staffs">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.staff">
+              <MappingFragment StoreEntitySet="staffs">
+                <ScalarProperty Name="address" ColumnName="address" />
+                <ScalarProperty Name="manager_id" ColumnName="manager_id" />
+                <ScalarProperty Name="store_id" ColumnName="store_id" />
+                <ScalarProperty Name="active" ColumnName="active" />
+                <ScalarProperty Name="phone" ColumnName="phone" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="last_name" ColumnName="last_name" />
+                <ScalarProperty Name="first_name" ColumnName="first_name" />
+                <ScalarProperty Name="staff_id" ColumnName="staff_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="stores">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.store">
+              <MappingFragment StoreEntitySet="stores">
+                <ScalarProperty Name="zip_code" ColumnName="zip_code" />
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="city" ColumnName="city" />
+                <ScalarProperty Name="street" ColumnName="street" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="phone" ColumnName="phone" />
+                <ScalarProperty Name="store_name" ColumnName="store_name" />
+                <ScalarProperty Name="store_id" ColumnName="store_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="products">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.product">
+              <MappingFragment StoreEntitySet="products">
+                <ScalarProperty Name="is_publish" ColumnName="is_publish" />
+                <ScalarProperty Name="create_by" ColumnName="create_by" />
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="list_price" ColumnName="list_price" />
+                <ScalarProperty Name="model_year" ColumnName="model_year" />
+                <ScalarProperty Name="category_id" ColumnName="category_id" />
+                <ScalarProperty Name="brand_id" ColumnName="brand_id" />
+                <ScalarProperty Name="product_images" ColumnName="product_images" />
+                <ScalarProperty Name="product_description" ColumnName="product_description" />
+                <ScalarProperty Name="product_name" ColumnName="product_name" />
+                <ScalarProperty Name="product_id" ColumnName="product_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

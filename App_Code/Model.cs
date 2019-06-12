@@ -10,25 +10,192 @@
 using System;
 using System.Collections.Generic;
 
-public partial class Order
+public partial class brand
 {
-    public int ID { get; set; }
-    public string ProductID { get; set; }
-    public string CreatedBy { get; set; }
-    public Nullable<System.DateTime> CreatedDate { get; set; }
-    public Nullable<decimal> PriceTotal { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public brand()
+    {
+        this.products = new HashSet<product>();
+    }
+
+    public int brand_id { get; set; }
+    public string brand_name { get; set; }
+    public string brand_description { get; set; }
+    public string images { get; set; }
+    public Nullable<System.DateTime> create_date { get; set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<product> products { get; set; }
 }
 
-public partial class Product
+public partial class category
 {
-    public int ID { get; set; }
-    public string Title { get; set; }
-    public string Description { get; set; }
-    public string Status { get; set; }
-    public bool Publish { get; set; }
-    public string Images { get; set; }
-    public Nullable<int> RelativeProductIds { get; set; }
-    public decimal Price { get; set; }
-    public string Currency { get; set; }
-    public System.DateTime CreatedDate { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public category()
+    {
+        this.products = new HashSet<product>();
+    }
+
+    public int category_id { get; set; }
+    public string category_name { get; set; }
+    public string category_description { get; set; }
+    public string images { get; set; }
+    public Nullable<System.DateTime> create_date { get; set; }
+    public Nullable<int> parent_id { get; set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<product> products { get; set; }
+}
+
+public partial class customer
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public customer()
+    {
+        this.orders = new HashSet<order1>();
+    }
+
+    public int customer_id { get; set; }
+    public string first_name { get; set; }
+    public string last_name { get; set; }
+    public string phone { get; set; }
+    public string email { get; set; }
+    public string street { get; set; }
+    public string city { get; set; }
+    public string state { get; set; }
+    public string zip_code { get; set; }
+    public string address { get; set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<order1> orders { get; set; }
+}
+
+public partial class order_items
+{
+    public int order_id { get; set; }
+    public int item_id { get; set; }
+    public int product_id { get; set; }
+    public int quantity { get; set; }
+    public decimal list_price { get; set; }
+    public decimal discount { get; set; }
+
+    public virtual order1 order { get; set; }
+    public virtual product product { get; set; }
+}
+
+public partial class order1
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public order1()
+    {
+        this.order_items = new HashSet<order_items>();
+    }
+
+    public int order_id { get; set; }
+    public Nullable<int> customer_id { get; set; }
+    public byte order_status { get; set; }
+    public System.DateTime order_date { get; set; }
+    public System.DateTime required_date { get; set; }
+    public Nullable<System.DateTime> shipped_date { get; set; }
+    public int store_id { get; set; }
+    public int staff_id { get; set; }
+
+    public virtual customer customer { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<order_items> order_items { get; set; }
+    public virtual staff staff { get; set; }
+    public virtual store store { get; set; }
+}
+
+public partial class product
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public product()
+    {
+        this.order_items = new HashSet<order_items>();
+        this.stocks = new HashSet<stock>();
+    }
+
+    public int product_id { get; set; }
+    public string product_name { get; set; }
+    public string product_description { get; set; }
+    public string product_images { get; set; }
+    public int brand_id { get; set; }
+    public int category_id { get; set; }
+    public short model_year { get; set; }
+    public decimal list_price { get; set; }
+    public Nullable<System.DateTime> create_date { get; set; }
+    public string create_by { get; set; }
+    public Nullable<bool> is_publish { get; set; }
+
+    public virtual brand brand { get; set; }
+    public virtual category category { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<order_items> order_items { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<stock> stocks { get; set; }
+}
+
+public partial class staff
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public staff()
+    {
+        this.orders = new HashSet<order1>();
+        this.staffs1 = new HashSet<staff>();
+    }
+
+    public int staff_id { get; set; }
+    public string first_name { get; set; }
+    public string last_name { get; set; }
+    public string email { get; set; }
+    public string phone { get; set; }
+    public byte active { get; set; }
+    public int store_id { get; set; }
+    public Nullable<int> manager_id { get; set; }
+    public string address { get; set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<order1> orders { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<staff> staffs1 { get; set; }
+    public virtual staff staff1 { get; set; }
+    public virtual store store { get; set; }
+}
+
+public partial class stock
+{
+    public int store_id { get; set; }
+    public int product_id { get; set; }
+    public Nullable<int> quantity { get; set; }
+
+    public virtual store store { get; set; }
+    public virtual product product { get; set; }
+}
+
+public partial class store
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public store()
+    {
+        this.stocks = new HashSet<stock>();
+        this.orders = new HashSet<order1>();
+        this.staffs = new HashSet<staff>();
+    }
+
+    public int store_id { get; set; }
+    public string store_name { get; set; }
+    public string phone { get; set; }
+    public string email { get; set; }
+    public string street { get; set; }
+    public string city { get; set; }
+    public string state { get; set; }
+    public string zip_code { get; set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<stock> stocks { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<order1> orders { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<staff> staffs { get; set; }
 }
