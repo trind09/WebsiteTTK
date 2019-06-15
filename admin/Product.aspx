@@ -1,7 +1,9 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/admin/admin.master" AutoEventWireup="true" CodeFile="Product.aspx.cs" Inherits="admin_Product" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <form id="form1" runat="server">
-        <asp:Button ID="btnApplyAllChanges" runat="server" Text="Apply all changes"" CssClass="btn btn-success" OnClientClick="return AskForApplyAllChange();" OnClick="btnApplyAllChanges_Click"/>
+        <asp:linkbutton runat="server" CssClass="btn btn-success" OnClientClick="return AskForApplyAllChange();" OnClick="btnApplyAllChanges_Click">Apply all changes</asp:linkbutton>
+        <asp:textbox id="Server_Data1" runat="server" enable="false"></asp:textbox>
+        <asp:textbox id="txtDeletedIds" runat="server" enable="false"></asp:textbox>
         <link rel="stylesheet" href="AngularJS/css/toastr.css">
         <link rel="stylesheet" href="AngularJS/css/application.css">
         <div>
@@ -72,12 +74,12 @@
                                 <td>{{ item.create_by }}</td>
                                 <td>{{ item.is_publish }}</td>
                                 <td>
-                                    <button class="btn btn-warning btn-small" ng-click="editarItem(item.product_id)">
+                                    <a class="btn btn-warning btn-small" ng-click="editarItem(item.product_id)">
                                         <i class="icon-pencil icon-white"></i>Edit
-                                    </button>
-                                    <button class="btn btn-danger btn-small" ng-click="deleteItem(item.product_id)">
+                                    </a>
+                                    <a class="btn btn-danger btn-small" ng-click="deleteItem(item.product_id)">
                                         <i class="icon-trash icon-white"></i>Delete
-                                    </button>
+                                    </a>
                                 </td>
                             </tr>
                             <tr>
@@ -105,7 +107,7 @@
                     <tbody>
                         <tr>
                             <td>Product ID: </td>
-                            <td><input type="text" readonly="readonly" ng-model="item.product_id" placeholder="Product ID" style="width: 500px;"></td>
+                            <td><input type="number" readonly="readonly" ng-model="item.product_id" placeholder="Product ID" style="width: 500px;"></td>
                         </tr>
                         <tr>
                             <td>Product Name: </td>
@@ -121,19 +123,19 @@
                         </tr>
                         <tr>
                             <td>Brand ID: </td>
-                            <td><input type="text" ng-model="item.brand_id" placeholder="Brand ID" class="input-small" required style="width: 500px;"></td>
+                            <td><input type="number" ng-model="item.brand_id" placeholder="Brand ID" class="input-small" required style="width: 500px;"></td>
                         </tr>
                         <tr>
                             <td>Category ID: </td>
-                            <td><input type="text" ng-model="item.category_id" placeholder="Category ID" class="input-small" required style="width: 500px;"></td>
+                            <td><input type="number" ng-model="item.category_id" placeholder="Category ID" class="input-small" required style="width: 500px;"></td>
                         </tr>
                         <tr>
                             <td>Model Year: </td>
-                            <td><input type="text" ng-model="item.model_year" placeholder="Model Year" class="input-small" required style="width: 500px;"></td>
+                            <td><input type="number" ng-model="item.model_year" placeholder="Model Year" class="input-small" required style="width: 500px;"></td>
                         </tr>
                         <tr>
                             <td>List Price: </td>
-                            <td><input type="text" ng-model="item.list_price" placeholder="List Price" class="input-small" required style="width: 500px;"></td>
+                            <td><input type="number" ng-model="item.list_price" placeholder="List Price" class="input-small" required style="width: 500px;"></td>
                         </tr>
                         <tr>
                             <td>Create Date: </td>
@@ -149,12 +151,12 @@
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <button ng-hide="edit" class="btn btn-success" ng-disabled="validarValoresPreenchidos.$invalid" ng-click="adicionaItem()">
+                                <a ng-hide="edit" class="btn btn-success" ng-disabled="validarValoresPreenchidos.$invalid" ng-click="adicionaItem()">
                                     <i class="icon-plus icon-white"></i>Add
-                                </button>
-                                <button ng-show="edit" class="btn btn-success" ng-disabled="validarValoresPreenchidos.$invalid" ng-click="applyChanges()">
+                                </a>
+                                <a ng-show="edit" class="btn btn-success" ng-disabled="validarValoresPreenchidos.$invalid" ng-click="applyChanges()">
                                     <i class="icon-ok icon-white"></i>Update
-                                </button>
+                                </a>
                             </td>
                         </tr>
                     </tbody>
@@ -169,7 +171,8 @@
                     var scope = angular.element(TodoController).scope();
                     var myFilter = scope.myFilter;
                     scope.items = Server_Data;
-                    scope.copyOfItems = Server_Data;
+                    //Copy a new item from existing object. This could help to reduce from update to this list when you are updated orginal list
+                    //scope.copyOfItems = Object.assign([], Server_Data);
                     scope.totalItem = scope.items.length;
 
                     scope.$watch('searchValue', function () {
@@ -187,22 +190,34 @@
                     });
 
                     scope.$apply();
+
+                    DisableSeverControls();
                 });
 
                 function AskForApplyAllChange() {
                     if (confirm('Are you sure to apply all change?')) {
                         var TodoController = 'div[ng-controller="TodoController"]';
                         var scope = angular.element(TodoController).scope();
-                        $("#<%=Server_Data1.ClientID%>").text(JSON.stringify(scope.copyOfItems));
+                        $("#<%=Server_Data1.ClientID%>").val(JSON.stringify(scope.addedOrUpdatedItems));
+                        $("#<%=txtDeletedIds.ClientID%>").val(JSON.stringify(scope.deletedIds));
                         return true;
                     }
                     return false;
+                }
+
+                function DisableSeverControls() {
+                    $("#<%=Server_Data1.ClientID%>").keypress(function(e) {
+                        e.preventDefault();
+                    });
+
+                    $("#<%=txtDeletedIds.ClientID%>").keypress(function(e) {
+                        e.preventDefault();
+                    });
                 }
             </script>
             <script src="AngularJS/lib/toastr.min.js"></script>
             <script src="AngularJS/app/product.js"></script>
             <div runat="server" id="Server_Data" style="display: none;"></div>
-            <div runat="server" id="Server_Data1" style="display: none;"></div>
         </div>
     </form>
 </asp:Content>

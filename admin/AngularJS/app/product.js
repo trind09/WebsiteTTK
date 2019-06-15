@@ -8,6 +8,8 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
     $scope.item = {};
     $scope.items = [];
     $scope.copyOfItems = [];
+    $scope.addedOrUpdatedItems = [];
+    $scope.deletedIds = [];
     $scope.searchValue = '';
     $scope.myFilter = $filter;
     $scope.totalItem = 0;
@@ -15,19 +17,46 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
     $scope.reverseOrder = true;
     $scope.sortField = 'create_date';
 
+    $scope.getRandomId = function (min) {
+        min = Math.ceil(min);
+        return Math.floor(Math.random() * (min + 1)) + min;
+    }
+
+    $scope.isIdExisted = function (newGeneratedproduct_id) {
+        var index = $scope.items.findIndex(x => x.product_id === newGeneratedproduct_id);
+        console.log(index);
+        if (index < 0) {
+            return false;
+        }
+        return true;
+    }
+
     //Manual functions
     //Add new item function
     $scope.adicionaItem = function () {
-        var newGeneratedproduct_id = Math.random().toString(36).substr(2, 9);
+        var newGeneratedproduct_id = $scope.getRandomId($scope.items.length);
+        do {
+            newGeneratedproduct_id = $scope.getRandomId($scope.items.length);
+        }
+        while ($scope.isIdExisted(newGeneratedproduct_id));
+        console.log(newGeneratedproduct_id);
         var today = $filter('date')(new Date(), 'dd/MM/yyyy HH:mm:ss');
         
         $scope.items.push({
             product_id: newGeneratedproduct_id, product_name: $scope.item.product_name, product_images: $scope.item.product_images,
             product_description: $scope.item.product_description, brand_id: $scope.item.brand_id,
             category_id: $scope.item.category_id, model_year: $scope.item.model_year, list_price: $scope.item.list_price,
-            create_date: today, create_by: $scope.item.create_by, is_publish: $scope.item.is_publish, IsDelete: false
+            create_date: today, create_by: $scope.item.create_by, is_publish: $scope.item.is_publish
         });
-        $scope.item.product_id = $scope.item.product_id = '';
+
+        $scope.addedOrUpdatedItems.push({
+            product_id: newGeneratedproduct_id, product_name: $scope.item.product_name, product_images: $scope.item.product_images,
+            product_description: $scope.item.product_description, brand_id: $scope.item.brand_id,
+            category_id: $scope.item.category_id, model_year: $scope.item.model_year, list_price: $scope.item.list_price,
+            create_date: today, create_by: $scope.item.create_by, is_publish: $scope.item.is_publish
+        });
+
+        $scope.item.product_id = '';
         
         //Reset pagination
         $scope.filteredItems = $scope.items;
@@ -40,6 +69,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
     $scope.editarItem = function (id) {
         var index = $scope.items.findIndex(x => x.product_id === id);
         $scope.item = $scope.items[index];
+        $scope.item.create_date = $scope.GetDate($scope.item.create_date);
         $scope.edit = true;
     };
 
@@ -48,7 +78,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         var item = $scope.item;
 
         //Update source item
-        var item1 = $scope.copyOfItems.find(x => x.product_id == item.product_id);
+        var item1 = $scope.items.find(x => x.product_id == item.product_id);
         item1.product_name = item.product_name;
         item1.product_description = item.product_description;
         item1.product_images = item.product_images;
@@ -59,6 +89,13 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         item1.create_date = item.create_date;
         item1.create_by = item.create_by;
         item1.is_publish = item.is_publish;
+
+        var existedUpdatedItem = $scope.addedOrUpdatedItems.find(x => x.product_id == item.product_id);
+        if (existedUpdatedItem != null) {
+            existedUpdatedItem = item1;
+        } else {
+            $scope.addedOrUpdatedItems.push(item1);
+        }
 
         $scope.item = {};
         $scope.edit = false;
@@ -73,12 +110,12 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
 
             //Update source item
             var item1 = $scope.copyOfItems.find(x => x.product_id == item.product_id);
-            item1.IsDelete = true;
 
             $scope.items.splice(index, 1);
             $scope.filteredItems = $scope.items;
             $scope.totalItem = $scope.filteredItems.length;
             toastr.success("Item removed successful.");
+            $scope.deletedIds.push(id);
 
             //Turn off edit to prevent update deleted record
             $scope.edit = false;
@@ -93,7 +130,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
 
                 //Update source item
                 var item1 = $scope.copyOfItems.find(x => x.product_id == element.value);
-                item1.IsDelete = true;
+                $scope.deletedIds.push(item1.id);
 
                 var index = $scope.items.indexOf(item);
                 $scope.items.splice(index, 1);
@@ -110,6 +147,22 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
     $scope.sortBy = function (sortField) {
         $scope.reverseOrder = ($scope.sortField === sortField) ? !$scope.reverseOrder : false;
         $scope.sortField = sortField;
+    };
+
+    //Convert database date to jquery datetime function. Used for scope only
+    $scope.GetDate = function (x) {
+        if (x != null) {
+            var re = /\/Date\(([0-9]*)\)\//;
+            if (x instanceof Date) {
+                return x;
+            } else {
+                var m = x.match(re);
+                if (m) return new Date(parseInt(m[1]));
+                else return x;
+            }
+        } else {
+            return null;
+        }
     };
 }]);
 
@@ -138,3 +191,4 @@ app.filter("filterdate", function () {
         }
     };
 });
+
