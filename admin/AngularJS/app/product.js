@@ -106,10 +106,6 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
     $scope.deleteItem = function (id) {
         if (confirm('Are you sure to delete?')) {
             var index = $scope.items.findIndex(x => x.product_id === id);
-            var item = $scope.items[index];
-
-            //Update source item
-            var item1 = $scope.copyOfItems.find(x => x.product_id == item.product_id);
 
             $scope.items.splice(index, 1);
             $scope.filteredItems = $scope.items;
@@ -127,10 +123,8 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         if (confirm('Are you sure to delete?')) {
             $('input[id^="item-"]').each(function (index, element) {
                 var item = $scope.items.find(x => x.product_id == element.value);
-
-                //Update source item
-                var item1 = $scope.copyOfItems.find(x => x.product_id == element.value);
-                $scope.deletedIds.push(item1.id);
+                
+                $scope.deletedIds.push(item.id);
 
                 var index = $scope.items.indexOf(item);
                 $scope.items.splice(index, 1);
