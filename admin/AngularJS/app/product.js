@@ -122,12 +122,15 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
     $scope.removeAll = function () {
         if (confirm('Are you sure to delete?')) {
             $('input[id^="item-"]').each(function (index, element) {
-                var item = $scope.items.find(x => x.product_id == element.value);
-                
-                $scope.deletedIds.push(item.id);
+                if (element.checked) {
+                    var item = $scope.items.find(x => x.product_id == element.value);
 
-                var index = $scope.items.indexOf(item);
-                $scope.items.splice(index, 1);
+                    if (item != null) {
+                        $scope.deletedIds.push(item.product_id);
+                        var index = $scope.items.indexOf(item);
+                        $scope.items.splice(index, 1);
+                    }
+                }
             });
 
             //Reset pagination
