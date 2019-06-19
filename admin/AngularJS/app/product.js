@@ -121,15 +121,13 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
     //Remove all checked record
     $scope.removeAll = function () {
         if (confirm('Are you sure to delete?')) {
-            $('input[id^="item-"]').each(function (index, element) {
-                if (element.checked) {
-                    var item = $scope.items.find(x => x.product_id == element.value);
+            $('input[id^="item-"]:checked').each(function (index, element) {
+                var item = $scope.items.find(x => x.product_id == element.value);
 
-                    if (item != null) {
-                        $scope.deletedIds.push(item.product_id);
-                        var index = $scope.items.indexOf(item);
-                        $scope.items.splice(index, 1);
-                    }
+                if (item != null) {
+                    $scope.deletedIds.push(item.product_id);
+                    var index = $scope.items.indexOf(item);
+                    $scope.items.splice(index, 1);
                 }
             });
 
