@@ -3,8 +3,6 @@ using System.Web.Script.Serialization;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
-using System.Globalization;
 
 public partial class admin_Product :  System.Web.UI.Page
 {
@@ -22,7 +20,7 @@ public partial class admin_Product :  System.Web.UI.Page
         List<product> products = new List<product>();
         var productsJson = Server_Data1.Text;
         dynamic productsResponse = JsonConvert.DeserializeObject(productsJson);
-        if (productsResponse != null)
+        if (productsResponse.Count > 0)
         {
             List<object> productObjects = productsResponse.ToObject<List<object>>();
             foreach (var obj in productObjects)
@@ -69,7 +67,7 @@ public partial class admin_Product :  System.Web.UI.Page
         //Get product ids from json posted from client
         var deletedIdsJson = txtDeletedIds.Text;
         dynamic deletedIdsResponse = JsonConvert.DeserializeObject(deletedIdsJson);
-        if (deletedIdsResponse != null)
+        if (deletedIdsResponse.Count > 0)
         {
             List<int> deletedIds = deletedIdsResponse.ToObject<List<int>>();
 
