@@ -32,7 +32,7 @@ public class ProductHelper
         }
     }
 
-    public static void UpdateProducts(List<product> products)
+    public static void UpdateProducts(List<product> products, bool isUpdateProductImages = false)
     {
         using (var context = new WebsiteTTKEntities())
         {
@@ -43,7 +43,10 @@ public class ProductHelper
                 {
                     result.product_name = item.product_name;
                     result.product_description = item.product_description;
-                    result.product_images = item.product_images;
+                    if (isUpdateProductImages)
+                    {
+                        result.product_images = item.product_images;
+                    }
                     result.brand_id = item.brand_id;
                     result.category_id = item.category_id;
                     result.model_year = item.model_year;

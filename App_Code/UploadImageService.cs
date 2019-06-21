@@ -50,7 +50,7 @@ public class UploadImageService : System.Web.Services.WebService
                             List<string> strList = objPro.product_images.Split(';').ToList();
                             strList.RemoveAll(x => x.StartsWith(@image));
                             objPro.product_images = string.Join(";", strList);
-                            ProductHelper.UpdateProducts(new List<product> { objPro });
+                            ProductHelper.UpdateProducts(new List<product> { objPro }, true);
                             File.Delete(Server.MapPath("~/" + image));
                             return "Remove image successful!";
                         }

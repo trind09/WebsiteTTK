@@ -65,7 +65,7 @@
                                 <td><strong>{{ item.product_id }}</strong></td>
                                 <td>{{ item.product_name }}</td>
                                 <td><div style="width: 100%; height: 50px; overflow-y:auto;">{{ item.product_description }}</div></td>
-                                <td>{{ item.product_images }}</td>
+                                <td><a style="cursor: pointer;" ng-click="openUploadImagePanel(item.product_id)">Show Images</a></td>
                                 <td>{{ item.brand_id }}</td>
                                 <td>{{ item.category_id }}</td>
                                 <td>{{ item.model_year }}</td>
@@ -122,8 +122,8 @@
                         </tr>
                         <tr>
                             <td>Product Images: </td>
-                            <td><input type="text" ng-model="item.product_images" placeholder="Product Images" style="width: 500px;"></td>
-                            <td><a style="cursor: pointer;" ng-click="openUploadImagePanel(item.product_id)">Upload Images</a></td>
+                            <td><a style="cursor: pointer;" ng-show="edit" ng-click="openUploadImagePanel(item.product_id)">Show Images</a></td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>Brand ID: </td>

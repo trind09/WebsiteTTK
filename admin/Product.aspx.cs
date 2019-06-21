@@ -33,7 +33,6 @@ public partial class admin_Product :  System.Web.UI.Page
 
                 item.product_name = Helper.GetPropValue(obj + "", "product_name") + "";
                 item.product_description = Helper.GetPropValue(obj + "", "product_description") + "";
-                item.product_images = Helper.GetPropValue(obj + "", "product_images") + "";
 
                 int brand_id = -1;
                 Int32.TryParse(Helper.GetPropValue(obj + "", "brand_id") + "", out brand_id);

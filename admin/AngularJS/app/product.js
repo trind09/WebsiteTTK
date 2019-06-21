@@ -81,7 +81,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         var item1 = $scope.items.find(x => x.product_id == item.product_id);
         item1.product_name = item.product_name;
         item1.product_description = item.product_description;
-        item1.product_images = item.product_images;
+        //item1.product_images = item.product_images;
         item1.brand_id = item.brand_id;
         item1.category_id = item.category_id;
         item1.product_images = item.product_images;

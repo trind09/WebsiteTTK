@@ -18,7 +18,8 @@
         <form id="form1" runat="server">
             <div class="form-group">
                 <label for="exampleFormControlFile1">Upload image</label>
-                <asp:FileUpload ID="fulImageUpload" runat="server" CssClass="form-control-file" /><asp:LinkButton ID="lbnSubmit" runat="server" OnClick="lbnSubmit_Click">Upload</asp:LinkButton>
+                <asp:FileUpload ID="fulImageUpload" runat="server" CssClass="form-control-file" /><br />
+                <asp:LinkButton ID="lbnSubmit" runat="server" CssClass="btn btn-success" OnClick="lbnSubmit_Click">Upload</asp:LinkButton><br />
                 <asp:Label ID="lblUploadResult" runat="server" Text=""></asp:Label>
             </div>
         </form>

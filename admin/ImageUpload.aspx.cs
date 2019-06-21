@@ -36,13 +36,16 @@ public partial class admin_ImageUpload : System.Web.UI.Page
                     IQueryable<product> qProductsTable = from t in context.products where t.product_id == product_id
                                                          select t;
                     product objPro = qProductsTable.FirstOrDefault();
-                    if (objPro.product_images != null)
+                    if (objPro != null)
                     {
-                        Images_Data.InnerText = objPro.product_images;
-                    }
-                    else
-                    {
-                        Images_Data.InnerText = "";
+                        if (objPro.product_images != null)
+                        {
+                            Images_Data.InnerText = objPro.product_images;
+                        }
+                        else
+                        {
+                            Images_Data.InnerText = "";
+                        }
                     }
                 }
             }
@@ -62,34 +65,46 @@ public partial class admin_ImageUpload : System.Web.UI.Page
             {
                 string id = Request.QueryString["id"];
                 string table_name = Request.QueryString["table_name"];
+
                 if (table_name == "products")
                 {
                     int product_id = -1;
                     Int32.TryParse(id, out product_id);
                     if (product_id > 0)
                     {
-                        string subPath = "~/admin/img/" + product_id + "/";
-
-                        List<KeyValuePair<string, object>> result = Helper.SaveFileFromUpload(subPath, fulImageUpload, new string[] { ".jpg", ".gif", ".png"});
-                        string message = result.First(kvp => kvp.Key == "message").Value.ToString();
-                        string isSuccess = result.First(kvp => kvp.Key == "result").Value.ToString();
-                        if (Boolean.Parse(isSuccess))
+                        IQueryable<product> qProductsTable = from t in context.products
+                                                             where t.product_id == product_id
+                                                             select t;
+                        product objPro = qProductsTable.FirstOrDefault();
+                        if (objPro != null)
                         {
-                            string fileName = result.First(kvp => kvp.Key == "fileName").Value.ToString();
+                            string subPath = "~/admin/img/" + product_id + "/";
 
-                            IQueryable<product> qProductsTable = from t in context.products
-                                                                 where t.product_id == product_id
-                                                                 select t;
-                            product objPro = qProductsTable.FirstOrDefault();
-                            if (objPro.product_images != null)
+                            List<KeyValuePair<string, object>> result = Helper.SaveFileFromUpload(subPath, fulImageUpload, new string[] { ".jpg", ".gif", ".png", ".jpeg" });
+                            string message = result.First(kvp => kvp.Key == "message").Value.ToString();
+                            string isSuccess = result.First(kvp => kvp.Key == "result").Value.ToString();
+                            if (Boolean.Parse(isSuccess))
                             {
-                                objPro.product_images = objPro.product_images + ";admin/img/" + product_id + "/" + fileName;
+                                string fileName = result.First(kvp => kvp.Key == "fileName").Value.ToString();
+
+                                if (objPro.product_images != null)
+                                {
+                                    objPro.product_images = objPro.product_images + ";admin/img/" + product_id + "/" + fileName;
+                                }
+                                else
+                                {
+                                    objPro.product_images = "admin/img/" + product_id + "/" + fileName;
+                                }
                                 ProductHelper.UpdateProducts(new List<product> { objPro });
+                                lblUploadResult.Text = "<br/>" + message;
                             }
-                            lblUploadResult.Text = "<br/>" + message;
+                            else
+                            {
+                                lblUploadResult.Text = "<br/>" + message;
+                            }
                         } else
                         {
-                            lblUploadResult.Text = "<br/>" + message;
+                            lblUploadResult.Text = "<br/>Product id " + product_id + " doesn't exist!";
                         }
                     }
                 }
