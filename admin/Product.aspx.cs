@@ -18,7 +18,7 @@ public partial class admin_Product :  System.Web.UI.Page
     {
         //Create product list from json posted from client
         List<product> products = new List<product>();
-        var productsJson = Server_Data1.Text;
+        var productsJson = Product_Data_To_Post_To_Server.Text;
         dynamic productsResponse = JsonConvert.DeserializeObject(productsJson);
         if (productsResponse.Count > 0)
         {
@@ -91,9 +91,10 @@ public partial class admin_Product :  System.Web.UI.Page
     {
         using (var context = new WebsiteTTKEntities())
         {
-            IQueryable<product> qTable = from t in context.products
+            //Get product data
+            IQueryable<product> qProductsTable = from t in context.products
                                          select t; // can you confirm if your context has Tables or MyTables?
-            var list = qTable.Select(s => new {
+            var listOfProducts = qProductsTable.Select(s => new {
                 s.product_id,
                 s.product_name,
                 s.product_description,
@@ -106,8 +107,35 @@ public partial class admin_Product :  System.Web.UI.Page
                 s.create_by,
                 s.is_publish
             }).ToList();
-            var json = new JavaScriptSerializer().Serialize(list);
-            Server_Data.InnerText = json;
+            var productsJson = new JavaScriptSerializer().Serialize(listOfProducts);
+            Products_Data.InnerText = productsJson;
+
+            //Get brand data
+            IQueryable<brand> qBrandsTable = from t in context.brands
+                                         select t; // can you confirm if your context has Tables or MyTables?
+            var listOfBrand = qBrandsTable.Select(s => new {
+                s.brand_id,
+                s.brand_name,
+                s.brand_description,
+                s.images,
+                s.create_date
+            }).ToList();
+            var brandsJson = new JavaScriptSerializer().Serialize(listOfBrand);
+            Brand_Data.InnerText = brandsJson;
+
+            //Get Category data
+            IQueryable<category> qCategoriesTable = from t in context.categories
+                                             select t; // can you confirm if your context has Tables or MyTables?
+            var listOfCategories = qCategoriesTable.Select(s => new {
+                s.category_id,
+                s.category_name,
+                s.category_description,
+                s.images,
+                s.create_date,
+                s.parent_id
+            }).ToList();
+            var categoriesJson = new JavaScriptSerializer().Serialize(listOfCategories);
+            Category_Data.InnerText = categoriesJson;
         }
     }
 }

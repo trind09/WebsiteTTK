@@ -7,6 +7,8 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
     $scope.currentNumPerPage = 0;
     $scope.item = {};
     $scope.items = [];
+    $scope.brands = [];
+    $scope.categories = [];
     $scope.copyOfItems = [];
     $scope.addedOrUpdatedItems = [];
     $scope.deletedIds = [];
@@ -24,7 +26,6 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
 
     $scope.isIdExisted = function (newGeneratedproduct_id) {
         var index = $scope.items.findIndex(x => x.product_id === newGeneratedproduct_id);
-        console.log(index);
         if (index < 0) {
             return false;
         }
@@ -39,7 +40,6 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
             newGeneratedproduct_id = $scope.getRandomId($scope.items.length);
         }
         while ($scope.isIdExisted(newGeneratedproduct_id));
-        console.log(newGeneratedproduct_id);
         var today = $filter('date')(new Date(), 'dd/MM/yyyy HH:mm:ss');
         
         $scope.items.push({

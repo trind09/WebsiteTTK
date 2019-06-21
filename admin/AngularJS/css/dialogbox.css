@@ -1,0 +1,35 @@
+﻿.popup {
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.popup .container {
+    height: 60%;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    width: 60%;
+}
+
+.popup .container .text {
+    background: #fff;
+    height: 100%;
+    left: -50%;
+    position: absolute;
+    top: -50%;
+    width: 100%;
+}
+
+.popup .bg {
+    background: rgba(0,0,0,0.5);
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 9;
+}

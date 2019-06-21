@@ -10,9 +10,8 @@
         function CallMe() {
             $.ajax({
                 type: 'POST',
-                url: 'http://localhost:64538/admin/Services/WebService.asmx/HelloWorld',
+                url: 'http://localhost:56720/admin/Services/WebService.asmx/HelloWorld',
                 async: false,
-                contentType: "application/json",
                 dataType: 'json',
                 success: function (data) {
                     console.log(data);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.UI.WebControls;
 
 /// <summary>
 /// Summary description for Helper
@@ -37,5 +38,103 @@ public class Helper
             return token;
         }
         return null;
+    }
+
+    public static string GetHostURL()
+    {
+        return HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);
+    }
+
+    /// <summary>
+    /// Save file from upload
+    /// </summary>
+    /// Return explain:
+    /// <param name="message">Message from upload file</param>
+    /// <param name="fileName">Uploaded File name</param>
+    /// /// <param name="result">Result in boolean</param>
+    /// <returns>List of KeyValuePair string and object</returns>
+    /// <example>Helper.SaveFileFromUpload(subPath, fulImageUpload, new string[] { ".jpg", ".gif", ".png"});</example>
+    /// <get>string message = list.First(kvp => kvp.Key == "message").Value.ToString();</get>
+    /// <get>string isSuccess = list.First(kvp => kvp.Key == "result").Value.ToString();</get>
+    /// <get>string fileName = result.First(kvp => kvp.Key == "fileName").Value.ToString();</get>
+    public static List<KeyValuePair<string, object>> SaveFileFromUpload(string subPath, FileUpload ful, string[] extensions)
+    {
+        try
+        {
+            bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath(subPath));
+            if (!exists)
+                System.IO.Directory.CreateDirectory(HttpContext.Current.Server.MapPath(subPath));
+
+            subPath = HttpContext.Current.Server.MapPath(subPath);
+
+            string result = "";
+
+            // Get the name of the file to upload.
+            string fileName = ful.FileName;
+
+            string ext = System.IO.Path.GetExtension(fileName).ToLower();
+            if (extensions.Contains(ext)) {
+
+                // Create the path and file name to check for duplicates.
+                string pathToCheck = subPath + fileName;
+
+                // Create a temporary file name to use for checking duplicates.
+                string tempfileName = "";
+
+                // Check to see if a file already exists with the
+                // same name as the file to upload.        
+                if (System.IO.File.Exists(pathToCheck))
+                {
+                    int counter = 2;
+                    while (System.IO.File.Exists(pathToCheck))
+                    {
+                        // if a file with this name already exists,
+                        // prefix the filename with a number.
+                        tempfileName = counter.ToString() + fileName;
+                        pathToCheck = subPath + tempfileName;
+                        counter++;
+                    }
+
+                    fileName = tempfileName;
+
+                    // Notify the user that the file name was changed.
+                    result = "A file with the same name already exists." +
+                        "<br />Your file was saved as " + fileName;
+                }
+                else
+                {
+                    // Notify the user that the file was saved successfully.
+                    result = "Your file was uploaded successfully.";
+                }
+
+                // Append the name of the file to upload to the path.
+                subPath += fileName;
+
+                // Call the SaveAs method to save the uploaded
+                // file to the specified directory.
+                ful.SaveAs(subPath);
+
+
+                var list = new List<KeyValuePair<string, object>>();
+                list.Add(new KeyValuePair<string, object>("message", result));
+                list.Add(new KeyValuePair<string, object>("fileName", fileName));
+                list.Add(new KeyValuePair<string, object>("result", true));
+                return list;
+            } else
+            {
+                var list = new List<KeyValuePair<string, object>>();
+                list.Add(new KeyValuePair<string, object>("message", "Invalid file extension!"));
+                list.Add(new KeyValuePair<string, object>("fileName", null));
+                list.Add(new KeyValuePair<string, object>("result", false));
+                return list;
+            }
+        } catch (Exception ex)
+        {
+            var list = new List<KeyValuePair<string, object>>();
+            list.Add(new KeyValuePair<string, object>("message", ex.Message));
+            list.Add(new KeyValuePair<string, object>("fileName", null));
+            list.Add(new KeyValuePair<string, object>("result", false));
+            return list;
+        }
     }
 }

@@ -2,7 +2,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <form id="form1" runat="server">
         <asp:linkbutton runat="server" CssClass="btn btn-success" OnClientClick="return AskForApplyAllChange();" OnClick="btnApplyAllChanges_Click">Apply all changes</asp:linkbutton>
-        <asp:textbox id="Server_Data1" runat="server" enable="false"></asp:textbox>
+        <asp:textbox id="Product_Data_To_Post_To_Server" runat="server" enable="false"></asp:textbox>
         <asp:textbox id="txtDeletedIds" runat="server" enable="false"></asp:textbox>
         <link rel="stylesheet" href="AngularJS/css/toastr.css">
         <link rel="stylesheet" href="AngularJS/css/application.css">
@@ -101,56 +101,75 @@
                 <table style="width: 100%">
                     <thead>
                         <tr>
-                            <th colspan="2">Product form</th>
+                            <th colspan="3">Product form</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>Product ID: </td>
                             <td><input type="number" readonly="readonly" ng-model="item.product_id" placeholder="Product ID" style="width: 500px;"></td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>Product Name: </td>
                             <td><input type="text" ng-model="item.product_name" placeholder="Product Name" required style="width: 500px;"></td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>Product Description: </td>
                             <td><textarea type="text" ng-model="item.product_description" placeholder="Product Description" class="input-small" cols="69" rows="10"></textarea></td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>Product Images: </td>
                             <td><input type="text" ng-model="item.product_images" placeholder="Product Images" style="width: 500px;"></td>
+                            <td><a style="cursor: pointer;" ng-click="openUploadImagePanel(item.product_id)">Upload Images</a></td>
                         </tr>
                         <tr>
                             <td>Brand ID: </td>
-                            <td><input type="number" ng-model="item.brand_id" placeholder="Brand ID" class="input-small" required style="width: 500px;"></td>
+                            <td><input type="text" readonly ng-model="item.brand_id" placeholder="Brand ID" class="input-small" required style="width: 500px;"></td>
+                            <td>Select brand: 
+                                <select ng-model="item.brand_id">
+                                  <option ng-repeat="x in brands" value="{{x.brand_id}}">{{x.brand_name}}</option>
+                                </select>
+                            </td>
                         </tr>
                         <tr>
                             <td>Category ID: </td>
-                            <td><input type="number" ng-model="item.category_id" placeholder="Category ID" class="input-small" required style="width: 500px;"></td>
+                            <td><input type="text" readonly ng-model="item.category_id" placeholder="Category ID" class="input-small" required style="width: 500px;"></td>
+                            <td>Select category: 
+                                <select ng-model="item.category_id">
+                                  <option ng-repeat="x in categories" value="{{x.category_id}}">{{x.category_name}}</option>
+                                </select>
+                            </td>
                         </tr>
                         <tr>
                             <td>Model Year: </td>
                             <td><input type="number" ng-model="item.model_year" placeholder="Model Year" class="input-small" required style="width: 500px;"></td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>List Price: </td>
                             <td><input type="number" ng-model="item.list_price" placeholder="List Price" class="input-small" required style="width: 500px;"></td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>Create Date: </td>
                             <td><input type="date" ng-model="item.create_date" placeholder="Create Date" class="input-small" style="width: 500px;"></td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>Create By: </td>
                             <td><input type="text" ng-model="item.create_by" placeholder="Create By" class="input-small" style="width: 500px;"></td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>Publish: </td>
                             <td><input type="checkbox" ng-model="item.is_publish" class="input-small"></td>
+                            <td></td>
                         </tr>
                         <tr>
-                            <td colspan="2">
+                            <td colspan="3">
                                 <a ng-hide="edit" class="btn btn-success" ng-disabled="validarValoresPreenchidos.$invalid" ng-click="adicionaItem()">
                                     <i class="icon-plus icon-white"></i>Add
                                 </a>
@@ -163,17 +182,23 @@
                 </table>
             </div>
             <script>
-                var Server_Data = {};
+                var Product_Data_lList = {};
                 $(document).ready(function () {
-                    var data = $("#<%=Server_Data.ClientID%>").text();
-                    Server_Data = jQuery.parseJSON(data);
+                    var productDataJson = $("#<%=Products_Data.ClientID%>").text();
+                    Product_Data_lList = jQuery.parseJSON(productDataJson);
                     var TodoController = 'div[ng-controller="TodoController"]';
                     var scope = angular.element(TodoController).scope();
                     var myFilter = scope.myFilter;
-                    scope.items = Server_Data;
+                    scope.items = Product_Data_lList;
                     //Copy a new item from existing object. This could help to reduce from update to this list when you are updated orginal list
                     //scope.copyOfItems = Object.assign([], Server_Data);
                     scope.totalItem = scope.items.length;
+
+                    var brandDataJson = $("#<%=Brand_Data.ClientID%>").text();
+                    scope.brands = jQuery.parseJSON(brandDataJson);
+
+                    var categoryDataJson = $("#<%=Category_Data.ClientID%>").text();
+                    scope.categories = jQuery.parseJSON(categoryDataJson);
 
                     scope.$watch('searchValue', function () {
                         scope.filteredItems = myFilter('filter')(scope.items, scope.searchValue);
@@ -189,6 +214,12 @@
                         }
                     });
 
+                    scope.openUploadImagePanel = function (product_id) {
+                        $('#popup_container').append('<iframe src="ImageUpload.aspx?id=' + product_id + '&table_name=products" id="ImageUpload" style="width: 100%; height: 100%;"></iframe>');
+                        jQuery('.popup').show();
+                        return false;
+                    };
+
                     scope.$apply();
 
                     DisableSeverControls();
@@ -198,7 +229,7 @@
                     if (confirm('Are you sure to apply all change?')) {
                         var TodoController = 'div[ng-controller="TodoController"]';
                         var scope = angular.element(TodoController).scope();
-                        $("#<%=Server_Data1.ClientID%>").val(JSON.stringify(scope.addedOrUpdatedItems));
+                        $("#<%=Product_Data_To_Post_To_Server.ClientID%>").val(JSON.stringify(scope.addedOrUpdatedItems));
                         $("#<%=txtDeletedIds.ClientID%>").val(JSON.stringify(scope.deletedIds));
                         return true;
                     }
@@ -206,7 +237,7 @@
                 }
 
                 function DisableSeverControls() {
-                    $("#<%=Server_Data1.ClientID%>").keypress(function(e) {
+                    $("#<%=Product_Data_To_Post_To_Server.ClientID%>").keypress(function(e) {
                         e.preventDefault();
                     });
 
@@ -214,10 +245,25 @@
                         e.preventDefault();
                     });
                 }
+
+                function ClosePopup() {
+                    $('#ImageUpload').remove();
+                    jQuery('.popup').fadeOut();
+                    return false;
+                }
             </script>
             <script src="AngularJS/lib/toastr.min.js"></script>
             <script src="AngularJS/app/product.js"></script>
-            <div runat="server" id="Server_Data" style="display: none;"></div>
+            <div runat="server" id="Products_Data" style="display: none;"></div>
+            <div runat="server" id="Brand_Data" style="display: none;"></div>
+            <div runat="server" id="Category_Data" style="display: none;"></div>
+
+            <div class="popup" style="display: none;">
+                <div class="container"><div class="text" id="popup_container">
+                    <p class="close" id="close_window_popup"><a style="cursor: pointer;position: absolute;top: 0;right: 0;padding: 10px; color: red;" onclick="return ClosePopup();">Close Window</a></p>
+                </div></div>
+                <div class="bg"></div>
+            </div>
         </div>
     </form>
 </asp:Content>
