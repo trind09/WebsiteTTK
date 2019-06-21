@@ -95,7 +95,7 @@ public partial class admin_ImageUpload : System.Web.UI.Page
                                 {
                                     objPro.product_images = "admin/img/" + product_id + "/" + fileName;
                                 }
-                                ProductHelper.UpdateProducts(new List<product> { objPro });
+                                ProductHelper.UpdateProducts(new List<product> { objPro }, true);
                                 lblUploadResult.Text = "<br/>" + message;
                             }
                             else
