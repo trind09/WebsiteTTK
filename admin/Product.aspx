@@ -1,5 +1,11 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/admin/admin.master" AutoEventWireup="true" CodeFile="Product.aspx.cs" Inherits="admin_Product" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
+    <!--SummerNote rich text box library-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.js"></script>
+    <!--SummerNote rich text box library-->
     <form id="form1" runat="server">
         <asp:linkbutton runat="server" CssClass="btn btn-success" OnClientClick="return AskForApplyAllChange();" OnClick="btnApplyAllChanges_Click">Apply all changes</asp:linkbutton>
         <asp:textbox id="Product_Data_To_Post_To_Server" runat="server" enable="false"></asp:textbox>
@@ -117,7 +123,7 @@
                         </tr>
                         <tr>
                             <td>Product Description: </td>
-                            <td><textarea type="text" ng-model="item.product_description" placeholder="Product Description" class="input-small" cols="69" rows="10"></textarea></td>
+                            <td><textarea id="product_description_textarea" name="editordata" ng-model="item.product_description"></textarea></td>
                             <td></td>
                         </tr>
                         <tr>
@@ -188,8 +194,19 @@
                     Product_Data_lList = jQuery.parseJSON(productDataJson);
                     var TodoController = 'div[ng-controller="TodoController"]';
                     var scope = angular.element(TodoController).scope();
+
                     var myFilter = scope.myFilter;
                     scope.items = Product_Data_lList;
+                    
+                    //trigger summoer note rich text editor
+                    $('#product_description_textarea').summernote({
+                        callbacks: {
+                            onBlur: function () {
+                                SetTextToProductDescription();
+                            }
+                        }
+                    });
+
                     //Copy a new item from existing object. This could help to reduce from update to this list when you are updated orginal list
                     //scope.copyOfItems = Object.assign([], Server_Data);
                     scope.totalItem = scope.items.length;
@@ -224,6 +241,13 @@
 
                     DisableSeverControls();
                 });
+
+                //Set text to product description when user enter text to product description rich text editor (summernote editor)
+                function SetTextToProductDescription() {
+                    var TodoController = 'div[ng-controller="TodoController"]';
+                    var scope = angular.element(TodoController).scope();
+                    scope.item.product_description = $('.note-editable.card-block').html();
+                }
 
                 function AskForApplyAllChange() {
                     if (confirm('Are you sure to apply all change?')) {
