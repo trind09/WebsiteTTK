@@ -10,6 +10,87 @@
 using System;
 using System.Collections.Generic;
 
+public partial class AspNetRole
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public AspNetRole()
+    {
+        this.AspNetUsers = new HashSet<AspNetUser>();
+    }
+
+    public string Id { get; set; }
+    public string Name { get; set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<AspNetUser> AspNetUsers { get; set; }
+}
+
+public partial class AspNetUser
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public AspNetUser()
+    {
+        this.AspNetUserClaims = new HashSet<AspNetUserClaim>();
+        this.AspNetUserLogins = new HashSet<AspNetUserLogin>();
+        this.AspNetRoles = new HashSet<AspNetRole>();
+    }
+
+    public string Id { get; set; }
+    public string Email { get; set; }
+    public bool EmailConfirmed { get; set; }
+    public string PasswordHash { get; set; }
+    public string SecurityStamp { get; set; }
+    public string PhoneNumber { get; set; }
+    public bool PhoneNumberConfirmed { get; set; }
+    public bool TwoFactorEnabled { get; set; }
+    public Nullable<System.DateTime> LockoutEndDateUtc { get; set; }
+    public bool LockoutEnabled { get; set; }
+    public int AccessFailedCount { get; set; }
+    public string UserName { get; set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<AspNetUserClaim> AspNetUserClaims { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<AspNetUserLogin> AspNetUserLogins { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<AspNetRole> AspNetRoles { get; set; }
+}
+
+public partial class AspNetUserAddress
+{
+    public int Id { get; set; }
+    public string UserId { get; set; }
+    public string Firstname { get; set; }
+    public string Lastname { get; set; }
+    public string Company { get; set; }
+    public string Street { get; set; }
+    public string City { get; set; }
+    public string Country { get; set; }
+    public string State { get; set; }
+    public string Zip { get; set; }
+    public Nullable<System.DateTime> Birthday { get; set; }
+    public string Gender { get; set; }
+}
+
+public partial class AspNetUserClaim
+{
+    public int Id { get; set; }
+    public string UserId { get; set; }
+    public string ClaimType { get; set; }
+    public string ClaimValue { get; set; }
+
+    public virtual AspNetUser AspNetUser { get; set; }
+}
+
+public partial class AspNetUserLogin
+{
+    public string LoginProvider { get; set; }
+    public string ProviderKey { get; set; }
+    public string UserId { get; set; }
+
+    public virtual AspNetUser AspNetUser { get; set; }
+}
+
 public partial class brand
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -26,6 +107,14 @@ public partial class brand
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<product> products { get; set; }
+}
+
+public partial class C__MigrationHistory
+{
+    public string MigrationId { get; set; }
+    public string ContextKey { get; set; }
+    public byte[] Model { get; set; }
+    public string ProductVersion { get; set; }
 }
 
 public partial class category
@@ -52,7 +141,7 @@ public partial class customer
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
     public customer()
     {
-        this.orders = new HashSet<order1>();
+        this.orders = new HashSet<order>();
     }
 
     public int customer_id { get; set; }
@@ -67,26 +156,13 @@ public partial class customer
     public string address { get; set; }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    public virtual ICollection<order1> orders { get; set; }
+    public virtual ICollection<order> orders { get; set; }
 }
 
-public partial class order_items
-{
-    public int order_id { get; set; }
-    public int item_id { get; set; }
-    public int product_id { get; set; }
-    public int quantity { get; set; }
-    public decimal list_price { get; set; }
-    public decimal discount { get; set; }
-
-    public virtual order1 order { get; set; }
-    public virtual product product { get; set; }
-}
-
-public partial class order1
+public partial class order
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-    public order1()
+    public order()
     {
         this.order_items = new HashSet<order_items>();
     }
@@ -105,6 +181,19 @@ public partial class order1
     public virtual ICollection<order_items> order_items { get; set; }
     public virtual staff staff { get; set; }
     public virtual store store { get; set; }
+}
+
+public partial class order_items
+{
+    public int order_id { get; set; }
+    public int item_id { get; set; }
+    public int product_id { get; set; }
+    public int quantity { get; set; }
+    public decimal list_price { get; set; }
+    public decimal discount { get; set; }
+
+    public virtual product product { get; set; }
+    public virtual order order { get; set; }
 }
 
 public partial class product
@@ -141,7 +230,7 @@ public partial class staff
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
     public staff()
     {
-        this.orders = new HashSet<order1>();
+        this.orders = new HashSet<order>();
         this.staffs1 = new HashSet<staff>();
     }
 
@@ -156,7 +245,7 @@ public partial class staff
     public string address { get; set; }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    public virtual ICollection<order1> orders { get; set; }
+    public virtual ICollection<order> orders { get; set; }
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<staff> staffs1 { get; set; }
     public virtual staff staff1 { get; set; }
@@ -169,8 +258,8 @@ public partial class stock
     public int product_id { get; set; }
     public Nullable<int> quantity { get; set; }
 
-    public virtual store store { get; set; }
     public virtual product product { get; set; }
+    public virtual store store { get; set; }
 }
 
 public partial class store
@@ -179,7 +268,7 @@ public partial class store
     public store()
     {
         this.stocks = new HashSet<stock>();
-        this.orders = new HashSet<order1>();
+        this.orders = new HashSet<order>();
         this.staffs = new HashSet<staff>();
     }
 
@@ -195,7 +284,7 @@ public partial class store
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<stock> stocks { get; set; }
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    public virtual ICollection<order1> orders { get; set; }
+    public virtual ICollection<order> orders { get; set; }
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<staff> staffs { get; set; }
 }

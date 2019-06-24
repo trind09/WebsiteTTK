@@ -23,13 +23,19 @@ public partial class WebsiteTTKEntities : DbContext
         throw new UnintentionalCodeFirstException();
     }
 
+    public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
+    public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
+    public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
+    public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
+    public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
     public virtual DbSet<brand> brands { get; set; }
     public virtual DbSet<category> categories { get; set; }
+    public virtual DbSet<product> products { get; set; }
     public virtual DbSet<stock> stocks { get; set; }
     public virtual DbSet<customer> customers { get; set; }
     public virtual DbSet<order_items> order_items { get; set; }
-    public virtual DbSet<order1> order1 { get; set; }
+    public virtual DbSet<order> orders { get; set; }
     public virtual DbSet<staff> staffs { get; set; }
     public virtual DbSet<store> stores { get; set; }
-    public virtual DbSet<product> products { get; set; }
+    public virtual DbSet<AspNetUserAddress> AspNetUserAddresses { get; set; }
 }

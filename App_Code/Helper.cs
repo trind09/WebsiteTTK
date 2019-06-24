@@ -40,6 +40,54 @@ public class Helper
         return null;
     }
 
+    public static string StripHTML(string input)
+    {
+        return System.Text.RegularExpressions.Regex.Replace(input, "<.*?>", String.Empty);
+    }
+
+    public static bool IsValidPassword(string password)
+    {
+        //Password must be 8 characters including 1 uppercase letter, 1 special character, alphanumeric characters
+        //return System.Text.RegularExpressions.Regex.Match(password, @"^(.{0,7}|[^0-9]*|[^A-Z])$").Success;
+        //Password at least one upper case english letter • At least one lower case english letter • At least one digit • At least one special character • Minimum 8 in length
+        //return System.Text.RegularExpressions.Regex.Match(password, @"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$").Success;
+        if (password.Length < 6)
+        {
+            return false;
+        }
+        else if (password.IndexOf(" ") > -1)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    public static bool IsValidUsername(string username)
+    {
+        return System.Text.RegularExpressions.Regex.Match(username, @"^(?=[a-zA-Z])[-\w.]{0,23}([a-zA-Z\d]|(?<![-.])_)$").Success;
+    }
+
+    public static bool IsPhoneNumber(string number)
+    {
+        return System.Text.RegularExpressions.Regex.Match(number, @"^(\+[0-9]{9})$").Success;
+    }
+
+    public static bool IsValidEmail(string email)
+    {
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address == email;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public static string GetHostURL()
     {
         return HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);

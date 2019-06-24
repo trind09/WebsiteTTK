@@ -1,47 +1,56 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="customer-account.aspx.cs" Inherits="customer_account" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
-    <div id="all">
-        <div id="content">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <!-- breadcrumb-->
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li aria-current="page" class="breadcrumb-item active">My account</li>
-                            </ol>
-                        </nav>
-                    </div>
-                    <div class="col-lg-3">
-                        <!--
-              *** CUSTOMER MENU ***
-              _________________________________________________________
-              -->
-                        <div class="card sidebar-menu">
-                            <div class="card-header">
-                                <h3 class="h4 card-title">Customer section</h3>
-                            </div>
-                            <div class="card-body">
-                                <ul class="nav nav-pills flex-column"><a href="customer-orders.aspx" class="nav-link active"><i class="fa fa-list"></i>My orders</a><a href="customer-wishlist.aspx" class="nav-link"><i class="fa fa-heart"></i> My wishlist</a><a href="customer-account.aspx" class="nav-link"><i class="fa fa-user"></i> My account</a><a href="Default.aspx" class="nav-link"><i class="fa fa-sign-out"></i> Logout</a></ul>
-                            </div>
+    <form id="form1" runat="server">
+        <div id="all">
+            <div id="content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <!-- breadcrumb-->
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                    <li aria-current="page" class="breadcrumb-item active">My account</li>
+                                </ol>
+                            </nav>
                         </div>
-                        <!-- /.col-lg-3-->
-                        <!-- *** CUSTOMER MENU END ***-->
-                    </div>
-                    <div class="col-lg-9">
-                        <div class="box">
-                            <h1>My account</h1>
-                            <p class="lead">Change your personal details or your password here.</p>
-                            <p class="text-muted">Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
-                            <h3>Change password</h3>
-                            <form>
+                        <div class="col-lg-3">
+                            <!--
+                  *** CUSTOMER MENU ***
+                  _________________________________________________________
+                  -->
+                            <div class="card sidebar-menu">
+                                <div class="card-header">
+                                    <h3 class="h4 card-title">Customer section</h3>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="nav nav-pills flex-column">
+                                        <a href="customer-orders.aspx" class="nav-link">
+                                            <i class="fa fa-list"></i>My orders</a>
+                                        <a href="customer-wishlist.aspx" class="nav-link">
+                                            <i class="fa fa-heart"></i>My wishlist</a>
+                                        <a href="customer-account.aspx" class="nav-link active">
+                                            <i class="fa fa-user"></i>My account</a>
+                                        <a href="Default.aspx" class="nav-link"><i class="fa fa-sign-out"></i>Logout</a>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- /.col-lg-3-->
+                            <!-- *** CUSTOMER MENU END ***-->
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="box">
+                                <h1>My account</h1>
+                                <p class="lead">Change your personal details or your password here.</p>
+                                <p class="text-muted">Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
+                                <h3>Change password</h3>
+                                <asp:Label ID="lblChangePasswordMessage" runat="server" Text=""></asp:Label>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="password_old">Old password</label>
-                                            <input id="password_old" type="password" class="form-control">
+                                            <asp:TextBox ID="password_old" runat="server" TextMode="Password" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
                                 </div>
@@ -49,23 +58,21 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="password_1">New password</label>
-                                            <input id="password_1" type="password" class="form-control">
+                                            <asp:TextBox ID="password_1" runat="server" TextMode="Password" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="password_2">Retype new password</label>
-                                            <input id="password_2" type="password" class="form-control">
+                                            <asp:TextBox ID="password_2" runat="server" TextMode="Password" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
                                 </div>
                                 <!-- /.row-->
                                 <div class="col-md-12 text-center">
-                                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Save new password</button>
+                                    <asp:LinkButton ID="lbnChangePassword" runat="server" CssClass="btn btn-primary" OnClick="lbnChangePassword_Click"><i class="fa fa-save"></i>Save new password</asp:LinkButton>
                                 </div>
-                            </form>
-                            <h3 class="mt-5">Personal details</h3>
-                            <form>
+                                <h3 class="mt-5">Personal details</h3>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -124,25 +131,25 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="phone">Telephone</label>
-                                            <input id="phone" type="text" class="form-control">
+                                            <asp:TextBox ID="PhoneNumber" MaxLength="15" runat="server" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="email">Email</label>
-                                            <input id="email" type="text" class="form-control">
+                                            <asp:TextBox ID="Email" MaxLength="64" runat="server" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
                                     <div class="col-md-12 text-center">
                                         <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Save changes</button>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </asp:Content>
 

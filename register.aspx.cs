@@ -28,22 +28,52 @@ public partial class register : System.Web.UI.Page
     protected void CreateUser_Click(object sender, EventArgs e)
     {
         // Default UserStore constructor uses the default connection string named: DefaultConnection
-        var userStore = new UserStore<IdentityUser>();
-        var manager = new UserManager<IdentityUser>(userStore);
-        var user = new IdentityUser() { UserName = UserName.Text };
-
-        IdentityResult result = manager.Create(user, Password.Text);
-
-        if (result.Succeeded)
+        string unsatifyMessage = "";
+        string userName = Helper.StripHTML(UserName.Text);
+        string password = Helper.StripHTML(Password.Text);
+        string confirmPassword = Helper.StripHTML(ConfirmPassword.Text);
+        string email = Helper.StripHTML(Email.Text);
+        string phoneNumber = Helper.StripHTML(PhoneNumber.Text);
+        if (password != confirmPassword)
         {
-            var authenticationManager = HttpContext.Current.GetOwinContext().Authentication;
-            var userIdentity = manager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
-            authenticationManager.SignIn(new AuthenticationProperties() { }, userIdentity);
-            Page.Response.Redirect(Page.Request.Url.ToString(), true);
+            unsatifyMessage = "<p style='color: red;'>Confirm password doesn't match!</p>";
+        }
+        if (!Helper.IsValidUsername(userName) || userName.Trim().Length == 0)
+        {
+            unsatifyMessage += "<p style='color: red;'>Username is invalid!</p>";
+        }
+        if (!Helper.IsValidPassword(password) || password.Trim().Length == 0)
+        {
+            unsatifyMessage += "<p style='color: red;'>Password at least 6 characters and has no white space!</p>";
+        }
+        if (!Helper.IsValidEmail(email) || email.Trim().Length == 0)
+        {
+            unsatifyMessage += "<p style='color: red;'>Email is invalid!</p>";
+        }
+        if (unsatifyMessage != "")
+        {
+            StatusMessage.Text = unsatifyMessage;
         }
         else
         {
-            StatusMessage.Text = result.Errors.FirstOrDefault();
+            StatusMessage.Text = "";
+            var userStore = new UserStore<IdentityUser>();
+            var manager = new UserManager<IdentityUser>(userStore);
+            var user = new IdentityUser() { UserName = userName, Email = email, PhoneNumber = phoneNumber };
+
+            IdentityResult result = manager.Create(user, password);
+
+            if (result.Succeeded)
+            {
+                var authenticationManager = HttpContext.Current.GetOwinContext().Authentication;
+                var userIdentity = manager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                authenticationManager.SignIn(new AuthenticationProperties() { }, userIdentity);
+                Page.Response.Redirect(Page.Request.Url.ToString(), true);
+            }
+            else
+            {
+                StatusMessage.Text = result.Errors.FirstOrDefault();
+            }
         }
     }
 

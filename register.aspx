@@ -27,15 +27,23 @@
                                 </div>
                                 <div class="form-group">
                                     <asp:Label runat="server" AssociatedControlID="UserName">User name</asp:Label>
-                                    <asp:TextBox runat="server" ID="UserName" CssClass="form-control" />
+                                    <asp:TextBox runat="server" ID="UserName" MaxLength="64" CssClass="form-control" />
                                 </div>
                                 <div class="form-group">
                                     <asp:Label runat="server" AssociatedControlID="Password">Password</asp:Label>
-                                    <asp:TextBox runat="server" ID="Password" TextMode="Password" CssClass="form-control" />
+                                    <asp:TextBox runat="server" ID="Password" MaxLength="128" TextMode="Password" CssClass="form-control" />
                                 </div>
                                 <div class="form-group">
                                     <asp:Label runat="server" AssociatedControlID="ConfirmPassword">Confirm password</asp:Label>
-                                    <asp:TextBox runat="server" ID="ConfirmPassword" TextMode="Password" CssClass="form-control" />
+                                    <asp:TextBox runat="server" ID="ConfirmPassword" MaxLength="128" TextMode="Password" CssClass="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <asp:Label runat="server" AssociatedControlID="Email">Email</asp:Label>
+                                    <asp:TextBox runat="server" ID="Email" MaxLength="64" CssClass="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <asp:Label runat="server" AssociatedControlID="PhoneNumber">Phone Number</asp:Label>
+                                    <asp:TextBox runat="server" ID="PhoneNumber" MaxLength="15" CssClass="form-control" />
                                 </div>
                                 <div class="text-center">
                                     <asp:Button runat="server" CssClass="btn btn-primary" OnClick="CreateUser_Click" Text="Register" />
