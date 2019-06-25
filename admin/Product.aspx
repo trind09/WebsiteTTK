@@ -53,7 +53,6 @@
                                 <th><input type='checkbox' value='' ng-model='checkall'></th>
                                 <th ng-click="sortBy('product_id')" style="text-decoration: underline; cursor: pointer;">Product ID</th>
                                 <th ng-click="sortBy('product_name')" style="text-decoration: underline; cursor: pointer;">Name</th>
-                                <th>Description</th>
                                 <th>Images</th>
                                 <th>Brand ID</th>
                                 <th>Category ID</th>
@@ -70,7 +69,6 @@
                                 <td><input type='checkbox' ng-checked="checkall" id="item-{{ item.product_id }}" value="{{ item.product_id }}"></td>
                                 <td><strong>{{ item.product_id }}</strong></td>
                                 <td>{{ item.product_name }}</td>
-                                <td><div style="width: 100%; height: 50px; overflow-y:auto;">{{ item.product_description }}</div></td>
                                 <td><a style="cursor: pointer;" ng-click="openUploadImagePanel(item.product_id)">Show Images</a></td>
                                 <td>{{ item.brand_id }}</td>
                                 <td>{{ item.category_id }}</td>

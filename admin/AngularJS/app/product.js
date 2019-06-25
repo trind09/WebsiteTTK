@@ -41,17 +41,20 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         }
         while ($scope.isIdExisted(newGeneratedproduct_id));
         var today = $filter('date')(new Date(), 'dd/MM/yyyy HH:mm:ss');
-        
+
+        //Because aspx control doesn't allow to post html in textbox. So we will escape the html content.
+        var escapedProductDescription = $scope.Escaped($scope.item.product_description);
+
         $scope.items.push({
             product_id: newGeneratedproduct_id, product_name: $scope.item.product_name, product_images: $scope.item.product_images,
-            product_description: $scope.item.product_description, brand_id: $scope.item.brand_id,
+            product_description: escapedProductDescription, brand_id: $scope.item.brand_id,
             category_id: $scope.item.category_id, model_year: $scope.item.model_year, list_price: $scope.item.list_price,
             create_date: today, create_by: $scope.item.create_by, is_publish: $scope.item.is_publish
         });
 
         $scope.addedOrUpdatedItems.push({
             product_id: newGeneratedproduct_id, product_name: $scope.item.product_name, product_images: $scope.item.product_images,
-            product_description: $scope.item.product_description, brand_id: $scope.item.brand_id,
+            product_description: escapedProductDescription, brand_id: $scope.item.brand_id,
             category_id: $scope.item.category_id, model_year: $scope.item.model_year, list_price: $scope.item.list_price,
             create_date: today, create_by: $scope.item.create_by, is_publish: $scope.item.is_publish
         });
@@ -70,6 +73,10 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         var index = $scope.items.findIndex(x => x.product_id === id);
         $scope.item = $scope.items[index];
         $scope.item.create_date = $scope.GetDate($scope.item.create_date);
+        //Because aspx control doesn't allow to post html in textbox. So we will escape the html content.
+        $scope.item.product_description = $scope.Unescaped($scope.item.product_description);
+        //Set data to summernote content to be editing.
+        $('#product_description_textarea').summernote('code', $scope.item.product_description);
         $scope.edit = true;
     };
 
@@ -77,10 +84,12 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
     $scope.applyChanges = function (index) {
         var item = $scope.item;
 
+        var escapedProductDescription = $("<div>").text(item.product_description).html();
+
         //Update source item
         var item1 = $scope.items.find(x => x.product_id == item.product_id);
         item1.product_name = item.product_name;
-        item1.product_description = item.product_description;
+        item1.product_description = escapedProductDescription;
         //item1.product_images = item.product_images;
         item1.brand_id = item.brand_id;
         item1.category_id = item.category_id;
@@ -100,6 +109,9 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         $scope.item = {};
         $scope.edit = false;
         toastr.success("Item updated successful.");
+
+        //Remove summernote texarea content after update. This will help other to add new record withou confusing on old data.
+        $('#product_description_textarea').summernote('code', "");
     };
 
     //Delete item function
@@ -159,6 +171,18 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
             return null;
         }
     };
+
+    //Unescape the html content to view on client
+    $scope.Unescaped = function (x) {
+        var unEscapedStr = $("<div>").html(x).text();
+        return unEscapedStr;
+    }
+
+    //Escape the html content to post to server
+    $scope.Escaped = function (x) {
+        var escapedStr = $("<div>").text(x).html();
+        return escapedStr;
+    }
 }]);
 
 app.filter('startFrom', function () {
