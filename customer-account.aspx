@@ -73,17 +73,18 @@
                                     <asp:LinkButton ID="lbnChangePassword" runat="server" CssClass="btn btn-primary" OnClick="lbnChangePassword_Click"><i class="fa fa-save"></i>Save new password</asp:LinkButton>
                                 </div>
                                 <h3 class="mt-5">Personal details</h3>
+                                <asp:Label ID="lblChangePersonalDetails" runat="server" Text=""></asp:Label>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="firstname">Firstname</label>
-                                            <input id="firstname" type="text" class="form-control">
+                                            <asp:TextBox ID="firstname" runat="server" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="lastname">Lastname</label>
-                                            <input id="lastname" type="text" class="form-control">
+                                            <asp:TextBox ID="lastname" runat="server" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
                                 </div>
@@ -92,13 +93,13 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="company">Company</label>
-                                            <input id="company" type="text" class="form-control">
+                                            <asp:TextBox ID="company" runat="server" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="street">Street</label>
-                                            <input id="street" type="text" class="form-control">
+                                            <asp:TextBox ID="street" runat="server" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
                                 </div>
@@ -106,26 +107,26 @@
                                 <div class="row">
                                     <div class="col-md-6 col-lg-3">
                                         <div class="form-group">
-                                            <label for="city">Company</label>
-                                            <input id="city" type="text" class="form-control">
+                                            <label for="city">City</label>
+                                            <asp:TextBox ID="city" runat="server" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-3">
                                         <div class="form-group">
                                             <label for="zip">ZIP</label>
-                                            <input id="zip" type="text" class="form-control">
+                                            <asp:TextBox ID="zip" runat="server" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-3">
                                         <div class="form-group">
                                             <label for="state">State</label>
-                                            <select id="state" class="form-control"></select>
+                                            <asp:TextBox ID="state" runat="server" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-lg-3">
                                         <div class="form-group">
                                             <label for="country">Country</label>
-                                            <select id="country" class="form-control"></select>
+                                            <asp:DropDownList ID="country" runat="server" CssClass="form-control"></asp:DropDownList>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -140,8 +141,23 @@
                                             <asp:TextBox ID="Email" MaxLength="64" runat="server" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
+                                </div>
+                                <!-- /.row-->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="phone">Birthday</label>
+                                            <input id="birthday" runat="server" type="date" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="email">Gender</label>
+                                            <asp:DropDownList ID="gender" runat="server" CssClass="form-control"></asp:DropDownList>
+                                        </div>
+                                    </div>
                                     <div class="col-md-12 text-center">
-                                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Save changes</button>
+                                        <asp:LinkButton ID="btnSubmitUserAddress" runat="server" CssClass="btn btn-primary" OnClick="btnSubmitUserAddress_Click"><i class="fa fa-save"></i>Save changes</asp:LinkButton>
                                     </div>
                                 </div>
                             </div>

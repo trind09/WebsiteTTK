@@ -69,7 +69,10 @@ public partial class AspNetUserAddress
     public string State { get; set; }
     public string Zip { get; set; }
     public Nullable<System.DateTime> Birthday { get; set; }
-    public string Gender { get; set; }
+    public Nullable<bool> Gender { get; set; }
+    public string PhoneNumber { get; set; }
+    public string Email { get; set; }
+    public string AddressType { get; set; }
 }
 
 public partial class AspNetUserClaim
