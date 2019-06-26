@@ -37,6 +37,15 @@
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+    
+    <!-- JavaScript files-->
+    <script language="JavaScript" type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script language="JavaScript" type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script language="JavaScript" type="text/javascript" src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="vendor/jquery.cookie/jquery.cookie.js"> </script>
+    <script language="JavaScript" type="text/javascript" src="vendor/owl.carousel/owl.carousel.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="vendor/owl.carousel2.thumbs/owl.carousel2.thumbs.js"></script>
+    <script language="JavaScript" type="text/javascript" src="js/front.js"></script>
 </head>
 <body>
     <!-- navbar-->
@@ -287,13 +296,5 @@
         </div>
     </div>
     <!-- *** COPYRIGHT END ***-->
-    <!-- JavaScript files-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="vendor/jquery.cookie/jquery.cookie.js"> </script>
-    <script src="vendor/owl.carousel/owl.carousel.min.js"></script>
-    <script src="vendor/owl.carousel2.thumbs/owl.carousel2.thumbs.js"></script>
-    <script src="js/front.js"></script>
-    </div>
 </body>
 </html>

@@ -22,8 +22,6 @@
           <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'WebsiteTTK.dbo.AspNetUserAddress' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="AspNetUserAddress">
           <Key>
             <PropertyRef Name="Id" />
@@ -410,6 +408,7 @@ warning 6002: The table/view 'WebsiteTTK.dbo.AspNetUserAddress' does not have a 
         <EntityContainer Name="WebsiteTTKModelStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUserAddress" EntityType="Self.AspNetUserAddress" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
@@ -423,25 +422,6 @@ warning 6002: The table/view 'WebsiteTTK.dbo.AspNetUserAddress' does not have a 
           <EntitySet Name="orders" EntityType="Self.orders" Schema="sales" store:Type="Tables" />
           <EntitySet Name="staffs" EntityType="Self.staffs" Schema="sales" store:Type="Tables" />
           <EntitySet Name="stores" EntityType="Self.stores" Schema="sales" store:Type="Tables" />
-          <EntitySet Name="AspNetUserAddress" EntityType="Self.AspNetUserAddress" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [AspNetUserAddress].[Id] AS [Id], 
-    [AspNetUserAddress].[UserId] AS [UserId], 
-    [AspNetUserAddress].[Firstname] AS [Firstname], 
-    [AspNetUserAddress].[Lastname] AS [Lastname], 
-    [AspNetUserAddress].[Company] AS [Company], 
-    [AspNetUserAddress].[Street] AS [Street], 
-    [AspNetUserAddress].[City] AS [City], 
-    [AspNetUserAddress].[Country] AS [Country], 
-    [AspNetUserAddress].[State] AS [State], 
-    [AspNetUserAddress].[Zip] AS [Zip], 
-    [AspNetUserAddress].[Birthday] AS [Birthday], 
-    [AspNetUserAddress].[Gender] AS [Gender], 
-    [AspNetUserAddress].[PhoneNumber] AS [PhoneNumber], 
-    [AspNetUserAddress].[Email] AS [Email], 
-    [AspNetUserAddress].[AddressType] AS [AddressType]
-    FROM [dbo].[AspNetUserAddress] AS [AspNetUserAddress]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="FK__order_ite__order__4E88ABD4" Association="Self.FK__order_ite__order__4E88ABD4">
             <End Role="orders" EntitySet="orders" />
             <End Role="order_items" EntitySet="order_items" />

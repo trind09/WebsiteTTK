@@ -33,9 +33,10 @@ public partial class customer_account : System.Web.UI.Page
                         zip.Text = address.Zip;
                         state.Text = address.State;
                         SetupCountryDropDownList(address.Country);
-                        if (address.Birthday.Value != null)
+                        if (address.Birthday != null)
                         {
-                            birthday.Value = address.Birthday.Value.ToString("dd-MM-yyyy");
+                            string globalDateFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateFormat"];
+                            birthday.Value = address.Birthday.Value.ToString(globalDateFormat);
                         }
                         SetupGenderDropDownList(UserHelper.ConvertBooleanToGender(address.Gender));
 
@@ -66,6 +67,7 @@ public partial class customer_account : System.Web.UI.Page
                         SetupGenderDropDownList(null);
                     }
                 }
+                currentDateFormat.Value = System.Configuration.ConfigurationManager.AppSettings["GlobalDateFormat"];
             }
             else
             {
@@ -193,7 +195,8 @@ public partial class customer_account : System.Web.UI.Page
                         address.Country = Helper.StripHTML(country.SelectedValue);
                         try
                         {
-                            DateTime biDate = DateTime.ParseExact(Helper.StripHTML(birthday.Value), "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                            string globalDateFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateFormat"];
+                            DateTime biDate = DateTime.ParseExact(Helper.StripHTML(birthday.Value), globalDateFormat, System.Globalization.CultureInfo.InvariantCulture);
                             address.Birthday = biDate;
                         }
                         catch
@@ -236,7 +239,8 @@ public partial class customer_account : System.Web.UI.Page
                         address.Country = Helper.StripHTML(country.SelectedValue);
                         try
                         {
-                            DateTime biDate = DateTime.ParseExact(Helper.StripHTML(birthday.Value), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                            string globalDateFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateFormat"];
+                            DateTime biDate = DateTime.ParseExact(Helper.StripHTML(birthday.Value), globalDateFormat, System.Globalization.CultureInfo.InvariantCulture);
                             address.Birthday = biDate;
                         }
                         catch

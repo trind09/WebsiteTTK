@@ -147,7 +147,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="phone">Birthday</label>
-                                            <input id="birthday" runat="server" type="date" class="form-control">
+                                            <input id="birthday" runat="server" type="text" date="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -157,6 +157,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 text-center">
+                                        <input id="currentDateFormat" runat="server" type="text" style="display: none;">
                                         <asp:LinkButton ID="btnSubmitUserAddress" runat="server" CssClass="btn btn-primary" OnClick="btnSubmitUserAddress_Click"><i class="fa fa-save"></i>Save changes</asp:LinkButton>
                                     </div>
                                 </div>
@@ -167,5 +168,19 @@
             </div>
         </div>
     </form>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script>
+        $(document).ready(function () {
+            var currentDateFormat = $("#<%=currentDateFormat.ClientID%>").val();
+            $('input[date=date]').each(function () {
+                currentDateFormat = currentDateFormat.replace('yyyy', 'yy');
+                currentDateFormat = currentDateFormat.replace('MM', 'mm');
+                console.log(currentDateFormat);
+                $(this).datepicker({
+                    dateFormat: currentDateFormat
+                });
+            })
+        });
+    </script>
 </asp:Content>
 
