@@ -1,9 +1,17 @@
-﻿<%@ Page Title="Category" Language="C#" MasterPageFile="~/admin/admin.master" AutoEventWireup="true" CodeFile="Category.aspx.cs" Inherits="admin_Category" %>
-
-<asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/admin/admin.master" AutoEventWireup="true" CodeFile="Category.aspx.cs" Inherits="admin_Category" %>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder0" runat="Server">
+    <title>Category Management</title>
+</asp:Content>
+<asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+    <!--SummerNote rich text box library-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.js"></script>
+    <!--SummerNote rich text box library-->
     <form id="form1" runat="server">
         <asp:linkbutton runat="server" CssClass="btn btn-success" OnClientClick="return AskForApplyAllChange();" OnClick="btnApplyAllChanges_Click">Apply all changes</asp:linkbutton>
-        <asp:textbox id="Server_Data1" runat="server" enable="false"></asp:textbox>
+        <asp:textbox id="Category_Data_To_Post_To_Server" runat="server" enable="false"></asp:textbox>
         <asp:textbox id="txtDeletedIds" runat="server" enable="false"></asp:textbox>
         <link rel="stylesheet" href="AngularJS/css/toastr.css">
         <link rel="stylesheet" href="AngularJS/css/application.css">
@@ -12,7 +20,7 @@
                 <div class="row">
                     <div class="page-header">
                         <div class="span9">
-                            <h1>List of Category</h1>
+                            <h1>List of categories</h1>
                         </div>
                         <div class="span3">
                             <table>
@@ -47,23 +55,23 @@
                             <tr>
                                 <th><input type='checkbox' value='' ng-model='checkall'></th>
                                 <th ng-click="sortBy('category_id')" style="text-decoration: underline; cursor: pointer;">Category ID</th>
-                                <th ng-click="sortBy('category_id')" style="text-decoration: underline; cursor: pointer;">Category Name</th>
-                                <th>Categogy Description</th>
+                                <th ng-click="sortBy('category_name')" style="text-decoration: underline; cursor: pointer;">Name</th>
                                 <th>Images</th>
-                                <th ng-click="sortBy('create_date')" style="text-decoration: underline; cursor: pointer;">Create Date</th>
                                 <th>Parent ID</th>
+                                <th ng-click="sortBy('create_date')" style="text-decoration: underline; cursor: pointer;">Create Date</th>
+                                <th>Publish</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="item in filteredItems | orderBy:sortField:reverseOrder | filter:searchValue | startFrom:(currentPage - 1) * numPerPage | limitTo:numPerPage" class="comprado-{{ item.category_id }}">
+                            <tr ng-repeat="item in filteredItems | orderBy:sortField:reverseOrder | filter:searchValue | startFrom:(currentPage - 1) * numPerPage | limitTo:numPerPage" class="comprado-{{ item.category_name }}">
                                 <td><input type='checkbox' ng-checked="checkall" id="item-{{ item.category_id }}" value="{{ item.category_id }}"></td>
                                 <td><strong>{{ item.category_id }}</strong></td>
                                 <td>{{ item.category_name }}</td>
-                                <td><div style="width: 100%; height: 50px; overflow-y:auto;">{{ item.category_description }}</div></td>
-                                <td>{{ item.images }}</td>
-                                <td>{{ item.create_date | filterdate | date:'dd/MM/yyyy hh:mm:ss' }}</td>
+                                <td><a style="cursor: pointer;" ng-click="openUploadImagePanel(item.category_id)">Show Images</a></td>
                                 <td>{{ item.parent_id }}</td>
+                                <td>{{ item.create_date | filterdate | date:'dd/MM/yyyy hh:mm:ss' }}</td>
+                                <td>{{ item.is_publish }}</td>
                                 <td>
                                     <a class="btn btn-warning btn-small" ng-click="editarItem(item.category_id)">
                                         <i class="icon-pencil icon-white"></i>Edit
@@ -92,36 +100,51 @@
                 <table style="width: 100%">
                     <thead>
                         <tr>
-                            <th colspan="2">Category form</th>
+                            <th colspan="3">Category form</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Category ID:<span style="color:red">*</span></td>
-                            <td><input type="number" ng-model="item.category_id" placeholder="Category ID" style="width: 500px;" required></td>
+                            <td>Category ID: </td>
+                            <td><input type="number" readonly="readonly" ng-model="item.category_id" placeholder="Category ID" style="width: 500px;"></td>
+                            <td></td>
                         </tr>
                         <tr>
-                            <td>Category Name:<span style="color:red">*</span></td>
+                            <td>Category Name: </td>
                             <td><input type="text" ng-model="item.category_name" placeholder="Category Name" required style="width: 500px;"></td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>Category Description: </td>
-                            <td><textarea type="text" ng-model="item.category_description" placeholder="Category Description" class="input-small" cols="69" rows="10"></textarea></td>
+                            <td><textarea id="category_description_textarea" name="editordata" ng-model="item.category_description"></textarea></td>
+                            <td></td>
                         </tr>
                         <tr>
-                            <td>Images: </td>
-                            <td><input type="file" ng-model="item.images" placeholder="Images" style="width: 500px;"></td>
+                            <td>Category Images: </td>
+                            <td><a style="cursor: pointer;" ng-show="edit" ng-click="openUploadImagePanel(item.category_id)">Show Images</a></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Parent ID: </td>
+                            <td><input type="text" readonly ng-model="item.parent_id" placeholder="Parent_Category ID" class="input-small" required style="width: 500px;"></td>
+                            <td>Select parent category: 
+                                <select ng-model="item.parent_id">
+                                  <option ng-repeat="x in parentCategories" value="{{x.category_id}}">{{x.category_name}}</option>
+                                </select>
+                            </td>
                         </tr>
                         <tr>
                             <td>Create Date: </td>
                             <td><input type="date" ng-model="item.create_date" placeholder="Create Date" class="input-small" style="width: 500px;"></td>
-                        </tr>
-                         <tr>
-                            <td>Paren ID: </td>
-                            <td><input type="number" ng-model="item.parent_id" placeholder="Parent ID" style="width: 500px;"></td>
+                            <td></td>
                         </tr>
                         <tr>
-                            <td colspan="2">
+                            <td>Publish: </td>
+                            <td><input type="checkbox" ng-model="item.is_publish" class="input-small"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
                                 <a ng-hide="edit" class="btn btn-success" ng-disabled="validarValoresPreenchidos.$invalid" ng-click="adicionaItem()">
                                     <i class="icon-plus icon-white"></i>Add
                                 </a>
@@ -134,17 +157,31 @@
                 </table>
             </div>
             <script>
-                var Server_Data = {};
+                var Category_Data_lList = {};
                 $(document).ready(function () {
-                    var data = $("#<%=Server_Data.ClientID%>").text();
-                    Server_Data = jQuery.parseJSON(data);
+                    var categoryDataJson = $("#<%=Categories_Data.ClientID%>").text();
+                    Category_Data_lList = jQuery.parseJSON(categoryDataJson);
                     var TodoController = 'div[ng-controller="TodoController"]';
                     var scope = angular.element(TodoController).scope();
+
                     var myFilter = scope.myFilter;
-                    scope.items = Server_Data;
+                    scope.items = Category_Data_lList;
+                    
+                    //trigger summoer note rich text editor
+                    $('#category_description_textarea').summernote({
+                        callbacks: {
+                            onBlur: function () {
+                                SetTextToCategoryDescription();
+                            }
+                        }
+                    });
+
                     //Copy a new item from existing object. This could help to reduce from update to this list when you are updated orginal list
                     //scope.copyOfItems = Object.assign([], Server_Data);
                     scope.totalItem = scope.items.length;
+
+                    var parentCategoryDataJson = $("#<%=Parent_Category_Data.ClientID%>").text();
+                    scope.parentCategories = jQuery.parseJSON(parentCategoryDataJson);
 
                     scope.$watch('searchValue', function () {
                         scope.filteredItems = myFilter('filter')(scope.items, scope.searchValue);
@@ -160,16 +197,30 @@
                         }
                     });
 
+                    scope.openUploadImagePanel = function (category_id) {
+                        $('#popup_container').append('<iframe src="ImageUpload.aspx?id=' + category_id + '&table_name=categories" id="ImageUpload" style="width: 100%; height: 100%;"></iframe>');
+                        jQuery('.popup').show();
+                        return false;
+                    };
+
                     scope.$apply();
 
                     DisableSeverControls();
                 });
 
+                //Set text to category description when user enter text to category description rich text editor (summernote editor)
+                function SetTextToCategoryDescription() {
+                    var TodoController = 'div[ng-controller="TodoController"]';
+                    var scope = angular.element(TodoController).scope();
+                    scope.item.category_description = $('.note-editable.card-block').html();
+                }
+
                 function AskForApplyAllChange() {
                     if (confirm('Are you sure to apply all change?')) {
                         var TodoController = 'div[ng-controller="TodoController"]';
                         var scope = angular.element(TodoController).scope();
-                        $("#<%=Server_Data1.ClientID%>").val(JSON.stringify(scope.addedOrUpdatedItems));
+                        
+                        $("#<%=Category_Data_To_Post_To_Server.ClientID%>").val(JSON.stringify(scope.addedOrUpdatedItems));
                         $("#<%=txtDeletedIds.ClientID%>").val(JSON.stringify(scope.deletedIds));
                         return true;
                     }
@@ -177,7 +228,7 @@
                 }
 
                 function DisableSeverControls() {
-                    $("#<%=Server_Data1.ClientID%>").keypress(function(e) {
+                    $("#<%=Category_Data_To_Post_To_Server.ClientID%>").keypress(function(e) {
                         e.preventDefault();
                     });
 
@@ -185,10 +236,24 @@
                         e.preventDefault();
                     });
                 }
+
+                function ClosePopup() {
+                    $('#ImageUpload').remove();
+                    jQuery('.popup').fadeOut();
+                    return false;
+                }
             </script>
             <script src="AngularJS/lib/toastr.min.js"></script>
             <script src="AngularJS/app/category.js"></script>
-            <div runat="server" id="Server_Data" style="display: none;"></div>
+            <div runat="server" id="Categories_Data" style="display: none;"></div>
+            <div runat="server" id="Parent_Category_Data" style="display: none;"></div>
+
+            <div class="popup" style="display: none; z-index: 10001">
+                <div class="container"><div class="text" id="popup_container">
+                    <p class="close" id="close_window_popup"><a style="cursor: pointer;position: absolute;top: 0;right: 0;padding: 10px; color: red;" onclick="return ClosePopup();">Close Window</a></p>
+                </div></div>
+                <div class="bg"></div>
+            </div>
         </div>
     </form>
 </asp:Content>

@@ -25,6 +25,7 @@ public partial class WebsiteTTKEntities : DbContext
 
     public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
     public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
+    public virtual DbSet<AspNetUserAddress> AspNetUserAddresses { get; set; }
     public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
     public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
     public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
@@ -37,5 +38,4 @@ public partial class WebsiteTTKEntities : DbContext
     public virtual DbSet<order> orders { get; set; }
     public virtual DbSet<staff> staffs { get; set; }
     public virtual DbSet<store> stores { get; set; }
-    public virtual DbSet<AspNetUserAddress> AspNetUserAddresses { get; set; }
 }

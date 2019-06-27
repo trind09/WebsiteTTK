@@ -1,4 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/admin/admin.master" AutoEventWireup="true" CodeFile="Product.aspx.cs" Inherits="admin_Product" %>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder0" runat="Server">
+    <title>Product Management</title>
+</asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <!--SummerNote rich text box library-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
@@ -280,7 +283,7 @@
             <div runat="server" id="Brand_Data" style="display: none;"></div>
             <div runat="server" id="Category_Data" style="display: none;"></div>
 
-            <div class="popup" style="display: none;">
+            <div class="popup" style="display: none; z-index: 10001">
                 <div class="container"><div class="text" id="popup_container">
                     <p class="close" id="close_window_popup"><a style="cursor: pointer;position: absolute;top: 0;right: 0;padding: 10px; color: red;" onclick="return ClosePopup();">Close Window</a></p>
                 </div></div>

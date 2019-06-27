@@ -170,7 +170,7 @@ public partial class customer_account : System.Web.UI.Page
             var userStore = new UserStore<IdentityUser>();
             var userManager = new UserManager<IdentityUser>(userStore);
             System.Threading.Tasks.Task<IdentityUser> user = userManager.FindByNameAsync(userName);
-            if (user != null)
+            if (user.Result != null)
             {
                 //Because of updating user's profile, thus it use home address.
                 List<AspNetUserAddress> addresses = UserHelper.GetUserAddressByUserId(user.Result.Id, UserHelper.AddressType.HomeAddress);

@@ -1,11 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System;
 using System.Web.Script.Serialization;
-using System.Web.UI;
-using System.Web.UI.WebControls;
+using System.Linq;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 public partial class admin_Category : System.Web.UI.Page
 {
@@ -19,14 +16,14 @@ public partial class admin_Category : System.Web.UI.Page
 
     protected void btnApplyAllChanges_Click(object sender, EventArgs e)
     {
-        //Create product list from json posted from client
-        List<category> categorys = new List<category>();
-        var categorysJon = Server_Data1.Text;
-        dynamic categorysResponse = JsonConvert.DeserializeObject(categorysJon);
-        if (categorysResponse.Count > 0)
+        //Create category list from json posted from client
+        List<category> categories = new List<category>();
+        var categoriesJson = Category_Data_To_Post_To_Server.Text;
+        dynamic categoriesResponse = JsonConvert.DeserializeObject(categoriesJson);
+        if (categoriesResponse.Count > 0)
         {
-            List<object> categorysObjects = categorysResponse.ToObject<List<object>>();
-            foreach (var obj in categorysObjects)
+            List<object> categoryObjects = categoriesResponse.ToObject<List<object>>();
+            foreach (var obj in categoryObjects)
             {
                 category item = new category();
 
@@ -36,19 +33,23 @@ public partial class admin_Category : System.Web.UI.Page
 
                 item.category_name = Helper.GetPropValue(obj + "", "category_name") + "";
                 item.category_description = Helper.GetPropValue(obj + "", "category_description") + "";
-                item.images = Helper.GetPropValue(obj + "", "images") + "";
+
                 item.create_date = Helper.ConverToDateTime(Helper.GetPropValue(obj + "", "create_date") + "");
 
                 int parent_id = -1;
                 Int32.TryParse(Helper.GetPropValue(obj + "", "parent_id") + "", out parent_id);
                 item.parent_id = parent_id;
 
-                categorys.Add(item);
+                bool is_publish = true;
+                bool.TryParse(Helper.GetPropValue(obj + "", "is_publish") + "", out is_publish);
+                item.is_publish = is_publish;
+
+                categories.Add(item);
             }
         }
 
-        //Delete records from product
-        //Get product ids from json posted from client
+        //Delete records from category
+        //Get category ids from json posted from client
         var deletedIdsJson = txtDeletedIds.Text;
         dynamic deletedIdsResponse = JsonConvert.DeserializeObject(deletedIdsJson);
         if (deletedIdsResponse.Count > 0)
@@ -59,14 +60,14 @@ public partial class admin_Category : System.Web.UI.Page
             {
                 foreach (var id in deletedIds)
                 {
-                    var found = categorys.Find(x => x.category_id == id);
-                    if (found != null) categorys.Remove(found);
+                    var found = categories.Find(x => x.category_id == id);
+                    if (found != null) categories.Remove(found);
                 }
-                CategoryHepler.DeleteCategoryByIds(deletedIds);
+                CategoryHelper.DeleteCategoryByIds(deletedIds);
             }
         }
 
-        CategoryHepler.Updatecategorys(categorys);
+        CategoryHelper.UpdateCategories(categories);
         PushDataToClient();
     }
 
@@ -75,18 +76,35 @@ public partial class admin_Category : System.Web.UI.Page
     {
         using (var context = new WebsiteTTKEntities())
         {
-            IQueryable<category> qTable = from t in context.categories
-                                       select t; // can you confirm if your context has Tables or MyTables?
-            var list = qTable.Select(s => new {
+            //Get category data
+            IQueryable<category> qCategoriesTable = from t in context.categories
+                                                 select t; // can you confirm if your context has Tables or MyTables?
+            var listOfCategories = qCategoriesTable.Select(s => new {
                 s.category_id,
                 s.category_name,
                 s.category_description,
-                s.images,
+                s.category_images,
                 s.create_date,
-                s.parent_id
+                s.parent_id,
+                s.is_publish
             }).ToList();
-            var json = new JavaScriptSerializer().Serialize(list);
-            Server_Data.InnerText = json;
+            var categoriesJson = new JavaScriptSerializer().Serialize(listOfCategories);
+            Categories_Data.InnerText = categoriesJson;
+
+            //Get brand data
+            IQueryable<category> qParent_CategorysTable = from t in context.categories
+                                             select t; // can you confirm if your context has Tables or MyTables?
+            var listOfParentCategories = qParent_CategorysTable.Select(s => new {
+                s.category_id,
+                s.category_name,
+                s.category_description,
+                s.category_images,
+                s.create_date,
+                s.parent_id,
+                s.is_publish
+            }).ToList();
+            var parentcCategoriesJson = new JavaScriptSerializer().Serialize(listOfParentCategories);
+            Parent_Category_Data.InnerText = parentcCategoriesJson;
         }
     }
 }

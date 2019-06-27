@@ -131,9 +131,10 @@ public partial class category
     public int category_id { get; set; }
     public string category_name { get; set; }
     public string category_description { get; set; }
-    public string images { get; set; }
+    public string category_images { get; set; }
     public Nullable<System.DateTime> create_date { get; set; }
     public Nullable<int> parent_id { get; set; }
+    public Nullable<bool> is_publish { get; set; }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<product> products { get; set; }

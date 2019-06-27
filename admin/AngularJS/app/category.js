@@ -7,6 +7,8 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
     $scope.currentNumPerPage = 0;
     $scope.item = {};
     $scope.items = [];
+    $scope.parentcCategories = [];
+    $scope.categories = [];
     $scope.copyOfItems = [];
     $scope.addedOrUpdatedItems = [];
     $scope.deletedIds = [];
@@ -24,7 +26,6 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
 
     $scope.isIdExisted = function (newGeneratedcategory_id) {
         var index = $scope.items.findIndex(x => x.category_id === newGeneratedcategory_id);
-        console.log(index);
         if (index < 0) {
             return false;
         }
@@ -39,18 +40,19 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
             newGeneratedcategory_id = $scope.getRandomId($scope.items.length);
         }
         while ($scope.isIdExisted(newGeneratedcategory_id));
-        console.log(newGeneratedcategory_id);
         var today = $filter('date')(new Date(), 'dd/MM/yyyy HH:mm:ss');
 
+        //Because aspx control doesn't allow to post html in textbox. So we will escape the html content.
+        var escapedCategoryDescription = $scope.Escaped($scope.item.category_description);
+
         $scope.items.push({
-            category_id: newGeneratedcategory_id, category_name: $scope.item.category_name, category_description: $scope.item.category_description,
-            images: $scope.item.images, create_date: today, parent_id: $scope.item.parent_id
+            category_id: newGeneratedcategory_id, category_name: $scope.item.category_name, category_images: $scope.item.category_images,
+            category_description: escapedCategoryDescription, create_date: today, is_publish: $scope.item.is_publish, parent_id: $scope.item.parent_id
         });
 
         $scope.addedOrUpdatedItems.push({
-            category_id: newGeneratedcategory_id, category_name: $scope.item.category_name, category_description: $scope.item.category_description,
-            images: $scope.item.images,  parent_id: $scope.item.parent_id,
-            create_date: today
+            category_id: newGeneratedcategory_id, category_name: $scope.item.category_name, category_images: $scope.item.category_images,
+            category_description: escapedCategoryDescription, parent_id: $scope.item.parent_id, create_date: today, is_publish: $scope.item.is_publish
         });
 
         $scope.item.category_id = '';
@@ -67,6 +69,10 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         var index = $scope.items.findIndex(x => x.category_id === id);
         $scope.item = $scope.items[index];
         $scope.item.create_date = $scope.GetDate($scope.item.create_date);
+        //Because aspx control doesn't allow to post html in textbox. So we will escape the html content.
+        $scope.item.category_description = $scope.Unescaped($scope.item.category_description);
+        //Set data to summernote content to be editing.
+        $('#category_description_textarea').summernote('code', $scope.item.category_description);
         $scope.edit = true;
     };
 
@@ -74,13 +80,17 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
     $scope.applyChanges = function (index) {
         var item = $scope.item;
 
+        var escapedCategoryDescription = $("<div>").text(item.category_description).html();
+        
         //Update source item
         var item1 = $scope.items.find(x => x.category_id == item.category_id);
         item1.category_name = item.category_name;
-        item1.category_description = item.category_description;
-        item1.images = item.images;
-        item1.create_date = item.create_date;
+        item1.category_description = escapedCategoryDescription;
+        //item1.category_images = item.category_images;
         item1.parent_id = item.parent_id;
+        item1.category_images = item.category_images;
+        item1.create_date = item.create_date;
+        item1.is_publish = item.is_publish;
 
         var existedUpdatedItem = $scope.addedOrUpdatedItems.find(x => x.category_id == item.category_id);
         if (existedUpdatedItem != null) {
@@ -92,15 +102,15 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         $scope.item = {};
         $scope.edit = false;
         toastr.success("Item updated successful.");
+
+        //Remove summernote texarea content after update. This will help other to add new record withou confusing on old data.
+        $('#category_description_textarea').summernote('code', "");
     };
 
     //Delete item function
     $scope.deleteItem = function (id) {
         if (confirm('Are you sure to delete?')) {
             var index = $scope.items.findIndex(x => x.category_id === id);
-            var item = $scope.items[index];
-
-
 
             $scope.items.splice(index, 1);
             $scope.filteredItems = $scope.items;
@@ -154,6 +164,18 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
             return null;
         }
     };
+
+    //Unescape the html content to view on client
+    $scope.Unescaped = function (x) {
+        var unEscapedStr = $("<div>").html(x).text();
+        return unEscapedStr;
+    }
+
+    //Escape the html content to post to server
+    $scope.Escaped = function (x) {
+        var escapedStr = $("<div>").text(x).html();
+        return escapedStr;
+    }
 }]);
 
 app.filter('startFrom', function () {

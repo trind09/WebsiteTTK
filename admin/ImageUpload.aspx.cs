@@ -48,6 +48,28 @@ public partial class admin_ImageUpload : System.Web.UI.Page
                         }
                     }
                 }
+            } else if (table_name == "categories")
+            {
+                int category_id = -1;
+                Int32.TryParse(id, out category_id);
+                if (category_id > 0)
+                {
+                    IQueryable<category> qCategoriesTable = from t in context.categories
+                                                         where t.category_id == category_id
+                                                         select t;
+                    category objCat = qCategoriesTable.FirstOrDefault();
+                    if (objCat != null)
+                    {
+                        if (objCat.category_images != null)
+                        {
+                            Images_Data.InnerText = objCat.category_images;
+                        }
+                        else
+                        {
+                            Images_Data.InnerText = "";
+                        }
+                    }
+                }
             }
 
             string hostURL = Helper.GetHostURL();
@@ -105,6 +127,48 @@ public partial class admin_ImageUpload : System.Web.UI.Page
                         } else
                         {
                             lblUploadResult.Text = "<br/>Product id " + product_id + " doesn't exist!";
+                        }
+                    }
+                } else if (table_name == "categories")
+                {
+                    int category_id = -1;
+                    Int32.TryParse(id, out category_id);
+                    if (category_id > 0)
+                    {
+                        IQueryable<category> qCategoriesTable = from t in context.categories
+                                                             where t.category_id == category_id
+                                                             select t;
+                        category objCat = qCategoriesTable.FirstOrDefault();
+                        if (objCat != null)
+                        {
+                            string subPath = "~/admin/img/cat_" + category_id + "/";
+
+                            List<KeyValuePair<string, object>> result = Helper.SaveFileFromUpload(subPath, fulImageUpload, new string[] { ".jpg", ".gif", ".png", ".jpeg" });
+                            string message = result.First(kvp => kvp.Key == "message").Value.ToString();
+                            string isSuccess = result.First(kvp => kvp.Key == "result").Value.ToString();
+                            if (Boolean.Parse(isSuccess))
+                            {
+                                string fileName = result.First(kvp => kvp.Key == "fileName").Value.ToString();
+
+                                if (objCat.category_images != null)
+                                {
+                                    objCat.category_images = objCat.category_images + ";admin/img/cat_" + category_id + "/" + fileName;
+                                }
+                                else
+                                {
+                                    objCat.category_images = "admin/img/cat_" + category_id + "/" + fileName;
+                                }
+                                CategoryHelper.UpdateCategories(new List<category> { objCat }, true);
+                                lblUploadResult.Text = "<br/>" + message;
+                            }
+                            else
+                            {
+                                lblUploadResult.Text = "<br/>" + message;
+                            }
+                        }
+                        else
+                        {
+                            lblUploadResult.Text = "<br/>Category id " + category_id + " doesn't exist!";
                         }
                     }
                 }

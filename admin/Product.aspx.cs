@@ -129,7 +129,7 @@ public partial class admin_Product :  System.Web.UI.Page
                 s.category_id,
                 s.category_name,
                 s.category_description,
-                s.images,
+                s.category_images,
                 s.create_date,
                 s.parent_id
             }).ToList();

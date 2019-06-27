@@ -8,7 +8,6 @@
 
 <html>
 <head runat="server">
-    <title>Product Management</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,6 +20,8 @@
     <script data-require="ui-bootstrap@*" data-semver="0.12.1" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.1.min.js"></script>
     <link rel="stylesheet" href="~/admin/AngularJS/css/adminmaster.css">
     <link rel="stylesheet" href="~/admin/AngularJS/css/dialogbox.css">
+    <asp:ContentPlaceHolder id="ContentPlaceHolder0" runat="server">
+    </asp:ContentPlaceHolder>
 </head>
 <body>
     <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">

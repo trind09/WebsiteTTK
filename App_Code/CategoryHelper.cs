@@ -4,11 +4,11 @@ using System.Linq;
 using System.Web;
 
 /// <summary>
-/// Summary description for CategoryHepler
+/// Summary description for CategoryHelper
 /// </summary>
-public class CategoryHepler
+public class CategoryHelper
 {
-    public CategoryHepler()
+    public CategoryHelper()
     {
         //
         // TODO: Add constructor logic here
@@ -32,21 +32,32 @@ public class CategoryHepler
         }
     }
 
-    public static void Updatecategorys(List<category> categorys)
+    public static void UpdateCategories(List<category> categories, bool isUpdateCategoryImages = false)
     {
         using (var context = new WebsiteTTKEntities())
         {
-            foreach (category item in categorys)
+            foreach (category item in categories)
             {
                 var result = context.categories.SingleOrDefault(b => b.category_id == item.category_id);
                 if (result != null)
                 {
                     result.category_name = item.category_name;
                     result.category_description = item.category_description;
-                    result.images = item.images;
+                    if (isUpdateCategoryImages)
+                    {
+                        result.category_images = item.category_images;
+                    }
                     result.create_date = item.create_date;
                     result.parent_id = item.parent_id;
-                    context.SaveChanges();
+                    result.is_publish = item.is_publish;
+
+                    try
+                    {
+                        context.SaveChanges();
+                    } catch (Exception ex)
+                    {
+                        LogHelper.Log("App_Code\\CategoryHelper.cs", LogHelper.ErrorType.Error, ex);
+                    }
                 }
                 else
                 {
@@ -54,20 +65,22 @@ public class CategoryHepler
                     {
                         category_name = item.category_name,
                         category_description = item.category_description,
-                        images = item.images,
+                        category_images = item.category_images,
                         create_date = item.create_date,
-                        parent_id = item.parent_id
+                        parent_id = item.parent_id,
+                        is_publish = item.is_publish
                     });
 
-                    context.SaveChanges();
+                    try
+                    {
+                        context.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.Log("App_Code\\CategoryHelper.cs", LogHelper.ErrorType.Error, ex);
+                    }
                 }
             }
         }
     }
-
-    public static void Updatecategorys()
-    {
-        throw new NotImplementedException();
-    }
-
 }
