@@ -60,6 +60,7 @@
                                 <th>Parent ID</th>
                                 <th ng-click="sortBy('create_date')" style="text-decoration: underline; cursor: pointer;">Create Date</th>
                                 <th>Publish</th>
+                                <th>Is Menu?</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -72,6 +73,7 @@
                                 <td>{{ item.parent_id }}</td>
                                 <td>{{ item.create_date | filterdate | date:'dd/MM/yyyy hh:mm:ss' }}</td>
                                 <td>{{ item.is_publish }}</td>
+                                <td>{{ item.is_menu }}</td>
                                 <td>
                                     <a class="btn btn-warning btn-small" ng-click="editarItem(item.category_id)">
                                         <i class="icon-pencil icon-white"></i>Edit
@@ -141,6 +143,11 @@
                         <tr>
                             <td>Publish: </td>
                             <td><input type="checkbox" ng-model="item.is_publish" class="input-small"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td title="If this element checked, this category will be used for the menu.">Is Menu: </td>
+                            <td><input type="checkbox" ng-model="item.is_menu" class="input-small"></td>
                             <td></td>
                         </tr>
                         <tr>

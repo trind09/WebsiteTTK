@@ -50,6 +50,7 @@ public class CategoryHelper
                     result.create_date = item.create_date;
                     result.parent_id = item.parent_id;
                     result.is_publish = item.is_publish;
+                    result.is_menu = item.is_menu;
 
                     try
                     {
@@ -68,7 +69,8 @@ public class CategoryHelper
                         category_images = item.category_images,
                         create_date = item.create_date,
                         parent_id = item.parent_id,
-                        is_publish = item.is_publish
+                        is_publish = item.is_publish,
+                        is_menu = item.is_menu
                     });
 
                     try
