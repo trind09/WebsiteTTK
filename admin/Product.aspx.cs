@@ -58,6 +58,22 @@ public partial class admin_Product :  System.Web.UI.Page
                 bool.TryParse(Helper.GetPropValue(obj + "", "is_publish") + "", out is_publish);
                 item.is_publish = is_publish;
 
+                bool is_featured = true;
+                bool.TryParse(Helper.GetPropValue(obj + "", "is_featured") + "", out is_featured);
+                item.is_featured = is_featured;
+
+                bool is_sale = true;
+                bool.TryParse(Helper.GetPropValue(obj + "", "is_sale") + "", out is_sale);
+                item.is_sale = is_sale;
+
+                bool is_new = true;
+                bool.TryParse(Helper.GetPropValue(obj + "", "is_new") + "", out is_new);
+                item.is_new = is_new;
+
+                bool is_gift = true;
+                bool.TryParse(Helper.GetPropValue(obj + "", "is_gift") + "", out is_gift);
+                item.is_gift = is_gift;
+
                 products.Add(item);
             }
         }
@@ -104,7 +120,11 @@ public partial class admin_Product :  System.Web.UI.Page
                 s.list_price,
                 s.create_date,
                 s.create_by,
-                s.is_publish
+                s.is_publish,
+                s.is_featured,
+                s.is_sale,
+                s.is_new,
+                s.is_gift
             }).ToList();
             var productsJson = new JavaScriptSerializer().Serialize(listOfProducts);
             Products_Data.InnerText = productsJson;

@@ -54,6 +54,10 @@ public class ProductHelper
                     result.create_date = item.create_date;
                     result.create_by = item.create_by;
                     result.is_publish = item.is_publish;
+                    result.is_featured = item.is_featured;
+                    result.is_sale = item.is_sale;
+                    result.is_new = item.is_new;
+                    result.is_gift = item.is_gift;
 
                     context.SaveChanges();
                 } else
@@ -68,7 +72,11 @@ public class ProductHelper
                         list_price = item.list_price,
                         create_date = item.create_date,
                         create_by = item.create_by,
-                        is_publish = item.is_publish
+                        is_publish = item.is_publish,
+                        is_featured = item.is_featured,
+                        is_sale = item.is_sale,
+                        is_new = item.is_new,
+                        is_gift = item.is_gift
                     });
 
                     context.SaveChanges();

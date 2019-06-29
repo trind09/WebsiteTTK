@@ -220,6 +220,10 @@ public partial class product
     public Nullable<System.DateTime> create_date { get; set; }
     public string create_by { get; set; }
     public Nullable<bool> is_publish { get; set; }
+    public Nullable<bool> is_featured { get; set; }
+    public Nullable<bool> is_sale { get; set; }
+    public Nullable<bool> is_new { get; set; }
+    public Nullable<bool> is_gift { get; set; }
 
     public virtual brand brand { get; set; }
     public virtual category category { get; set; }

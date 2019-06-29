@@ -64,6 +64,10 @@
                                 <th ng-click="sortBy('create_date')" style="text-decoration: underline; cursor: pointer;">Create Date</th>
                                 <th>Create By</th>
                                 <th>Publish</th>
+                                <th title="If this feature checked this product will be shown on body slider (TTK Shop)">Feature</th>
+                                <th title="If this feature checked this product will be on sale">Sale</th>
+                                <th title="If this feature checked this product will be new">New</th>
+                                <th title="If this feature checked this product will be gift">Gift</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -80,6 +84,10 @@
                                 <td>{{ item.create_date | filterdate | date:'dd/MM/yyyy hh:mm:ss' }}</td>
                                 <td>{{ item.create_by }}</td>
                                 <td>{{ item.is_publish }}</td>
+                                <td>{{ item.is_featured }}</td>
+                                <td>{{ item.is_sale }}</td>
+                                <td>{{ item.is_new }}</td>
+                                <td>{{ item.is_gift }}</td>
                                 <td>
                                     <a class="btn btn-warning btn-small" ng-click="editarItem(item.product_id)">
                                         <i class="icon-pencil icon-white"></i>Edit
@@ -173,6 +181,26 @@
                         <tr>
                             <td>Publish: </td>
                             <td><input type="checkbox" ng-model="item.is_publish" class="input-small"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td title="If this feature checked this product will be shown on body slider (TTK Shop)">Feature: </td>
+                            <td><input type="checkbox" ng-model="item.is_featured" class="input-small"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td title="If this feature checked this product will be on sale">Sale: </td>
+                            <td><input type="checkbox" ng-model="item.is_sale" class="input-small"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td title="If this feature checked this product will be new">New: </td>
+                            <td><input type="checkbox" ng-model="item.is_new" class="input-small"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td title="If this feature checked this product will be gift">Gift: </td>
+                            <td><input type="checkbox" ng-model="item.is_gift" class="input-small"></td>
                             <td></td>
                         </tr>
                         <tr>
