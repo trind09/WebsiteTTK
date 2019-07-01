@@ -6,19 +6,19 @@
     <edmx:Diagrams>
       <Diagram DiagramId="3d15ab36daf24d9690fca1f7e33bb256" Name="Diagram1" ZoomLevel="73">
         <EntityTypeShape EntityType="WebsiteTTKModel.C__MigrationHistory" Width="1.5" PointX="9.75" PointY="9.375" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.AspNetRole" Width="1.5" PointX="7.75" PointY="5.125" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.AspNetRole" Width="1.5" PointX="5.75" PointY="5.125" />
         <EntityTypeShape EntityType="WebsiteTTKModel.AspNetUserAddress" Width="1.5" PointX="9.75" PointY="12.375" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.AspNetUserClaim" Width="1.5" PointX="12.25" PointY="6.125" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.AspNetUserLogin" Width="1.5" PointX="12.25" PointY="3.625" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.AspNetUser" Width="1.5" PointX="10" PointY="4" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.brand" Width="1.5" PointX="1.5" PointY="18.125" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.category" Width="1.5" PointX="1.5" PointY="14.625" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.AspNetUserClaim" Width="1.5" PointX="10.25" PointY="6.125" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.AspNetUserLogin" Width="1.5" PointX="10.25" PointY="3.625" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.AspNetUser" Width="1.5" PointX="8" PointY="4" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.brand" Width="1.5" PointX="1.5" PointY="19" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.category" Width="1.5" PointX="1.5" PointY="21.875" />
         <EntityTypeShape EntityType="WebsiteTTKModel.product" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.stock" Width="1.5" PointX="3" PointY="7.125" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.customer" Width="1.5" PointX="3" PointY="3" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.order_items" Width="1.5" PointX="7.5" PointY="9.25" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.order" Width="1.5" PointX="5.25" PointY="8.875" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.staff" Width="1.5" PointX="3" PointY="10" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.stock" Width="1.5" PointX="3" PointY="8.125" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.customer" Width="1.5" PointX="3" PointY="4" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.order_items" Width="1.5" PointX="7.5" PointY="11.25" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.order" Width="1.5" PointX="5.25" PointY="10.875" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.staff" Width="1.5" PointX="3" PointY="14.125" />
         <EntityTypeShape EntityType="WebsiteTTKModel.store" Width="1.5" PointX="0.75" PointY="7.5" />
         <AssociationConnector Association="WebsiteTTKModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" />
         <AssociationConnector Association="WebsiteTTKModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" />
@@ -26,11 +26,11 @@
         <AssociationConnector Association="WebsiteTTKModel.FK__products__catego__3C69FB99" />
         <AssociationConnector Association="WebsiteTTKModel.FK__order_ite__produ__4F7CD00D" />
         <AssociationConnector Association="WebsiteTTKModel.FK__stocks__product___534D60F1" />
-        <AssociationConnector Association="WebsiteTTKModel.FK__stocks__store_id__52593CB8" />
+        <AssociationConnector Association="WebsiteTTKModel.FK__stocks__store_id__35BCFE0A" />
         <AssociationConnector Association="WebsiteTTKModel.FK__orders__customer__48CFD27E" />
-        <AssociationConnector Association="WebsiteTTKModel.FK__order_ite__order__4E88ABD4" />
+        <AssociationConnector Association="WebsiteTTKModel.FK__order_ite__order__36B12243" />
         <AssociationConnector Association="WebsiteTTKModel.FK__orders__staff_id__4AB81AF0" />
-        <AssociationConnector Association="WebsiteTTKModel.FK__orders__store_id__49C3F6B7" />
+        <AssociationConnector Association="WebsiteTTKModel.FK__orders__store_id__3A81B327" />
         <AssociationConnector Association="WebsiteTTKModel.FK__staffs__manager___45F365D3" />
         <AssociationConnector Association="WebsiteTTKModel.FK__staffs__store_id__44FF419A" />
         <AssociationConnector Association="WebsiteTTKModel.AspNetUserRoles" />
