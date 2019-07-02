@@ -205,7 +205,7 @@
           <Property Name="state" Type="varchar" MaxLength="10" />
           <Property Name="zip_code" Type="varchar" MaxLength="5" />
         </EntityType>
-        <Association Name="FK__order_ite__order__36B12243">
+        <Association Name="FK__order_ite__order__4E88ABD4">
           <End Role="orders" Type="Self.orders" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -259,7 +259,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__orders__store_id__3A81B327">
+        <Association Name="FK__orders__store_id__49C3F6B7">
           <End Role="stores" Type="Self.stores" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -341,7 +341,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__stocks__store_id__35BCFE0A">
+        <Association Name="FK__stocks__store_id__52593CB8">
           <End Role="stores" Type="Self.stores" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -428,7 +428,7 @@
           <EntitySet Name="orders" EntityType="Self.orders" Schema="sales" store:Type="Tables" />
           <EntitySet Name="staffs" EntityType="Self.staffs" Schema="sales" store:Type="Tables" />
           <EntitySet Name="stores" EntityType="Self.stores" Schema="sales" store:Type="Tables" />
-          <AssociationSet Name="FK__order_ite__order__36B12243" Association="Self.FK__order_ite__order__36B12243">
+          <AssociationSet Name="FK__order_ite__order__4E88ABD4" Association="Self.FK__order_ite__order__4E88ABD4">
             <End Role="orders" EntitySet="orders" />
             <End Role="order_items" EntitySet="order_items" />
           </AssociationSet>
@@ -444,7 +444,7 @@
             <End Role="staffs" EntitySet="staffs" />
             <End Role="orders" EntitySet="orders" />
           </AssociationSet>
-          <AssociationSet Name="FK__orders__store_id__3A81B327" Association="Self.FK__orders__store_id__3A81B327">
+          <AssociationSet Name="FK__orders__store_id__49C3F6B7" Association="Self.FK__orders__store_id__49C3F6B7">
             <End Role="stores" EntitySet="stores" />
             <End Role="orders" EntitySet="orders" />
           </AssociationSet>
@@ -468,7 +468,7 @@
             <End Role="products" EntitySet="products" />
             <End Role="stocks" EntitySet="stocks" />
           </AssociationSet>
-          <AssociationSet Name="FK__stocks__store_id__35BCFE0A" Association="Self.FK__stocks__store_id__35BCFE0A">
+          <AssociationSet Name="FK__stocks__store_id__52593CB8" Association="Self.FK__stocks__store_id__52593CB8">
             <End Role="stores" EntitySet="stores" />
             <End Role="stocks" EntitySet="stocks" />
           </AssociationSet>
@@ -533,7 +533,7 @@
             <End Role="product" EntitySet="products" />
             <End Role="stock" EntitySet="stocks" />
           </AssociationSet>
-          <AssociationSet Name="FK__stocks__store_id__35BCFE0A" Association="WebsiteTTKModel.FK__stocks__store_id__35BCFE0A">
+          <AssociationSet Name="FK__stocks__store_id__52593CB8" Association="WebsiteTTKModel.FK__stocks__store_id__52593CB8">
             <End Role="store" EntitySet="stores" />
             <End Role="stock" EntitySet="stocks" />
           </AssociationSet>
@@ -541,7 +541,7 @@
             <End Role="customer" EntitySet="customers" />
             <End Role="order" EntitySet="orders" />
           </AssociationSet>
-          <AssociationSet Name="FK__order_ite__order__36B12243" Association="WebsiteTTKModel.FK__order_ite__order__36B12243">
+          <AssociationSet Name="FK__order_ite__order__4E88ABD4" Association="WebsiteTTKModel.FK__order_ite__order__4E88ABD4">
             <End Role="order" EntitySet="orders" />
             <End Role="order_items" EntitySet="order_items" />
           </AssociationSet>
@@ -549,7 +549,7 @@
             <End Role="staff" EntitySet="staffs" />
             <End Role="order" EntitySet="orders" />
           </AssociationSet>
-          <AssociationSet Name="FK__orders__store_id__3A81B327" Association="WebsiteTTKModel.FK__orders__store_id__3A81B327">
+          <AssociationSet Name="FK__orders__store_id__49C3F6B7" Association="WebsiteTTKModel.FK__orders__store_id__49C3F6B7">
             <End Role="store" EntitySet="stores" />
             <End Role="order" EntitySet="orders" />
           </AssociationSet>
@@ -703,7 +703,7 @@
           <Property Name="product_id" Type="Int32" Nullable="false" />
           <Property Name="quantity" Type="Int32" />
           <NavigationProperty Name="product" Relationship="WebsiteTTKModel.FK__stocks__product___534D60F1" FromRole="stock" ToRole="product" />
-          <NavigationProperty Name="store" Relationship="WebsiteTTKModel.FK__stocks__store_id__35BCFE0A" FromRole="stock" ToRole="store" />
+          <NavigationProperty Name="store" Relationship="WebsiteTTKModel.FK__stocks__store_id__52593CB8" FromRole="stock" ToRole="store" />
         </EntityType>
         <EntityType Name="customer">
           <Key>
@@ -733,7 +733,7 @@
           <Property Name="list_price" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
           <Property Name="discount" Type="Decimal" Nullable="false" Precision="4" Scale="2" />
           <NavigationProperty Name="product" Relationship="WebsiteTTKModel.FK__order_ite__produ__4F7CD00D" FromRole="order_items" ToRole="product" />
-          <NavigationProperty Name="order" Relationship="WebsiteTTKModel.FK__order_ite__order__36B12243" FromRole="order_items" ToRole="order" />
+          <NavigationProperty Name="order" Relationship="WebsiteTTKModel.FK__order_ite__order__4E88ABD4" FromRole="order_items" ToRole="order" />
         </EntityType>
         <EntityType Name="order">
           <Key>
@@ -748,9 +748,9 @@
           <Property Name="store_id" Type="Int32" Nullable="false" />
           <Property Name="staff_id" Type="Int32" Nullable="false" />
           <NavigationProperty Name="customer" Relationship="WebsiteTTKModel.FK__orders__customer__48CFD27E" FromRole="order" ToRole="customer" />
-          <NavigationProperty Name="order_items" Relationship="WebsiteTTKModel.FK__order_ite__order__36B12243" FromRole="order" ToRole="order_items" />
+          <NavigationProperty Name="order_items" Relationship="WebsiteTTKModel.FK__order_ite__order__4E88ABD4" FromRole="order" ToRole="order_items" />
           <NavigationProperty Name="staff" Relationship="WebsiteTTKModel.FK__orders__staff_id__4AB81AF0" FromRole="order" ToRole="staff" />
-          <NavigationProperty Name="store" Relationship="WebsiteTTKModel.FK__orders__store_id__3A81B327" FromRole="order" ToRole="store" />
+          <NavigationProperty Name="store" Relationship="WebsiteTTKModel.FK__orders__store_id__49C3F6B7" FromRole="order" ToRole="store" />
         </EntityType>
         <EntityType Name="staff">
           <Key>
@@ -782,8 +782,8 @@
           <Property Name="city" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="state" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="zip_code" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="stocks" Relationship="WebsiteTTKModel.FK__stocks__store_id__35BCFE0A" FromRole="store" ToRole="stock" />
-          <NavigationProperty Name="orders" Relationship="WebsiteTTKModel.FK__orders__store_id__3A81B327" FromRole="store" ToRole="order" />
+          <NavigationProperty Name="stocks" Relationship="WebsiteTTKModel.FK__stocks__store_id__52593CB8" FromRole="store" ToRole="stock" />
+          <NavigationProperty Name="orders" Relationship="WebsiteTTKModel.FK__orders__store_id__49C3F6B7" FromRole="store" ToRole="order" />
           <NavigationProperty Name="staffs" Relationship="WebsiteTTKModel.FK__staffs__store_id__44FF419A" FromRole="store" ToRole="staff" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
@@ -870,7 +870,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__stocks__store_id__35BCFE0A">
+        <Association Name="FK__stocks__store_id__52593CB8">
           <End Type="WebsiteTTKModel.store" Role="store" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -898,7 +898,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__order_ite__order__36B12243">
+        <Association Name="FK__order_ite__order__4E88ABD4">
           <End Type="WebsiteTTKModel.order" Role="order" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -924,7 +924,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__orders__store_id__3A81B327">
+        <Association Name="FK__orders__store_id__49C3F6B7">
           <End Type="WebsiteTTKModel.store" Role="store" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
