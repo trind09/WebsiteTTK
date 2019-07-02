@@ -141,6 +141,14 @@ public partial class category
     public virtual ICollection<product> products { get; set; }
 }
 
+public partial class colour
+{
+    public int colour_id { get; set; }
+    public string colour_name { get; set; }
+    public string colour_description { get; set; }
+    public Nullable<System.DateTime> create_date { get; set; }
+}
+
 public partial class customer
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]

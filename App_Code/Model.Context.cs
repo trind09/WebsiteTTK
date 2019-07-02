@@ -31,6 +31,7 @@ public partial class WebsiteTTKEntities : DbContext
     public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
     public virtual DbSet<brand> brands { get; set; }
     public virtual DbSet<category> categories { get; set; }
+    public virtual DbSet<colour> colours { get; set; }
     public virtual DbSet<product> products { get; set; }
     public virtual DbSet<stock> stocks { get; set; }
     public virtual DbSet<customer> customers { get; set; }
