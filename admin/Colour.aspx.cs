@@ -83,7 +83,7 @@ public partial class admin_Colour : System.Web.UI.Page
                 s.create_date,
             }).ToList();
             var coloursJson = new JavaScriptSerializer().Serialize(listOfColours);
-            Colours_Data.InnerText = coloursJson;
+            Colour_Data.InnerText = coloursJson;
 
 
         }

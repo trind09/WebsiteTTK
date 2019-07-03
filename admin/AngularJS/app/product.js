@@ -48,7 +48,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         $scope.items.push({
             product_id: newGeneratedproduct_id, product_name: $scope.item.product_name, product_images: $scope.item.product_images,
             product_description: escapedProductDescription, brand_id: $scope.item.brand_id,
-            category_id: $scope.item.category_id, model_year: $scope.item.model_year, list_price: $scope.item.list_price,
+            category_id: $scope.item.category_id, colour_id: $scope.item.colour_id, model_year: $scope.item.model_year, list_price: $scope.item.list_price,
             create_date: today, create_by: $scope.item.create_by, is_publish: $scope.item.is_publish, is_featured: $scope.item.is_featured,
             is_sale: $scope.item.is_sale, is_new: $scope.item.is_new, is_gift: $scope.item.is_gift
         });
@@ -56,7 +56,8 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         $scope.addedOrUpdatedItems.push({
             product_id: newGeneratedproduct_id, product_name: $scope.item.product_name, product_images: $scope.item.product_images,
             product_description: escapedProductDescription, brand_id: $scope.item.brand_id,
-            category_id: $scope.item.category_id, model_year: $scope.item.model_year, list_price: $scope.item.list_price,
+            category_id: $scope.item.category_id,
+            colour_id: $scope.item.colour_id, model_year: $scope.item.model_year, list_price: $scope.item.list_price,
             create_date: today, create_by: $scope.item.create_by, is_publish: $scope.item.is_publish, is_featured: $scope.item.is_featured,
             is_sale: $scope.item.is_sale, is_new: $scope.item.is_new, is_gift: $scope.item.is_gift
         });
@@ -95,6 +96,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         //item1.product_images = item.product_images;
         item1.brand_id = item.brand_id;
         item1.category_id = item.category_id;
+        item1.colour_id = item.colour_id;
         item1.product_images = item.product_images;
         item1.list_price = item.list_price;
         item1.create_date = item.create_date;

@@ -29,6 +29,7 @@ public partial class WebsiteTTKEntities : DbContext
     public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
     public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
     public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+    public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
     public virtual DbSet<brand> brands { get; set; }
     public virtual DbSet<category> categories { get; set; }
     public virtual DbSet<colour> colours { get; set; }

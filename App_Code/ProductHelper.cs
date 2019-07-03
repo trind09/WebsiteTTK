@@ -49,6 +49,7 @@ public class ProductHelper
                     }
                     result.brand_id = item.brand_id;
                     result.category_id = item.category_id;
+                    result.colour_id = item.colour_id;
                     result.model_year = item.model_year;
                     result.list_price = item.list_price;
                     result.create_date = item.create_date;
@@ -68,6 +69,7 @@ public class ProductHelper
                         product_images = item.product_images,
                         brand_id = item.brand_id,
                         category_id = item.category_id,
+                        colour_id = item.colour_id,
                         model_year = item.model_year,
                         list_price = item.list_price,
                         create_date = item.create_date,

@@ -138,7 +138,7 @@
             <script>
                 var Colour_Data_lList = {};
                 $(document).ready(function () {
-                    var colourDataJson = $("#<%=Colours_Data.ClientID%>").text();
+                    var colourDataJson = $("#<%=Colour_Data.ClientID%>").text();
                     Colour_Data_lList = jQuery.parseJSON(colourDataJson);
                     var TodoController = 'div[ng-controller="TodoController"]';
                     var scope = angular.element(TodoController).scope();
@@ -215,7 +215,7 @@
             </script>
             <script src="AngularJS/lib/toastr.min.js"></script>
             <script src="AngularJS/app/colour.js"></script>
-            <div runat="server" id="Colours_Data" style="display: none;"></div>
+            <div runat="server" id="Colour_Data" style="display: none;"></div>
 
             <div class="popup" style="display: none; z-index: 10001">
                 <div class="container"><div class="text" id="popup_container">

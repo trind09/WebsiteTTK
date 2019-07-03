@@ -59,6 +59,7 @@
                                 <th>Images</th>
                                 <th>Brand ID</th>
                                 <th>Category ID</th>
+                                <th>Colour ID</th>
                                 <th>Model Year</th>
                                 <th>List Price</th>
                                 <th ng-click="sortBy('create_date')" style="text-decoration: underline; cursor: pointer;">Create Date</th>
@@ -79,6 +80,7 @@
                                 <td><a style="cursor: pointer;" ng-click="openUploadImagePanel(item.product_id)">Show Images</a></td>
                                 <td>{{ item.brand_id }}</td>
                                 <td>{{ item.category_id }}</td>
+                                <td>{{ item.colour_id }}</td>
                                 <td>{{ item.model_year }}</td>
                                 <td>{{ item.list_price }}</td>
                                 <td>{{ item.create_date | filterdate | date:'dd/MM/yyyy hh:mm:ss' }}</td>
@@ -155,6 +157,15 @@
                             <td>Select category: 
                                 <select ng-model="item.category_id">
                                   <option ng-repeat="x in categories" value="{{x.category_id}}">{{x.category_name}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Colour ID: </td>
+                            <td><input type="text" readonly ng-model="item.colour_id" placeholder="Colour ID" class="input-small" required style="width: 500px;"></td>
+                            <td>Select Colour: 
+                                <select ng-model="item.colour_id" style="width:200px">
+                                  <option ng-repeat="x in colours" value="{{x.colour_id}}">{{x.colour_name}}</option>
                                 </select>
                             </td>
                         </tr>
@@ -246,6 +257,9 @@
                     var categoryDataJson = $("#<%=Category_Data.ClientID%>").text();
                     scope.categories = jQuery.parseJSON(categoryDataJson);
 
+                    var colourDataJson = $("#<%=Colour_Data.ClientID%>").text();
+                    scope.colours = jQuery.parseJSON(colourDataJson);
+
                     scope.$watch('searchValue', function () {
                         scope.filteredItems = myFilter('filter')(scope.items, scope.searchValue);
                         scope.totalItem = scope.filteredItems.length;
@@ -310,6 +324,7 @@
             <div runat="server" id="Products_Data" style="display: none;"></div>
             <div runat="server" id="Brand_Data" style="display: none;"></div>
             <div runat="server" id="Category_Data" style="display: none;"></div>
+            <div runat="server" id="Colour_Data" style="display: none;"></div>
 
             <div class="popup" style="display: none; z-index: 10001">
                 <div class="container"><div class="text" id="popup_container">

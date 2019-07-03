@@ -86,6 +86,16 @@
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
         <EntityType Name="brands">
           <Key>
             <PropertyRef Name="brand_id" />
@@ -128,6 +138,7 @@
           <Property Name="product_images" Type="nvarchar" MaxLength="250" />
           <Property Name="brand_id" Type="int" Nullable="false" />
           <Property Name="category_id" Type="int" Nullable="false" />
+          <Property Name="colour_id" Type="int" />
           <Property Name="model_year" Type="smallint" Nullable="false" />
           <Property Name="list_price" Type="decimal" Precision="10" Scale="2" Nullable="false" />
           <Property Name="create_date" Type="datetime" />
@@ -214,7 +225,7 @@
           <Property Name="state" Type="varchar" MaxLength="10" />
           <Property Name="zip_code" Type="varchar" MaxLength="5" />
         </EntityType>
-        <Association Name="FK__order_ite__order__5DCAEF64">
+        <Association Name="FK__order_ite__order__38996AB5">
           <End Role="orders" Type="Self.orders" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -268,7 +279,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__orders__store_id__619B8048">
+        <Association Name="FK__orders__store_id__3C69FB99">
           <End Role="stores" Type="Self.stores" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -350,7 +361,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__stocks__store_id__5CD6CB2B">
+        <Association Name="FK__stocks__store_id__37A5467C">
           <End Role="stores" Type="Self.stores" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -428,6 +439,7 @@
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="brands" EntityType="Self.brands" Schema="production" store:Type="Tables" />
           <EntitySet Name="categories" EntityType="Self.categories" Schema="production" store:Type="Tables" />
           <EntitySet Name="colours" EntityType="Self.colours" Schema="production" store:Type="Tables" />
@@ -438,7 +450,7 @@
           <EntitySet Name="orders" EntityType="Self.orders" Schema="sales" store:Type="Tables" />
           <EntitySet Name="staffs" EntityType="Self.staffs" Schema="sales" store:Type="Tables" />
           <EntitySet Name="stores" EntityType="Self.stores" Schema="sales" store:Type="Tables" />
-          <AssociationSet Name="FK__order_ite__order__5DCAEF64" Association="Self.FK__order_ite__order__5DCAEF64">
+          <AssociationSet Name="FK__order_ite__order__38996AB5" Association="Self.FK__order_ite__order__38996AB5">
             <End Role="orders" EntitySet="orders" />
             <End Role="order_items" EntitySet="order_items" />
           </AssociationSet>
@@ -454,7 +466,7 @@
             <End Role="staffs" EntitySet="staffs" />
             <End Role="orders" EntitySet="orders" />
           </AssociationSet>
-          <AssociationSet Name="FK__orders__store_id__619B8048" Association="Self.FK__orders__store_id__619B8048">
+          <AssociationSet Name="FK__orders__store_id__3C69FB99" Association="Self.FK__orders__store_id__3C69FB99">
             <End Role="stores" EntitySet="stores" />
             <End Role="orders" EntitySet="orders" />
           </AssociationSet>
@@ -478,7 +490,7 @@
             <End Role="products" EntitySet="products" />
             <End Role="stocks" EntitySet="stocks" />
           </AssociationSet>
-          <AssociationSet Name="FK__stocks__store_id__5CD6CB2B" Association="Self.FK__stocks__store_id__5CD6CB2B">
+          <AssociationSet Name="FK__stocks__store_id__37A5467C" Association="Self.FK__stocks__store_id__37A5467C">
             <End Role="stores" EntitySet="stores" />
             <End Role="stocks" EntitySet="stocks" />
           </AssociationSet>
@@ -510,6 +522,7 @@
           <EntitySet Name="AspNetUserClaims" EntityType="WebsiteTTKModel.AspNetUserClaim" />
           <EntitySet Name="AspNetUserLogins" EntityType="WebsiteTTKModel.AspNetUserLogin" />
           <EntitySet Name="AspNetUsers" EntityType="WebsiteTTKModel.AspNetUser" />
+          <EntitySet Name="sysdiagrams" EntityType="WebsiteTTKModel.sysdiagram" />
           <EntitySet Name="brands" EntityType="WebsiteTTKModel.brand" />
           <EntitySet Name="categories" EntityType="WebsiteTTKModel.category" />
           <EntitySet Name="colours" EntityType="WebsiteTTKModel.colour" />
@@ -544,7 +557,7 @@
             <End Role="product" EntitySet="products" />
             <End Role="stock" EntitySet="stocks" />
           </AssociationSet>
-          <AssociationSet Name="FK__stocks__store_id__5CD6CB2B" Association="WebsiteTTKModel.FK__stocks__store_id__5CD6CB2B">
+          <AssociationSet Name="FK__stocks__store_id__37A5467C" Association="WebsiteTTKModel.FK__stocks__store_id__37A5467C">
             <End Role="store" EntitySet="stores" />
             <End Role="stock" EntitySet="stocks" />
           </AssociationSet>
@@ -552,7 +565,7 @@
             <End Role="customer" EntitySet="customers" />
             <End Role="order" EntitySet="orders" />
           </AssociationSet>
-          <AssociationSet Name="FK__order_ite__order__5DCAEF64" Association="WebsiteTTKModel.FK__order_ite__order__5DCAEF64">
+          <AssociationSet Name="FK__order_ite__order__38996AB5" Association="WebsiteTTKModel.FK__order_ite__order__38996AB5">
             <End Role="order" EntitySet="orders" />
             <End Role="order_items" EntitySet="order_items" />
           </AssociationSet>
@@ -560,7 +573,7 @@
             <End Role="staff" EntitySet="staffs" />
             <End Role="order" EntitySet="orders" />
           </AssociationSet>
-          <AssociationSet Name="FK__orders__store_id__619B8048" Association="WebsiteTTKModel.FK__orders__store_id__619B8048">
+          <AssociationSet Name="FK__orders__store_id__3C69FB99" Association="WebsiteTTKModel.FK__orders__store_id__3C69FB99">
             <End Role="store" EntitySet="stores" />
             <End Role="order" EntitySet="orders" />
           </AssociationSet>
@@ -656,6 +669,16 @@
           <NavigationProperty Name="AspNetUserLogins" Relationship="WebsiteTTKModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserLogin" />
           <NavigationProperty Name="AspNetRoles" Relationship="WebsiteTTKModel.AspNetUserRoles" FromRole="AspNetUser" ToRole="AspNetRole" />
         </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
         <EntityType Name="brand">
           <Key>
             <PropertyRef Name="brand_id" />
@@ -700,6 +723,7 @@
           <Property Name="product_images" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="brand_id" Type="Int32" Nullable="false" />
           <Property Name="category_id" Type="Int32" Nullable="false" />
+          <Property Name="colour_id" Type="Int32" />
           <Property Name="model_year" Type="Int16" Nullable="false" />
           <Property Name="list_price" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
           <Property Name="create_date" Type="DateTime" Precision="3" />
@@ -723,7 +747,7 @@
           <Property Name="product_id" Type="Int32" Nullable="false" />
           <Property Name="quantity" Type="Int32" />
           <NavigationProperty Name="product" Relationship="WebsiteTTKModel.FK__stocks__product___534D60F1" FromRole="stock" ToRole="product" />
-          <NavigationProperty Name="store" Relationship="WebsiteTTKModel.FK__stocks__store_id__5CD6CB2B" FromRole="stock" ToRole="store" />
+          <NavigationProperty Name="store" Relationship="WebsiteTTKModel.FK__stocks__store_id__37A5467C" FromRole="stock" ToRole="store" />
         </EntityType>
         <EntityType Name="customer">
           <Key>
@@ -753,7 +777,7 @@
           <Property Name="list_price" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
           <Property Name="discount" Type="Decimal" Nullable="false" Precision="4" Scale="2" />
           <NavigationProperty Name="product" Relationship="WebsiteTTKModel.FK__order_ite__produ__4F7CD00D" FromRole="order_items" ToRole="product" />
-          <NavigationProperty Name="order" Relationship="WebsiteTTKModel.FK__order_ite__order__5DCAEF64" FromRole="order_items" ToRole="order" />
+          <NavigationProperty Name="order" Relationship="WebsiteTTKModel.FK__order_ite__order__38996AB5" FromRole="order_items" ToRole="order" />
         </EntityType>
         <EntityType Name="order">
           <Key>
@@ -768,9 +792,9 @@
           <Property Name="store_id" Type="Int32" Nullable="false" />
           <Property Name="staff_id" Type="Int32" Nullable="false" />
           <NavigationProperty Name="customer" Relationship="WebsiteTTKModel.FK__orders__customer__48CFD27E" FromRole="order" ToRole="customer" />
-          <NavigationProperty Name="order_items" Relationship="WebsiteTTKModel.FK__order_ite__order__5DCAEF64" FromRole="order" ToRole="order_items" />
+          <NavigationProperty Name="order_items" Relationship="WebsiteTTKModel.FK__order_ite__order__38996AB5" FromRole="order" ToRole="order_items" />
           <NavigationProperty Name="staff" Relationship="WebsiteTTKModel.FK__orders__staff_id__4AB81AF0" FromRole="order" ToRole="staff" />
-          <NavigationProperty Name="store" Relationship="WebsiteTTKModel.FK__orders__store_id__619B8048" FromRole="order" ToRole="store" />
+          <NavigationProperty Name="store" Relationship="WebsiteTTKModel.FK__orders__store_id__3C69FB99" FromRole="order" ToRole="store" />
         </EntityType>
         <EntityType Name="staff">
           <Key>
@@ -802,8 +826,8 @@
           <Property Name="city" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="state" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="zip_code" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="stocks" Relationship="WebsiteTTKModel.FK__stocks__store_id__5CD6CB2B" FromRole="store" ToRole="stock" />
-          <NavigationProperty Name="orders" Relationship="WebsiteTTKModel.FK__orders__store_id__619B8048" FromRole="store" ToRole="order" />
+          <NavigationProperty Name="stocks" Relationship="WebsiteTTKModel.FK__stocks__store_id__37A5467C" FromRole="store" ToRole="stock" />
+          <NavigationProperty Name="orders" Relationship="WebsiteTTKModel.FK__orders__store_id__3C69FB99" FromRole="store" ToRole="order" />
           <NavigationProperty Name="staffs" Relationship="WebsiteTTKModel.FK__staffs__store_id__44FF419A" FromRole="store" ToRole="staff" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
@@ -890,7 +914,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__stocks__store_id__5CD6CB2B">
+        <Association Name="FK__stocks__store_id__37A5467C">
           <End Type="WebsiteTTKModel.store" Role="store" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -918,7 +942,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__order_ite__order__5DCAEF64">
+        <Association Name="FK__order_ite__order__38996AB5">
           <End Type="WebsiteTTKModel.order" Role="order" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -944,7 +968,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__orders__store_id__619B8048">
+        <Association Name="FK__orders__store_id__3C69FB99">
           <End Type="WebsiteTTKModel.store" Role="store" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -1070,6 +1094,17 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="brands">
             <EntityTypeMapping TypeName="WebsiteTTKModel.brand">
               <MappingFragment StoreEntitySet="brands">
@@ -1117,6 +1152,7 @@
                 <ScalarProperty Name="create_date" ColumnName="create_date" />
                 <ScalarProperty Name="list_price" ColumnName="list_price" />
                 <ScalarProperty Name="model_year" ColumnName="model_year" />
+                <ScalarProperty Name="colour_id" ColumnName="colour_id" />
                 <ScalarProperty Name="category_id" ColumnName="category_id" />
                 <ScalarProperty Name="brand_id" ColumnName="brand_id" />
                 <ScalarProperty Name="product_images" ColumnName="product_images" />

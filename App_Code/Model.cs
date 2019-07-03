@@ -224,6 +224,7 @@ public partial class product
     public string product_images { get; set; }
     public int brand_id { get; set; }
     public int category_id { get; set; }
+    public Nullable<int> colour_id { get; set; }
     public short model_year { get; set; }
     public decimal list_price { get; set; }
     public Nullable<System.DateTime> create_date { get; set; }
@@ -304,4 +305,13 @@ public partial class store
     public virtual ICollection<order> orders { get; set; }
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<staff> staffs { get; set; }
+}
+
+public partial class sysdiagram
+{
+    public string name { get; set; }
+    public int principal_id { get; set; }
+    public int diagram_id { get; set; }
+    public Nullable<int> version { get; set; }
+    public byte[] definition { get; set; }
 }

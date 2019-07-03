@@ -42,6 +42,11 @@ public partial class admin_Product :  System.Web.UI.Page
                 Int32.TryParse(Helper.GetPropValue(obj + "", "category_id") + "", out category_id);
                 item.category_id = category_id;
 
+
+                int colour_id = -1;
+                Int32.TryParse(Helper.GetPropValue(obj + "", "colour_id") + "", out colour_id);
+                item.colour_id = colour_id;
+
                 short model_year = -1;
                 short.TryParse(Helper.GetPropValue(obj + "", "model_year") + "", out model_year);
                 item.model_year = model_year;
@@ -116,6 +121,7 @@ public partial class admin_Product :  System.Web.UI.Page
                 s.product_images,
                 s.brand_id,
                 s.category_id,
+                s.colour_id,
                 s.model_year,
                 s.list_price,
                 s.create_date,
@@ -155,6 +161,19 @@ public partial class admin_Product :  System.Web.UI.Page
             }).ToList();
             var categoriesJson = new JavaScriptSerializer().Serialize(listOfCategories);
             Category_Data.InnerText = categoriesJson;
+
+            //Get Color data
+            IQueryable<colour> qColoursTable = from t in context.colours
+                                             select t; // can you confirm if your context has Tables or MyTables?
+            var listOfColour = qColoursTable.Select(s => new {
+                s.colour_id,
+                s.colour_name,
+                s.colour_description,
+                s.create_date
+            }).ToList();
+            var coloursJson = new JavaScriptSerializer().Serialize(listOfColour);
+          Colour_Data.InnerText = coloursJson;
+
         }
     }
 }
