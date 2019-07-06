@@ -85,13 +85,13 @@
                                 <div class="product same-height">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.aspx">
+                                            <div class="front"><a href="product-detail.aspx">
                                                 <img src="img/product2.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.aspx">
+                                            <div class="back"><a href="product-detail.aspx">
                                                 <img src="img/product2_2.jpg" alt="" class="img-fluid"></a></div>
                                         </div>
                                     </div>
-                                    <a href="detail.aspx" class="invisible">
+                                    <a href="product-detail.aspx" class="invisible">
                                         <img src="img/product2.jpg" alt="" class="img-fluid"></a>
                                     <div class="text">
                                         <h3>Fur coat</h3>
@@ -104,13 +104,13 @@
                                 <div class="product same-height">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.aspx">
+                                            <div class="front"><a href="product-detail.aspx">
                                                 <img src="img/product1.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.aspx">
+                                            <div class="back"><a href="product-detail.aspx">
                                                 <img src="img/product1_2.jpg" alt="" class="img-fluid"></a></div>
                                         </div>
                                     </div>
-                                    <a href="detail.aspx" class="invisible">
+                                    <a href="product-detail.aspx" class="invisible">
                                         <img src="img/product1.jpg" alt="" class="img-fluid"></a>
                                     <div class="text">
                                         <h3>Fur coat</h3>
@@ -123,13 +123,13 @@
                                 <div class="product same-height">
                                     <div class="flip-container">
                                         <div class="flipper">
-                                            <div class="front"><a href="detail.aspx">
+                                            <div class="front"><a href="product-detail.aspx">
                                                 <img src="img/product3.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="detail.aspx">
+                                            <div class="back"><a href="product-detail.aspx">
                                                 <img src="img/product3_2.jpg" alt="" class="img-fluid"></a></div>
                                         </div>
                                     </div>
-                                    <a href="detail.aspx" class="invisible">
+                                    <a href="product-detail.aspx" class="invisible">
                                         <img src="img/product3.jpg" alt="" class="img-fluid"></a>
                                     <div class="text">
                                         <h3>Fur coat</h3>
