@@ -75,6 +75,15 @@ public class Helper
         return System.Text.RegularExpressions.Regex.Match(number, @"^(\+[0-9]{9})$").Success;
     }
 
+    public static bool IsHomePage()
+    {
+        if (string.Compare(HttpContext.Current.Request.Url.LocalPath, "/default.aspx") == 0 || string.Compare(HttpContext.Current.Request.Url.LocalPath, "/") == 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
     public static bool IsValidEmail(string email)
     {
         try

@@ -109,6 +109,7 @@
           <Property Name="parent_id" Type="int" />
           <Property Name="is_publish" Type="bit" />
           <Property Name="is_menu" Type="bit" />
+          <Property Name="is_label" Type="bit" />
         </EntityType>
         <EntityType Name="colours">
           <Key>
@@ -682,6 +683,7 @@
           <Property Name="parent_id" Type="Int32" />
           <Property Name="is_publish" Type="Boolean" />
           <Property Name="is_menu" Type="Boolean" />
+          <Property Name="is_label" Type="Boolean" />
           <NavigationProperty Name="products" Relationship="WebsiteTTKModel.FK__products__catego__3C69FB99" FromRole="category" ToRole="product" />
         </EntityType>
         <EntityType Name="colour">
@@ -1088,6 +1090,7 @@
           <EntitySetMapping Name="categories">
             <EntityTypeMapping TypeName="WebsiteTTKModel.category">
               <MappingFragment StoreEntitySet="categories">
+                <ScalarProperty Name="is_label" ColumnName="is_label" />
                 <ScalarProperty Name="is_menu" ColumnName="is_menu" />
                 <ScalarProperty Name="is_publish" ColumnName="is_publish" />
                 <ScalarProperty Name="parent_id" ColumnName="parent_id" />

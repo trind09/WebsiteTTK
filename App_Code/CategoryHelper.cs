@@ -52,6 +52,7 @@ public class CategoryHelper
                     result.parent_id = item.parent_id;
                     result.is_publish = item.is_publish;
                     result.is_menu = item.is_menu;
+                    result.is_label = item.is_label;
 
                     try
                     {
@@ -72,7 +73,8 @@ public class CategoryHelper
                         create_date = item.create_date,
                         parent_id = item.parent_id,
                         is_publish = item.is_publish,
-                        is_menu = item.is_menu
+                        is_menu = item.is_menu,
+                        is_label = item.is_label
                     });
 
                     try

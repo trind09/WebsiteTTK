@@ -49,6 +49,10 @@ public partial class admin_Category : System.Web.UI.Page
                 bool.TryParse(Helper.GetPropValue(obj + "", "is_menu") + "", out is_menu);
                 item.is_menu = is_menu;
 
+                bool is_label = true;
+                bool.TryParse(Helper.GetPropValue(obj + "", "is_label") + "", out is_label);
+                item.is_label = is_label;
+
                 categories.Add(item);
             }
         }
@@ -93,7 +97,8 @@ public partial class admin_Category : System.Web.UI.Page
                          create_date = s.create_date,
                          parent_id = s.parent_id,
                          is_publish = s.is_publish,
-                         is_menu = s.is_menu
+                         is_menu = s.is_menu,
+                         is_label = s.is_label
                      });
 
             var categoriesJson = new JavaScriptSerializer().Serialize(qCategoriesTable.ToList());

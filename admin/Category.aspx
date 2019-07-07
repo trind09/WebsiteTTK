@@ -60,8 +60,9 @@
                                 <th>URL</th>
                                 <th>Parent ID</th>
                                 <th ng-click="sortBy('create_date')" style="text-decoration: underline; cursor: pointer;">Create Date</th>
-                                <th>Publish</th>
-                                <th>Is Menu?</th>
+                                <th title="If this is true, this category can be shown to client!">Publish</th>
+                                <th title="If this is true, this category is used on Mega Menu of Home Page">Is Menu?</th>
+                                <th title="If this is true, this category is used as a label on Mega Menu of Home Page">Is Label?</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -76,6 +77,7 @@
                                 <td>{{ item.create_date | filterdate | date:'dd/MM/yyyy hh:mm:ss' }}</td>
                                 <td>{{ item.is_publish }}</td>
                                 <td>{{ item.is_menu }}</td>
+                                <td>{{ item.is_label }}</td>
                                 <td>
                                     <a class="btn btn-warning btn-small" ng-click="editarItem(item.category_id)">
                                         <i class="icon-pencil icon-white"></i>Edit
@@ -148,13 +150,18 @@
                             <td></td>
                         </tr>
                         <tr>
-                            <td>Publish: </td>
+                            <td title="If this is true, this category can be shown to client">Publish: </td>
                             <td><input type="checkbox" ng-model="item.is_publish" class="input-small"></td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td title="If this element checked, this category will be used for the menu.">Is Menu: </td>
+                            <td title="If this is true, this category is used on Mega Menu of Home Page.">Is Menu: </td>
                             <td><input type="checkbox" ng-model="item.is_menu" class="input-small"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td title="If this is true, this category is used as a label on Mega Menu of Home Page.">Is Label: </td>
+                            <td><input type="checkbox" ng-model="item.is_label" class="input-small"></td>
                             <td></td>
                         </tr>
                         <tr>
