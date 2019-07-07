@@ -132,6 +132,7 @@ public partial class category
     public string category_name { get; set; }
     public string category_description { get; set; }
     public string category_images { get; set; }
+    public string category_url { get; set; }
     public Nullable<System.DateTime> create_date { get; set; }
     public Nullable<int> parent_id { get; set; }
     public Nullable<bool> is_publish { get; set; }

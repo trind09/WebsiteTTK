@@ -104,6 +104,7 @@
           <Property Name="category_name" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="category_description" Type="nvarchar(max)" />
           <Property Name="category_images" Type="nvarchar" MaxLength="155" />
+          <Property Name="category_url" Type="nvarchar" MaxLength="250" />
           <Property Name="create_date" Type="datetime" />
           <Property Name="parent_id" Type="int" />
           <Property Name="is_publish" Type="bit" />
@@ -676,6 +677,7 @@
           <Property Name="category_name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="category_description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="category_images" Type="String" MaxLength="155" FixedLength="false" Unicode="true" />
+          <Property Name="category_url" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="create_date" Type="DateTime" Precision="3" />
           <Property Name="parent_id" Type="Int32" />
           <Property Name="is_publish" Type="Boolean" />
@@ -1090,6 +1092,7 @@
                 <ScalarProperty Name="is_publish" ColumnName="is_publish" />
                 <ScalarProperty Name="parent_id" ColumnName="parent_id" />
                 <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="category_url" ColumnName="category_url" />
                 <ScalarProperty Name="category_images" ColumnName="category_images" />
                 <ScalarProperty Name="category_description" ColumnName="category_description" />
                 <ScalarProperty Name="category_name" ColumnName="category_name" />

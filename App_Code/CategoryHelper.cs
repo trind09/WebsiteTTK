@@ -47,6 +47,7 @@ public class CategoryHelper
                     {
                         result.category_images = item.category_images;
                     }
+                    result.category_url = item.category_url;
                     result.create_date = item.create_date;
                     result.parent_id = item.parent_id;
                     result.is_publish = item.is_publish;
@@ -67,6 +68,7 @@ public class CategoryHelper
                         category_name = item.category_name,
                         category_description = item.category_description,
                         category_images = item.category_images,
+                        category_url = item.category_url,
                         create_date = item.create_date,
                         parent_id = item.parent_id,
                         is_publish = item.is_publish,

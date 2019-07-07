@@ -46,13 +46,13 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         var escapedCategoryDescription = $scope.Escaped($scope.item.category_description);
 
         $scope.items.push({
-            category_id: newGeneratedcategory_id, category_name: $scope.item.category_name, category_images: $scope.item.category_images,
+            category_id: newGeneratedcategory_id, category_name: $scope.item.category_name, category_url: $scope.item.category_url, category_images: $scope.item.category_images,
             category_description: escapedCategoryDescription, create_date: today, is_publish: $scope.item.is_publish, parent_id: $scope.item.parent_id,
             is_menu: $scope.item.is_menu
         });
 
         $scope.addedOrUpdatedItems.push({
-            category_id: newGeneratedcategory_id, category_name: $scope.item.category_name, category_images: $scope.item.category_images,
+            category_id: newGeneratedcategory_id, category_name: $scope.item.category_name, category_url: $scope.item.category_url, category_images: $scope.item.category_images,
             category_description: escapedCategoryDescription, parent_id: $scope.item.parent_id, create_date: today, is_publish: $scope.item.is_publish,
             is_menu: $scope.item.is_menu
         });
@@ -87,6 +87,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         //Update source item
         var item1 = $scope.items.find(x => x.category_id == item.category_id);
         item1.category_name = item.category_name;
+        item1.category_url = item.category_url;
         item1.category_description = escapedCategoryDescription;
         //item1.category_images = item.category_images;
         item1.parent_id = item.parent_id;

@@ -57,6 +57,7 @@
                                 <th ng-click="sortBy('category_id')" style="text-decoration: underline; cursor: pointer;">Category ID</th>
                                 <th ng-click="sortBy('category_name')" style="text-decoration: underline; cursor: pointer;">Name</th>
                                 <th>Images</th>
+                                <th>URL</th>
                                 <th>Parent ID</th>
                                 <th ng-click="sortBy('create_date')" style="text-decoration: underline; cursor: pointer;">Create Date</th>
                                 <th>Publish</th>
@@ -70,6 +71,7 @@
                                 <td><strong>{{ item.category_id }}</strong></td>
                                 <td>{{ item.category_name }}</td>
                                 <td><a style="cursor: pointer;" ng-click="openUploadImagePanel(item.category_id)">Show Images</a></td>
+                                <td>{{ item.category_url }}</td>
                                 <td>{{ item.parent_id }}</td>
                                 <td>{{ item.create_date | filterdate | date:'dd/MM/yyyy hh:mm:ss' }}</td>
                                 <td>{{ item.is_publish }}</td>
@@ -124,6 +126,11 @@
                         <tr>
                             <td>Category Images: </td>
                             <td><a style="cursor: pointer;" ng-show="edit" ng-click="openUploadImagePanel(item.category_id)">Show Images</a></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Category URL: </td>
+                            <td><input type="text" ng-model="item.category_url" placeholder="Category URL" required style="width: 500px;"></td>
                             <td></td>
                         </tr>
                         <tr>

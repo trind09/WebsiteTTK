@@ -33,6 +33,7 @@ public partial class admin_Category : System.Web.UI.Page
 
                 item.category_name = Helper.GetPropValue(obj + "", "category_name") + "";
                 item.category_description = Helper.GetPropValue(obj + "", "category_description") + "";
+                item.category_url = Helper.GetPropValue(obj + "", "category_url") + "";
 
                 item.create_date = Helper.ConverToDateTime(Helper.GetPropValue(obj + "", "create_date") + "");
 
@@ -81,36 +82,25 @@ public partial class admin_Category : System.Web.UI.Page
         using (var context = new WebsiteTTKEntities())
         {
             //Get category data
-            IQueryable<category> qCategoriesTable = from t in context.categories
-                                                 select t; // can you confirm if your context has Tables or MyTables?
-            var listOfCategories = qCategoriesTable.Select(s => new {
-                s.category_id,
-                s.category_name,
-                s.category_description,
-                s.category_images,
-                s.create_date,
-                s.parent_id,
-                s.is_publish,
-                s.is_menu
-            }).ToList();
-            var categoriesJson = new JavaScriptSerializer().Serialize(listOfCategories);
+            IEnumerable<category> qCategoriesTable = (from s in context.categories.AsEnumerable()
+                     select new category
+                     {
+                         category_id = s.category_id,
+                         category_name = s.category_name,
+                         category_description = s.category_description,
+                         category_images = s.category_images,
+                         category_url = s.category_url,
+                         create_date = s.create_date,
+                         parent_id = s.parent_id,
+                         is_publish = s.is_publish,
+                         is_menu = s.is_menu
+                     });
+
+            var categoriesJson = new JavaScriptSerializer().Serialize(qCategoriesTable.ToList());
             Categories_Data.InnerText = categoriesJson;
 
-            //Get brand data
-            IQueryable<category> qParent_CategorysTable = from t in context.categories
-                                             select t; // can you confirm if your context has Tables or MyTables?
-            var listOfParentCategories = qParent_CategorysTable.Select(s => new {
-                s.category_id,
-                s.category_name,
-                s.category_description,
-                s.category_images,
-                s.create_date,
-                s.parent_id,
-                s.is_publish,
-                s.is_menu
-            }).ToList();
-            var parentcCategoriesJson = new JavaScriptSerializer().Serialize(listOfParentCategories);
-            Parent_Category_Data.InnerText = parentcCategoriesJson;
+            //Because the parent categories are also retrieved from the same category table. So we set parent ctegory dropdownlist items as same as items from category table
+            Parent_Category_Data.InnerText = categoriesJson;
         }
     }
 }

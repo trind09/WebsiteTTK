@@ -21,7 +21,7 @@ public partial class _Default : System.Web.UI.Page
         using (var context = new WebsiteTTKEntities())
         {
             //Get product data
-            IQueryable<product> qProductsTable = from t in context.products where t.is_featured == true
+            IQueryable<product> qProductsTable = from t in context.products where t.is_featured == true && t.is_publish == true
                                                  select t; // can you confirm if your context has Tables or MyTables?
             var listOfProducts = qProductsTable.Select(s => new {
                 s.product_id,
@@ -42,6 +42,7 @@ public partial class _Default : System.Web.UI.Page
                 s.is_gift
             }).ToList();
 
+            //--Start: Makeup product silder from home page
             var product_slider = "";
             foreach (var item in listOfProducts)
             {
@@ -129,6 +130,7 @@ public partial class _Default : System.Web.UI.Page
                 product_slider += itemHtml;
             }
             ttk_shop_slider.InnerHtml = product_slider;
+            //--End: Makeup product silder from home page
         }
     }
 }
