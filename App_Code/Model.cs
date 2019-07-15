@@ -120,35 +120,20 @@ public partial class C__MigrationHistory
     public string ProductVersion { get; set; }
 }
 
-public partial class category
-{
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-    public category()
-    {
-        this.products = new HashSet<product>();
-    }
-
-    public int category_id { get; set; }
-    public string category_name { get; set; }
-    public string category_description { get; set; }
-    public string category_images { get; set; }
-    public string category_url { get; set; }
-    public Nullable<System.DateTime> create_date { get; set; }
-    public Nullable<int> parent_id { get; set; }
-    public Nullable<bool> is_publish { get; set; }
-    public Nullable<bool> is_menu { get; set; }
-    public Nullable<bool> is_label { get; set; }
-
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    public virtual ICollection<product> products { get; set; }
-}
-
 public partial class colour
 {
     public int colour_id { get; set; }
     public string colour_name { get; set; }
     public string colour_description { get; set; }
     public Nullable<System.DateTime> create_date { get; set; }
+}
+
+public partial class currency
+{
+    public int currency_id { get; set; }
+    public string currency_name { get; set; }
+    public string currency_code { get; set; }
+    public string currency_symbol { get; set; }
 }
 
 public partial class customer
@@ -211,6 +196,30 @@ public partial class order_items
     public virtual order order { get; set; }
 }
 
+public partial class procategory
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public procategory()
+    {
+        this.products = new HashSet<product>();
+    }
+
+    public int category_id { get; set; }
+    public string category_name { get; set; }
+    public string category_description { get; set; }
+    public string category_images { get; set; }
+    public string category_url { get; set; }
+    public Nullable<System.DateTime> create_date { get; set; }
+    public Nullable<int> parent_id { get; set; }
+    public Nullable<bool> is_publish { get; set; }
+    public Nullable<bool> is_menu { get; set; }
+    public Nullable<bool> is_label { get; set; }
+    public Nullable<int> store_id { get; set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<product> products { get; set; }
+}
+
 public partial class product
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -236,9 +245,10 @@ public partial class product
     public Nullable<bool> is_new { get; set; }
     public Nullable<bool> is_gift { get; set; }
     public Nullable<int> colour_id { get; set; }
+    public Nullable<int> currency_id { get; set; }
 
     public virtual brand brand { get; set; }
-    public virtual category category { get; set; }
+    public virtual procategory procategory { get; set; }
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<order_items> order_items { get; set; }
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -63,6 +63,7 @@
                                 <th title="If this is true, this category can be shown to client!">Publish</th>
                                 <th title="If this is true, this category is used on Mega Menu of Home Page">Is Menu?</th>
                                 <th title="If this is true, this category is used as a label on Mega Menu of Home Page">Is Label?</th>
+                                <th title="Store that this category belong to">Store</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -78,6 +79,7 @@
                                 <td>{{ item.is_publish }}</td>
                                 <td>{{ item.is_menu }}</td>
                                 <td>{{ item.is_label }}</td>
+                                <td>{{ convertStoreIDToStoreName(item.store_id) }}</td>
                                 <td>
                                     <a class="btn btn-warning btn-small" ng-click="editarItem(item.category_id)">
                                         <i class="icon-pencil icon-white"></i>Edit
@@ -145,6 +147,15 @@
                             </td>
                         </tr>
                         <tr>
+                            <td>Store ID: </td>
+                            <td><input type="text" readonly ng-model="item.store_id" placeholder="Store ID" class="input-small" required style="width: 500px;"></td>
+                            <td>Select store: 
+                                <select ng-model="item.store_id">
+                                  <option ng-repeat="x in stores" value="{{x.store_id}}">{{x.store_name}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
                             <td>Create Date: </td>
                             <td><input type="date" ng-model="item.create_date" placeholder="Create Date" class="input-small" style="width: 500px;"></td>
                             <td></td>
@@ -204,6 +215,9 @@
                     var parentCategoryDataJson = $("#<%=Parent_Category_Data.ClientID%>").text();
                     scope.parentCategories = jQuery.parseJSON(parentCategoryDataJson);
 
+                    var storesDataJson = $("#<%=Stores_Data.ClientID%>").text();
+                    scope.stores = jQuery.parseJSON(storesDataJson);
+
                     scope.$watch('searchValue', function () {
                         scope.filteredItems = myFilter('filter')(scope.items, scope.searchValue);
                         scope.totalItem = scope.filteredItems.length;
@@ -222,6 +236,14 @@
                         $('#popup_container').append('<iframe src="ImageUpload.aspx?id=' + category_id + '&table_name=categories" id="ImageUpload" style="width: 100%; height: 100%;"></iframe>');
                         jQuery('.popup').show();
                         return false;
+                    };
+
+                    scope.convertStoreIDToStoreName = function (store_id) {
+                        var store = scope.stores.find(x => x.store_id == store_id);
+                        if (store) {
+                            return store.store_name;
+                        }
+                        return "";
                     };
 
                     scope.$apply();
@@ -268,6 +290,7 @@
             <script src="AngularJS/app/category.js"></script>
             <div runat="server" id="Categories_Data" style="display: none;"></div>
             <div runat="server" id="Parent_Category_Data" style="display: none;"></div>
+            <div runat="server" id="Stores_Data" style="display: none;"></div>
 
             <div class="popup" style="display: none; z-index: 10001">
                 <div class="container"><div class="text" id="popup_container">

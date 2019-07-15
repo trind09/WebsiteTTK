@@ -1,4 +1,3 @@
-6/27/2019 5:24:55 PM - Error - Filepath = App_Code\CategoryHelper.cs - StackTrack =    at System.Data.Entity.Internal.InternalContext.SaveChanges()
-   at System.Data.Entity.Internal.LazyInternalContext.SaveChanges()
-   at System.Data.Entity.DbContext.SaveChanges()
-   at CategoryHelper.UpdateCategories(List`1 categories, Boolean isUpdateCategoryImages) in E:\Projects\WebsiteTTK\App_Code\CategoryHelper.cs:line 56 - Message = Validation failed for one or more entities. See 'EntityValidationErrors' property for more details.
+7/14/2019 8:36:42 AM - Error - Filepath = App_Code\ProductHelper.cs - StackTrack =    at System.Data.DataRow.GetDataColumn(String columnName)
+   at System.Data.DataRow.get_Item(String columnName)
+   at ProductController.GetProductDetailData(Int32 product_id) in E:\Projects\WebsiteTTK\App_Code\Controller\ProductController.cs:line 237 - Message = Column 'product_id' does not belong to table Table.

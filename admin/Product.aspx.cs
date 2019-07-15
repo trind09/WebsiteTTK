@@ -79,6 +79,10 @@ public partial class admin_Product :  System.Web.UI.Page
                 bool.TryParse(Helper.GetPropValue(obj + "", "is_gift") + "", out is_gift);
                 item.is_gift = is_gift;
 
+                int currency_id = -1;
+                Int32.TryParse(Helper.GetPropValue(obj + "", "currency_id") + "", out currency_id);
+                item.currency_id = currency_id;
+
                 products.Add(item);
             }
         }
@@ -130,7 +134,8 @@ public partial class admin_Product :  System.Web.UI.Page
                 s.is_featured,
                 s.is_sale,
                 s.is_new,
-                s.is_gift
+                s.is_gift,
+                s.currency_id
             }).ToList();
             var productsJson = new JavaScriptSerializer().Serialize(listOfProducts);
             Products_Data.InnerText = productsJson;
@@ -149,8 +154,8 @@ public partial class admin_Product :  System.Web.UI.Page
             Brand_Data.InnerText = brandsJson;
 
             //Get Category data
-            IQueryable<category> qCategoriesTable = from t in context.categories
-                                             select t; // can you confirm if your context has Tables or MyTables?
+            IQueryable<procategory> qCategoriesTable = from t in context.procategories
+                                                       select t; // can you confirm if your context has Tables or MyTables?
             var listOfCategories = qCategoriesTable.Select(s => new {
                 s.category_id,
                 s.category_name,
@@ -172,7 +177,19 @@ public partial class admin_Product :  System.Web.UI.Page
                 s.create_date
             }).ToList();
             var coloursJson = new JavaScriptSerializer().Serialize(listOfColour);
-          Colour_Data.InnerText = coloursJson;
+            Colour_Data.InnerText = coloursJson;
+
+            //Get Color data
+            IQueryable<currency> qCurrenciesTable = from t in context.currencies
+                                               select t; // can you confirm if your context has Tables or MyTables?
+            var listOfCurrency = qCurrenciesTable.Select(s => new {
+                s.currency_id,
+                s.currency_name,
+                s.currency_code,
+                s.currency_symbol
+            }).ToList();
+            var currenciesJson = new JavaScriptSerializer().Serialize(listOfCurrency);
+            Currency_Data.InnerText = currenciesJson;
 
         }
     }

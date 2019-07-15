@@ -50,7 +50,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
             product_description: escapedProductDescription, brand_id: $scope.item.brand_id,
             category_id: $scope.item.category_id, colour_id: $scope.item.colour_id, model_year: $scope.item.model_year, list_price: $scope.item.list_price,
             create_date: today, create_by: $scope.item.create_by, is_publish: $scope.item.is_publish, is_featured: $scope.item.is_featured,
-            is_sale: $scope.item.is_sale, is_new: $scope.item.is_new, is_gift: $scope.item.is_gift
+            is_sale: $scope.item.is_sale, is_new: $scope.item.is_new, is_gift: $scope.item.is_gift, currency_id: $scope.item.currency_id
         });
 
         $scope.addedOrUpdatedItems.push({
@@ -59,7 +59,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
             category_id: $scope.item.category_id,
             colour_id: $scope.item.colour_id, model_year: $scope.item.model_year, list_price: $scope.item.list_price,
             create_date: today, create_by: $scope.item.create_by, is_publish: $scope.item.is_publish, is_featured: $scope.item.is_featured,
-            is_sale: $scope.item.is_sale, is_new: $scope.item.is_new, is_gift: $scope.item.is_gift
+            is_sale: $scope.item.is_sale, is_new: $scope.item.is_new, is_gift: $scope.item.is_gift, currency_id: $scope.item.currency_id
         });
 
         $scope.item.product_id = '';
@@ -106,6 +106,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         item1.is_sale = item.is_sale;
         item1.is_new = item.is_new;
         item1.is_gift = item.is_gift;
+        item1.currency_id = item.currency_id;
 
         var existedUpdatedItem = $scope.addedOrUpdatedItems.find(x => x.product_id == item.product_id);
         if (existedUpdatedItem != null) {
@@ -190,6 +191,15 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
     $scope.Escaped = function (x) {
         var escapedStr = $("<div>").text(x).html();
         return escapedStr;
+    }
+
+    //Get currency name by id
+    $scope.GetCurrencyName = function (currency_id) {
+        var item = $scope.currencies.find(x => x.currency_id == currency_id);
+        if (item != null) {
+            return item.currency_name;
+        }
+        return "";
     }
 }]);
 

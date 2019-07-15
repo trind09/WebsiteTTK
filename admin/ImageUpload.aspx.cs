@@ -54,10 +54,10 @@ public partial class admin_ImageUpload : System.Web.UI.Page
                 Int32.TryParse(id, out category_id);
                 if (category_id > 0)
                 {
-                    IQueryable<category> qCategoriesTable = from t in context.categories
-                                                         where t.category_id == category_id
+                    IQueryable<procategory> qCategoriesTable = from t in context.procategories
+                                                               where t.category_id == category_id
                                                          select t;
-                    category objCat = qCategoriesTable.FirstOrDefault();
+                    procategory objCat = qCategoriesTable.FirstOrDefault();
                     if (objCat != null)
                     {
                         if (objCat.category_images != null)
@@ -135,10 +135,10 @@ public partial class admin_ImageUpload : System.Web.UI.Page
                     Int32.TryParse(id, out category_id);
                     if (category_id > 0)
                     {
-                        IQueryable<category> qCategoriesTable = from t in context.categories
-                                                             where t.category_id == category_id
+                        IQueryable<procategory> qCategoriesTable = from t in context.procategories
+                                                                   where t.category_id == category_id
                                                              select t;
-                        category objCat = qCategoriesTable.FirstOrDefault();
+                        procategory objCat = qCategoriesTable.FirstOrDefault();
                         if (objCat != null)
                         {
                             string subPath = "~/admin/img/cat_" + category_id + "/";
@@ -158,7 +158,7 @@ public partial class admin_ImageUpload : System.Web.UI.Page
                                 {
                                     objCat.category_images = "admin/img/cat_" + category_id + "/" + fileName;
                                 }
-                                CategoryHelper.UpdateCategories(new List<category> { objCat }, true);
+                                CategoryHelper.UpdateCategories(new List<procategory> { objCat }, true);
                                 lblUploadResult.Text = "<br/>" + message;
                             }
                             else

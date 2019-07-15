@@ -51,7 +51,7 @@
                                 <th>Email</th>
                                 <th>Street</th>
                                 <th>City</th>
-                                <th>Zip Code/th>
+                                <th>Zip Code</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -106,14 +106,6 @@
                             <td>Store Name: <span style="color:red">*</span></td>
                             <td><input type="text" ng-model="item.store_name" placeholder="Store Name" required style="width: 500px;"></td>
                             <td>
-                                 <form>
-                                     <label>Store Name:</label>
-                                     <select class="country" >
-                                         <option value="usa">United States</option>
-                                         <option value="india">India</option>
-                                         <option value="uk">United Kingdom</option>
-                                     </select>
-                                 </form>
                             </td>
                         </tr>
                         <tr>

@@ -29,8 +29,8 @@ public partial class MasterPage : System.Web.UI.MasterPage
         using (var context = new WebsiteTTKEntities())
         {
             //Get Category data
-            System.Collections.Generic.IEnumerable<category> listOfCategories = (from s in context.categories.AsEnumerable() where s.is_publish == true && s.is_menu == true
-                                                      select new category
+            System.Collections.Generic.IEnumerable<procategory> listOfCategories = (from s in context.procategories.AsEnumerable() where s.is_publish == true && s.is_menu == true
+                                                      select new procategory
                                                       {
                                                           category_id = s.category_id,
                                                           category_name = s.category_name,
@@ -47,17 +47,17 @@ public partial class MasterPage : System.Web.UI.MasterPage
             string currentHostUrl = Helper.GetHostURL();
             string isActive = Helper.IsHomePage() ? " active" : "";
             string menuLiItems = "<li class='nav-item'><a href='" + currentHostUrl + "' class='nav-link" + isActive + "'>Home</a></li>";
-            System.Collections.Generic.IEnumerable<category> parentCategories = (from t in listOfCategories where t.parent_id == 0 select t).ToList();
-            foreach (var item in parentCategories)
+            System.Collections.Generic.IEnumerable<procategory> grandFatherCategories = (from t in listOfCategories where t.parent_id == 0 select t).ToList();
+            foreach (var item in grandFatherCategories)
             {
-                string url = currentHostUrl + "/category.aspx?category_id=" + item.category_id;
-                if (item.category_url != null)
+                string grandfather_category_url = currentHostUrl + "/category.aspx?category_id=" + item.category_id;
+                if (!String.IsNullOrEmpty(item.category_url))
                 {
-                    url = item.category_url;
+                    grandfather_category_url = item.category_url;
                 }
                 bool isLabel = item.is_label == null ? false : item.is_label.Value;
                 isActive = Request.QueryString["category_id"] == item.category_id + "" ? " active" : "";
-                System.Collections.Generic.IEnumerable<category> firstChildCategories = (from t in listOfCategories where t.parent_id == item.category_id select t).ToList();
+                System.Collections.Generic.IEnumerable<procategory> firstChildCategories = (from t in listOfCategories where t.parent_id == item.category_id select t).ToList();
                 if (firstChildCategories.Count() > 0)
                 {
                     if (isLabel)
@@ -66,21 +66,21 @@ public partial class MasterPage : System.Web.UI.MasterPage
                     }
                     else
                     {
-                        menuLiItems += "<li class='nav-item dropdown menu-large'><a data-toggle='dropdown' data-hover='dropdown' data-delay='200' class='dropdown-toggle nav-link" + isActive + "' href='" + url + "'>" + item.category_name + "<b class='caret'></b></a>";
+                        menuLiItems += "<li class='nav-item dropdown menu-large'><a data-toggle='dropdown' data-hover='dropdown' data-delay='200' class='dropdown-toggle nav-link" + isActive + "' href='" + grandfather_category_url + "'>" + item.category_name + "<b class='caret'></b></a>";
                     }
 
                     menuLiItems += "<ul class='dropdown-menu megamenu'><li><div class='row'>";
                     foreach (var firstChild in firstChildCategories)
                     {
-                        url = currentHostUrl + "/category.aspx?category_id=" + firstChild.category_id;
-                        if (firstChild.category_url != null)
+                        var father_category_url = currentHostUrl + "/category.aspx?category_id=" + firstChild.category_id;
+                        if (!String.IsNullOrEmpty(firstChild.category_url))
                         {
-                            url = firstChild.category_url;
+                            father_category_url = firstChild.category_url;
                         }
                         isLabel = firstChild.is_label == null ? false : firstChild.is_label.Value;
                         isActive = Request.QueryString["category_id"] == firstChild.category_id + "" ? " active" : "";
                         
-                        System.Collections.Generic.IEnumerable<category> secondChildCategories = (from t in listOfCategories where t.parent_id == firstChild.category_id select t).ToList();
+                        System.Collections.Generic.IEnumerable<procategory> secondChildCategories = (from t in listOfCategories where t.parent_id == firstChild.category_id select t).ToList();
                         if (secondChildCategories.Count() > 0)
                         {
                             if (isLabel)
@@ -89,16 +89,16 @@ public partial class MasterPage : System.Web.UI.MasterPage
                             }
                             else
                             {
-                                menuLiItems += "<div class='col-md-6 col-lg-3'><h5><a class='nav-link" + isActive + "' href='" + url + "'>" + firstChild.category_name + "</a></h5>";
+                                menuLiItems += "<div class='col-md-6 col-lg-3'><h5><a class='nav-link" + isActive + "' href='" + father_category_url + "'>" + firstChild.category_name + "</a></h5>";
                             }
 
                             menuLiItems += "<ul class='list-unstyled mb-3'>";
                             foreach (var secondChild in secondChildCategories)
                             {
-                                url = currentHostUrl + "/category.aspx?category_id=" + secondChild.category_id;
-                                if (secondChild.category_url != null)
+                                var child_category_url = currentHostUrl + "/category.aspx?category_id=" + secondChild.category_id;
+                                if (!String.IsNullOrEmpty(secondChild.category_url))
                                 {
-                                    url = secondChild.category_url;
+                                    child_category_url = secondChild.category_url;
                                 }
                                 isLabel = secondChild.is_label == null ? false : secondChild.is_label.Value;
                                 isActive = Request.QueryString["category_id"] == secondChild.category_id + "" ? " active" : "";
@@ -107,7 +107,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
                                     menuLiItems += "<li class='nav-item'><span style='cursor: pointer;' class='nav-link" + isActive + "'>" + secondChild.category_name + "</span></li>";
                                 } else
                                 {
-                                    menuLiItems += "<li class='nav-item'><a href='" + url + "' class='nav-link" + isActive + "'>" + secondChild.category_name + "</a></li>";
+                                    menuLiItems += "<li class='nav-item'><a href='" + child_category_url + "' class='nav-link" + isActive + "'>" + secondChild.category_name + "</a></li>";
                                 }
                             }
                             menuLiItems += "</ul>";
@@ -119,7 +119,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
                             }
                             else
                             {
-                                menuLiItems += "<div class='nav-item' style='margin-right: 35px;'><a class='nav-link" + isActive + "' href='" + url + "'>" + firstChild.category_name + "</a>";
+                                menuLiItems += "<div class='nav-item' style='margin-right: 35px;'><a class='nav-link" + isActive + "' href='" + father_category_url + "'>" + firstChild.category_name + "</a>";
                             }
                         }
                         menuLiItems += "</div>";
@@ -129,11 +129,11 @@ public partial class MasterPage : System.Web.UI.MasterPage
                 {
                     if (isLabel)
                     {
-                        menuLiItems += "<li class='nav-item'><span style='cursor: pointer;' class='nav-link" + isActive + "' onclick='return false;'>" + item.category_name + "</span>";
+                        menuLiItems += "<li class='nav-item'><span style='cursor: pointer;' class='nav-link" + isActive + "'>" + item.category_name + "</span>";
                     }
                     else
                     {
-                        menuLiItems += "<li class='nav-item'><a class='nav-link" + isActive + "' href='" + url + "'>" + item.category_name + "</a>";
+                        menuLiItems += "<li class='nav-item'><a class='nav-link" + isActive + "' href='" + grandfather_category_url + "'>" + item.category_name + "</a>";
                     }
                 }
                 menuLiItems += "</li>";

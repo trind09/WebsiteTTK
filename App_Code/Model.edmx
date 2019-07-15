@@ -96,7 +96,27 @@
           <Property Name="images" Type="nvarchar" MaxLength="155" />
           <Property Name="create_date" Type="datetime" />
         </EntityType>
-        <EntityType Name="categories">
+        <EntityType Name="colours">
+          <Key>
+            <PropertyRef Name="colour_id" />
+          </Key>
+          <Property Name="colour_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="colour_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="colour_description" Type="nvarchar(max)" />
+          <Property Name="create_date" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'WebsiteTTK.production.currency' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="currency">
+          <Key>
+            <PropertyRef Name="currency_id" />
+          </Key>
+          <Property Name="currency_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="currency_name" Type="nvarchar" MaxLength="100" />
+          <Property Name="currency_code" Type="nvarchar" MaxLength="10" />
+          <Property Name="currency_symbol" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="procategories">
           <Key>
             <PropertyRef Name="category_id" />
           </Key>
@@ -110,15 +130,7 @@
           <Property Name="is_publish" Type="bit" />
           <Property Name="is_menu" Type="bit" />
           <Property Name="is_label" Type="bit" />
-        </EntityType>
-        <EntityType Name="colours">
-          <Key>
-            <PropertyRef Name="colour_id" />
-          </Key>
-          <Property Name="colour_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="colour_name" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="colour_description" Type="nvarchar(max)" />
-          <Property Name="create_date" Type="datetime" />
+          <Property Name="store_id" Type="int" />
         </EntityType>
         <EntityType Name="products">
           <Key>
@@ -140,6 +152,7 @@
           <Property Name="is_new" Type="bit" />
           <Property Name="is_gift" Type="bit" />
           <Property Name="colour_id" Type="int" />
+          <Property Name="currency_id" Type="int" />
         </EntityType>
         <EntityType Name="stocks">
           <Key>
@@ -209,13 +222,13 @@
             <PropertyRef Name="store_id" />
           </Key>
           <Property Name="store_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="store_name" Type="varchar" MaxLength="255" Nullable="false" />
-          <Property Name="phone" Type="varchar" MaxLength="25" />
-          <Property Name="email" Type="varchar" MaxLength="255" />
-          <Property Name="street" Type="varchar" MaxLength="255" />
-          <Property Name="city" Type="varchar" MaxLength="255" />
-          <Property Name="state" Type="varchar" MaxLength="10" />
-          <Property Name="zip_code" Type="varchar" MaxLength="5" />
+          <Property Name="store_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="phone" Type="nvarchar" MaxLength="50" />
+          <Property Name="email" Type="nvarchar" MaxLength="255" />
+          <Property Name="street" Type="nvarchar" MaxLength="255" />
+          <Property Name="city" Type="nvarchar" MaxLength="255" />
+          <Property Name="state" Type="nvarchar" MaxLength="50" />
+          <Property Name="zip_code" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <Association Name="FK__order_ite__order__5DCAEF64">
           <End Role="orders" Type="Self.orders" Multiplicity="1">
@@ -300,12 +313,12 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__products__catego__3C69FB99">
-          <End Role="categories" Type="Self.categories" Multiplicity="1">
+          <End Role="procategories" Type="Self.procategories" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
           <End Role="products" Type="Self.products" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="categories">
+            <Principal Role="procategories">
               <PropertyRef Name="category_id" />
             </Principal>
             <Dependent Role="products">
@@ -432,8 +445,8 @@
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="brands" EntityType="Self.brands" Schema="production" store:Type="Tables" />
-          <EntitySet Name="categories" EntityType="Self.categories" Schema="production" store:Type="Tables" />
           <EntitySet Name="colours" EntityType="Self.colours" Schema="production" store:Type="Tables" />
+          <EntitySet Name="procategories" EntityType="Self.procategories" Schema="production" store:Type="Tables" />
           <EntitySet Name="products" EntityType="Self.products" Schema="production" store:Type="Tables" />
           <EntitySet Name="stocks" EntityType="Self.stocks" Schema="production" store:Type="Tables" />
           <EntitySet Name="customers" EntityType="Self.customers" Schema="sales" store:Type="Tables" />
@@ -441,6 +454,14 @@
           <EntitySet Name="orders" EntityType="Self.orders" Schema="sales" store:Type="Tables" />
           <EntitySet Name="staffs" EntityType="Self.staffs" Schema="sales" store:Type="Tables" />
           <EntitySet Name="stores" EntityType="Self.stores" Schema="sales" store:Type="Tables" />
+          <EntitySet Name="currency" EntityType="Self.currency" store:Type="Tables" store:Schema="production">
+            <DefiningQuery>SELECT 
+    [currency].[currency_id] AS [currency_id], 
+    [currency].[currency_name] AS [currency_name], 
+    [currency].[currency_code] AS [currency_code], 
+    [currency].[currency_symbol] AS [currency_symbol]
+    FROM [production].[currency] AS [currency]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK__order_ite__order__5DCAEF64" Association="Self.FK__order_ite__order__5DCAEF64">
             <End Role="orders" EntitySet="orders" />
             <End Role="order_items" EntitySet="order_items" />
@@ -466,7 +487,7 @@
             <End Role="products" EntitySet="products" />
           </AssociationSet>
           <AssociationSet Name="FK__products__catego__3C69FB99" Association="Self.FK__products__catego__3C69FB99">
-            <End Role="categories" EntitySet="categories" />
+            <End Role="procategories" EntitySet="procategories" />
             <End Role="products" EntitySet="products" />
           </AssociationSet>
           <AssociationSet Name="FK__staffs__manager___45F365D3" Association="Self.FK__staffs__manager___45F365D3">
@@ -514,8 +535,8 @@
           <EntitySet Name="AspNetUserLogins" EntityType="WebsiteTTKModel.AspNetUserLogin" />
           <EntitySet Name="AspNetUsers" EntityType="WebsiteTTKModel.AspNetUser" />
           <EntitySet Name="brands" EntityType="WebsiteTTKModel.brand" />
-          <EntitySet Name="categories" EntityType="WebsiteTTKModel.category" />
           <EntitySet Name="colours" EntityType="WebsiteTTKModel.colour" />
+          <EntitySet Name="procategories" EntityType="WebsiteTTKModel.procategory" />
           <EntitySet Name="products" EntityType="WebsiteTTKModel.product" />
           <EntitySet Name="stocks" EntityType="WebsiteTTKModel.stock" />
           <EntitySet Name="customers" EntityType="WebsiteTTKModel.customer" />
@@ -523,6 +544,7 @@
           <EntitySet Name="orders" EntityType="WebsiteTTKModel.order" />
           <EntitySet Name="staffs" EntityType="WebsiteTTKModel.staff" />
           <EntitySet Name="stores" EntityType="WebsiteTTKModel.store" />
+          <EntitySet Name="currencies" EntityType="WebsiteTTKModel.currency" />
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="WebsiteTTKModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaim" EntitySet="AspNetUserClaims" />
@@ -536,7 +558,7 @@
             <End Role="product" EntitySet="products" />
           </AssociationSet>
           <AssociationSet Name="FK__products__catego__3C69FB99" Association="WebsiteTTKModel.FK__products__catego__3C69FB99">
-            <End Role="category" EntitySet="categories" />
+            <End Role="procategory" EntitySet="procategories" />
             <End Role="product" EntitySet="products" />
           </AssociationSet>
           <AssociationSet Name="FK__order_ite__produ__4F7CD00D" Association="WebsiteTTKModel.FK__order_ite__produ__4F7CD00D">
@@ -670,7 +692,16 @@
           <Property Name="create_date" Type="DateTime" Precision="3" />
           <NavigationProperty Name="products" Relationship="WebsiteTTKModel.FK__products__brand___3D5E1FD2" FromRole="brand" ToRole="product" />
         </EntityType>
-        <EntityType Name="category">
+        <EntityType Name="colour">
+          <Key>
+            <PropertyRef Name="colour_id" />
+          </Key>
+          <Property Name="colour_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="colour_name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="colour_description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="create_date" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="procategory">
           <Key>
             <PropertyRef Name="category_id" />
           </Key>
@@ -684,16 +715,8 @@
           <Property Name="is_publish" Type="Boolean" />
           <Property Name="is_menu" Type="Boolean" />
           <Property Name="is_label" Type="Boolean" />
-          <NavigationProperty Name="products" Relationship="WebsiteTTKModel.FK__products__catego__3C69FB99" FromRole="category" ToRole="product" />
-        </EntityType>
-        <EntityType Name="colour">
-          <Key>
-            <PropertyRef Name="colour_id" />
-          </Key>
-          <Property Name="colour_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="colour_name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="colour_description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="create_date" Type="DateTime" Precision="3" />
+          <Property Name="store_id" Type="Int32" />
+          <NavigationProperty Name="products" Relationship="WebsiteTTKModel.FK__products__catego__3C69FB99" FromRole="procategory" ToRole="product" />
         </EntityType>
         <EntityType Name="product">
           <Key>
@@ -715,8 +738,9 @@
           <Property Name="is_new" Type="Boolean" />
           <Property Name="is_gift" Type="Boolean" />
           <Property Name="colour_id" Type="Int32" />
+          <Property Name="currency_id" Type="Int32" />
           <NavigationProperty Name="brand" Relationship="WebsiteTTKModel.FK__products__brand___3D5E1FD2" FromRole="product" ToRole="brand" />
-          <NavigationProperty Name="category" Relationship="WebsiteTTKModel.FK__products__catego__3C69FB99" FromRole="product" ToRole="category" />
+          <NavigationProperty Name="procategory" Relationship="WebsiteTTKModel.FK__products__catego__3C69FB99" FromRole="product" ToRole="procategory" />
           <NavigationProperty Name="order_items" Relationship="WebsiteTTKModel.FK__order_ite__produ__4F7CD00D" FromRole="product" ToRole="order_items" />
           <NavigationProperty Name="stocks" Relationship="WebsiteTTKModel.FK__stocks__product___534D60F1" FromRole="product" ToRole="stock" />
         </EntityType>
@@ -801,16 +825,25 @@
             <PropertyRef Name="store_id" />
           </Key>
           <Property Name="store_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="store_name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="phone" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
-          <Property Name="email" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="street" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="city" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="state" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="zip_code" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="store_name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="street" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="city" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="state" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="zip_code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="stocks" Relationship="WebsiteTTKModel.FK__stocks__store_id__5CD6CB2B" FromRole="store" ToRole="stock" />
           <NavigationProperty Name="orders" Relationship="WebsiteTTKModel.FK__orders__store_id__619B8048" FromRole="store" ToRole="order" />
           <NavigationProperty Name="staffs" Relationship="WebsiteTTKModel.FK__staffs__store_id__44FF419A" FromRole="store" ToRole="staff" />
+        </EntityType>
+        <EntityType Name="currency">
+          <Key>
+            <PropertyRef Name="currency_id" />
+          </Key>
+          <Property Name="currency_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="currency_name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="currency_code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="currency_symbol" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Type="WebsiteTTKModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
@@ -855,12 +888,12 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__products__catego__3C69FB99">
-          <End Type="WebsiteTTKModel.category" Role="category" Multiplicity="1">
+          <End Type="WebsiteTTKModel.procategory" Role="procategory" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
           <End Type="WebsiteTTKModel.product" Role="product" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="category">
+            <Principal Role="procategory">
               <PropertyRef Name="category_id" />
             </Principal>
             <Dependent Role="product">
@@ -1087,9 +1120,20 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="categories">
-            <EntityTypeMapping TypeName="WebsiteTTKModel.category">
-              <MappingFragment StoreEntitySet="categories">
+          <EntitySetMapping Name="colours">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.colour">
+              <MappingFragment StoreEntitySet="colours">
+                <ScalarProperty Name="create_date" ColumnName="create_date" />
+                <ScalarProperty Name="colour_description" ColumnName="colour_description" />
+                <ScalarProperty Name="colour_name" ColumnName="colour_name" />
+                <ScalarProperty Name="colour_id" ColumnName="colour_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="procategories">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.procategory">
+              <MappingFragment StoreEntitySet="procategories">
+                <ScalarProperty Name="store_id" ColumnName="store_id" />
                 <ScalarProperty Name="is_label" ColumnName="is_label" />
                 <ScalarProperty Name="is_menu" ColumnName="is_menu" />
                 <ScalarProperty Name="is_publish" ColumnName="is_publish" />
@@ -1103,19 +1147,10 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="colours">
-            <EntityTypeMapping TypeName="WebsiteTTKModel.colour">
-              <MappingFragment StoreEntitySet="colours">
-                <ScalarProperty Name="create_date" ColumnName="create_date" />
-                <ScalarProperty Name="colour_description" ColumnName="colour_description" />
-                <ScalarProperty Name="colour_name" ColumnName="colour_name" />
-                <ScalarProperty Name="colour_id" ColumnName="colour_id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="products">
             <EntityTypeMapping TypeName="WebsiteTTKModel.product">
               <MappingFragment StoreEntitySet="products">
+                <ScalarProperty Name="currency_id" ColumnName="currency_id" />
                 <ScalarProperty Name="colour_id" ColumnName="colour_id" />
                 <ScalarProperty Name="is_gift" ColumnName="is_gift" />
                 <ScalarProperty Name="is_new" ColumnName="is_new" />
@@ -1212,6 +1247,16 @@
                 <ScalarProperty Name="phone" ColumnName="phone" />
                 <ScalarProperty Name="store_name" ColumnName="store_name" />
                 <ScalarProperty Name="store_id" ColumnName="store_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="currencies">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.currency">
+              <MappingFragment StoreEntitySet="currency">
+                <ScalarProperty Name="currency_symbol" ColumnName="currency_symbol" />
+                <ScalarProperty Name="currency_code" ColumnName="currency_code" />
+                <ScalarProperty Name="currency_name" ColumnName="currency_name" />
+                <ScalarProperty Name="currency_id" ColumnName="currency_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

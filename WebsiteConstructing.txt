@@ -1,0 +1,7 @@
+﻿1.	Home Page
+	PushDataToClient()
+		Call "ProductController" to get home page data "GetHomePageData" to return "Featured Products (ProductCurrency)"
+
+2.	Product Deatail Page
+	BindData()
+		Call "ProductController" to get product detail data "GetProductDetailData" to return "Product Detail (ProductCurrency), Product's category detail (procategory), Store's categories (CategoryProduct)"

@@ -17,7 +17,7 @@ public partial class admin_Category : System.Web.UI.Page
     protected void btnApplyAllChanges_Click(object sender, EventArgs e)
     {
         //Create category list from json posted from client
-        List<category> categories = new List<category>();
+        List<procategory> categories = new List<procategory>();
         var categoriesJson = Category_Data_To_Post_To_Server.Text;
         dynamic categoriesResponse = JsonConvert.DeserializeObject(categoriesJson);
         if (categoriesResponse.Count > 0)
@@ -25,7 +25,7 @@ public partial class admin_Category : System.Web.UI.Page
             List<object> categoryObjects = categoriesResponse.ToObject<List<object>>();
             foreach (var obj in categoryObjects)
             {
-                category item = new category();
+                procategory item = new procategory();
 
                 int category_id = -1;
                 Int32.TryParse(Helper.GetPropValue(obj + "", "category_id") + "", out category_id);
@@ -52,6 +52,10 @@ public partial class admin_Category : System.Web.UI.Page
                 bool is_label = true;
                 bool.TryParse(Helper.GetPropValue(obj + "", "is_label") + "", out is_label);
                 item.is_label = is_label;
+
+                int store_id = -1;
+                Int32.TryParse(Helper.GetPropValue(obj + "", "store_id") + "", out store_id);
+                item.store_id = store_id;
 
                 categories.Add(item);
             }
@@ -86,8 +90,8 @@ public partial class admin_Category : System.Web.UI.Page
         using (var context = new WebsiteTTKEntities())
         {
             //Get category data
-            IEnumerable<category> qCategoriesTable = (from s in context.categories.AsEnumerable()
-                     select new category
+            IEnumerable<procategory> qCategoriesTable = (from s in context.procategories.AsEnumerable()
+                     select new procategory
                      {
                          category_id = s.category_id,
                          category_name = s.category_name,
@@ -98,7 +102,8 @@ public partial class admin_Category : System.Web.UI.Page
                          parent_id = s.parent_id,
                          is_publish = s.is_publish,
                          is_menu = s.is_menu,
-                         is_label = s.is_label
+                         is_label = s.is_label,
+                         store_id = s.store_id
                      });
 
             var categoriesJson = new JavaScriptSerializer().Serialize(qCategoriesTable.ToList());
@@ -106,6 +111,23 @@ public partial class admin_Category : System.Web.UI.Page
 
             //Because the parent categories are also retrieved from the same category table. So we set parent ctegory dropdownlist items as same as items from category table
             Parent_Category_Data.InnerText = categoriesJson;
+
+            //Get category data
+            IEnumerable<store> qStoresTable = (from s in context.stores.AsEnumerable()
+                                                      select new store
+                                                      {
+                                                          store_id = s.store_id,
+                                                          store_name = s.store_name,
+                                                          phone = s.phone,
+                                                          email = s.email,
+                                                          street = s.street,
+                                                          city = s.city,
+                                                          state = s.state,
+                                                          zip_code = s.zip_code
+                                                      });
+
+            var storesJson = new JavaScriptSerializer().Serialize(qStoresTable.ToList());
+            Stores_Data.InnerText = storesJson;
         }
     }
 }

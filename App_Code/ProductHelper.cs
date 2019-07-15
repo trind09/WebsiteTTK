@@ -59,6 +59,7 @@ public class ProductHelper
                     result.is_sale = item.is_sale;
                     result.is_new = item.is_new;
                     result.is_gift = item.is_gift;
+                    result.currency_id = item.currency_id;
 
                     context.SaveChanges();
                 } else
@@ -78,7 +79,8 @@ public class ProductHelper
                         is_featured = item.is_featured,
                         is_sale = item.is_sale,
                         is_new = item.is_new,
-                        is_gift = item.is_gift
+                        is_gift = item.is_gift,
+                        currency_id = item.currency_id
                     });
 
                     context.SaveChanges();

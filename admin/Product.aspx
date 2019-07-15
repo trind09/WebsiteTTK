@@ -69,6 +69,7 @@
                                 <th title="If this feature checked this product will be on sale">Sale</th>
                                 <th title="If this feature checked this product will be new">New</th>
                                 <th title="If this feature checked this product will be gift">Gift</th>
+                                <th title="This product currency">Currency</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -90,6 +91,7 @@
                                 <td>{{ item.is_sale }}</td>
                                 <td>{{ item.is_new }}</td>
                                 <td>{{ item.is_gift }}</td>
+                                <td>{{ GetCurrencyName(item.currency_id) }}</td>
                                 <td>
                                     <a class="btn btn-warning btn-small" ng-click="editarItem(item.product_id)">
                                         <i class="icon-pencil icon-white"></i>Edit
@@ -215,6 +217,15 @@
                             <td></td>
                         </tr>
                         <tr>
+                            <td>Currency: </td>
+                            <td><input type="text" readonly ng-model="item.currency_id" placeholder="Currency" class="input-small" required style="width: 500px;"></td>
+                            <td>Select currency: 
+                                <select ng-model="item.currency_id">
+                                  <option ng-repeat="x in currencies" value="{{x.currency_id}}">{{x.currency_name}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
                             <td colspan="3">
                                 <a ng-hide="edit" class="btn btn-success" ng-disabled="validarValoresPreenchidos.$invalid" ng-click="adicionaItem()">
                                     <i class="icon-plus icon-white"></i>Add
@@ -259,6 +270,9 @@
 
                     var colourDataJson = $("#<%=Colour_Data.ClientID%>").text();
                     scope.colours = jQuery.parseJSON(colourDataJson);
+
+                    var currencyDataJson = $("#<%=Currency_Data.ClientID%>").text();
+                    scope.currencies = jQuery.parseJSON(currencyDataJson);
 
                     scope.$watch('searchValue', function () {
                         scope.filteredItems = myFilter('filter')(scope.items, scope.searchValue);
@@ -325,6 +339,7 @@
             <div runat="server" id="Brand_Data" style="display: none;"></div>
             <div runat="server" id="Category_Data" style="display: none;"></div>
             <div runat="server" id="Colour_Data" style="display: none;"></div>
+            <div runat="server" id="Currency_Data" style="display: none;"></div>
 
             <div class="popup" style="display: none; z-index: 10001">
                 <div class="container"><div class="text" id="popup_container">
