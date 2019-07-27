@@ -21,6 +21,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
                 log_out_hyperlink.HRef = "logout.aspx?redirect=" + Page.Request.Url.ToString();
             }
             PushDataToClient();
+            WebSiteUrl.InnerHtml = Helper.GetHostURL();
         }
     }
 

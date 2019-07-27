@@ -5,3 +5,8 @@
 2.	Product Deatail Page
 	BindData()
 		Call "ProductController" to get product detail data "GetProductDetailData" to return "Product Detail (ProductCurrency), Product's category detail (procategory), Store's categories (CategoryProduct)"
+
+3.	WebSiteUrl 
+	Web.config 
+		Backend: Helper.GetHostURL()
+		Frontend: MasterPage.master <div runat="server" id="WebSiteUrl" style="display: none;"></div> | var currentHostUrl = $('*[id*=WebSiteUrl]')[0].innerHTML;

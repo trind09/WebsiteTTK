@@ -27,24 +27,19 @@ public partial class product_detail : System.Web.UI.Page
                 if (model != null)
                 {
                     //Throw data to client for script to generate the interface of product
-                    var productJson = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(model.Product);
-                    Product_Data.InnerText = productJson;
+                    var productDetailJson = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(model);
+                    ProductControllerModel_Data.InnerText = productDetailJson;
+
                     //Because product slider cannot be modify after script carousel is loaded. 
                     //Thus, we generate the slider on server first to help slider load before carousel script run.
                     MakeupProduct(model.Product);
-
-                    //Push data to client for script to generate the interface of category
-                    var thisProductCategoryJson = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(model.Category);
-                    ThisProductCategory_Data.InnerText = thisProductCategoryJson;
-
-                    //Push data to client for script to generate the interface of categories
-                    var storeCategoriesJson = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(model.Categories);
-                    StoreCategories_Data.InnerText = storeCategoriesJson;
                 }
             }
         }
     }
 
+    //Because product slider cannot be modify after script carousel is loaded. 
+    //Thus, we generate the slider on server first to help slider load before carousel script run.
     private void MakeupProduct(ProductCurrency qProduct)
     {
         var no_image = "img/no_image.jpg";
@@ -101,7 +96,11 @@ public partial class product_detail : System.Web.UI.Page
         itemHtml += "<h1 class='text-center'>" + qProduct.product_name + "</h1>";
         itemHtml += "<p class='goToDescription'><a href='#details' class='scroll-to'>Scroll to product details, material &amp; care and sizing</a></p>";
         itemHtml += "<p class='goToDescription'><p class='price'>" + qProduct.list_price + qProduct.currency_symbol + "</p>";
-        itemHtml += "<p class='text-center buttons'><a href='basket.aspx' class='btn btn-primary'><i class='fa fa-shopping-cart'></i>Add to cart</a><a href='basket.aspx' class='btn "
+        if (qProduct.colour_id > 0)
+        {
+            itemHtml += "<p class='goToDescription'><span class='colour' style='background: " + qProduct.colour_name + "; border-radius: 10px;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> " + qProduct.colour_description + "</p>";
+        }
+        itemHtml += "<p class='text-center buttons'><a href='basket.aspx?product_id=" + qProduct.product_id + "' class='btn btn-primary'><i class='fa fa-shopping-cart'></i>Add to cart</a><a style='cursor: pointer;' onclick=\"return AddToWishlist('" + qProduct.product_id + "');\" class='btn "
             + "btn-outline-primary'><i class='fa fa-heart'></i> Add to wishlist</a></p>";
         itemHtml += "</div>";
 

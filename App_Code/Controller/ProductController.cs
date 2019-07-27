@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 
@@ -27,8 +29,8 @@ public class ProductController
         using (System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection(connectionString))
         {
             con.Open();
-            string query = "SELECT pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol FROM production.products pro"
-                + " left join production.currency cur on pro.currency_id = cur.currency_id"
+            string query = "SELECT pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol, col.colour_name, col.colour_description FROM production.products pro"
+                + " left join production.currency cur on pro.currency_id = cur.currency_id left join production.colours col on pro.colour_id = col.colour_id"
                 + " where pro.is_featured = 1 and pro.is_publish = 1";
             using (System.Data.SqlClient.SqlCommand command = new System.Data.SqlClient.SqlCommand(query, con))
             {
@@ -78,6 +80,8 @@ public class ProductController
                             productModel.is_new = item["is_new"].ToString() == "" ? nullableBool : bool.Parse(item["is_new"] + "");
                             productModel.is_gift = item["is_gift"].ToString() == "" ? nullableBool : bool.Parse(item["is_gift"] + "");
                             productModel.colour_id = item["colour_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["colour_id"] + "");
+                            productModel.colour_name = item["colour_name"] + "";
+                            productModel.colour_description = item["colour_description"] + "";
                             productModel.currency_id = item["currency_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["currency_id"] + "");
                             if (item["currency_id"].ToString() == "")
                             {
@@ -133,11 +137,12 @@ public class ProductController
         {
             con.Open();
             //Query to get this product detail
-            string query = "SELECT pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol FROM production.products pro"
-                + " left join production.currency cur on pro.currency_id = cur.currency_id"
+            string query = "SELECT pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol, col.colour_name, col.colour_description FROM production.products pro"
+                + " left join production.currency cur on pro.currency_id = cur.currency_id left join production.colours col on pro.colour_id = col.colour_id"
                 + " where pro.product_id = " + product_id + "; ";
             //Query to get category that belong to this product
-            query += "select * from production.procategories cat left join production.products pro on cat.category_id = pro.category_id where pro.product_id = " + product_id + "; ";
+            query += "select cat.*, sto.* from production.procategories cat left join production.products pro on cat.category_id = pro.category_id"
+                + " left join sales.stores sto on cat.store_id = sto.store_id where pro.product_id = " + product_id + "; ";
             using (System.Data.SqlClient.SqlCommand command = new System.Data.SqlClient.SqlCommand(query, con))
             {
                 System.Data.SqlClient.SqlDataAdapter adapter = new System.Data.SqlClient.SqlDataAdapter();
@@ -183,6 +188,8 @@ public class ProductController
                         productDeatail.is_new = item["is_new"].ToString() == "" ? nullableBool : bool.Parse(item["is_new"] + "");
                         productDeatail.is_gift = item["is_gift"].ToString() == "" ? nullableBool : bool.Parse(item["is_gift"] + "");
                         productDeatail.colour_id = item["colour_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["colour_id"] + "");
+                        productDeatail.colour_name = item["colour_name"] + "";
+                        productDeatail.colour_description = item["colour_description"] + "";
                         productDeatail.currency_id = item["currency_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["currency_id"] + "");
                         if (item["currency_id"].ToString() == "")
                         {
@@ -207,7 +214,7 @@ public class ProductController
 
                         procategory category = new procategory();
 
-                        category.category_id = Int32.Parse(item["product_id"].ToString());
+                        category.category_id = Int32.Parse(item["category_id"].ToString());
                         category.category_name = item["category_name"] + "";
                         category.category_description = item["category_description"] + "";
                         category.category_images = item["category_images"] + "";
@@ -220,18 +227,35 @@ public class ProductController
                         category.store_id = item["store_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["store_id"] + "");
 
                         homeModel.Category = category;
+                        store sto = new store();
+                        sto.store_id = item["store_id"].ToString() == "" ? 0 : Int32.Parse(item["store_id"] + "");
+                        sto.store_name = item["store_name"] + "";
+                        sto.store_description = item["store_description"] + "";
+                        sto.store_images = item["store_images"] + "";
+                        sto.phone = item["phone"] + "";
+                        sto.email = item["email"] + "";
+                        sto.street = item["street"] + "";
+                        sto.city = item["city"] + "";
+                        sto.state = item["state"] + "";
+                        sto.zip_code = item["zip_code"] + "";
+                        homeModel.Store = sto;
 
                         //get category with same store id
                         query = "with LastResult As (SELECT c.category_id,c.category_name,c.category_description,c.category_images,"
-                            + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id,"
+                            + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id,s.store_name,"
                             + "COUNT(p.product_id) AS product_count FROM production.procategories AS c "
                             + "LEFT JOIN production.products AS cp ON cp.category_id=c.category_id "
-                            + "LEFT JOIN production.products AS p ON p.product_id=cp.product_id WHERE c.store_id = " + category.store_id + " "
+                            + "LEFT JOIN production.products AS p ON p.product_id=cp.product_id LEFT JOIN sales.stores s ON c.store_id=s.store_id WHERE c.store_id = " + category.store_id + " "
                             + "GROUP BY c.category_id,c.category_name,c.category_description,c.category_images,"
-                            + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id) "
+                            + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id,s.store_name) "
                             + "select  LastResult.category_id,LastResult.category_name,LastResult.category_description,LastResult.category_images,"
                             + "LastResult.category_url,LastResult.create_date,LastResult.parent_id,LastResult.is_publish,"
-                            + "LastResult.is_menu,LastResult.is_label,LastResult.store_id,LastResult.product_count from LastResult where LastResult.is_publish = 1;";
+                            + "LastResult.is_menu,LastResult.is_label,LastResult.store_id,LastResult.store_name,LastResult.product_count from LastResult where LastResult.is_publish = 1; ";
+
+                        //get products (relative products) with same category id, get top 10 and order by created date desc
+                        query += "SELECT top 10 pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol, col.colour_name, col.colour_description FROM production.products pro "
+                            + "left join production.currency cur on pro.currency_id = cur.currency_id left join production.colours col on pro.colour_id = col.colour_id "
+                            + " where pro.category_id = " + category.category_id + " and pro.product_id != " + homeModel.Product.product_id + " order by pro.create_date desc;";
                         System.Data.SqlClient.SqlCommand newCommand = new System.Data.SqlClient.SqlCommand(query, con);
                         adapter = new System.Data.SqlClient.SqlDataAdapter();
                         ds = new System.Data.DataSet();
@@ -256,11 +280,103 @@ public class ProductController
                                 cat.is_menu = row["is_menu"].ToString() == "" ? nullableBool : bool.Parse(row["is_menu"] + "");
                                 cat.is_label = row["is_label"].ToString() == "" ? nullableBool : bool.Parse(row["is_label"] + "");
                                 cat.store_id = row["store_id"].ToString() == "" ? nullableInteger : Int32.Parse(row["store_id"] + "");
+                                cat.store_name = row["store_name"] + "";
                                 cat.product_count = Int32.Parse(row["product_count"].ToString());
                                 categories.Add(cat);
                             }
 
                             homeModel.Categories = categories;
+                        }
+
+                        List<DataTable> dts = GetBrandsAndColours(con, homeModel.Category, homeModel.Categories);
+                        if (dts.Count > 0)
+                        {
+                            //get brands with same store id
+                            var brandsTable = dts[0];
+                            if (brandsTable.Rows.Count > 0)
+                            {
+                                List<BrandProduct> brands = new List<BrandProduct>();
+                                foreach (System.Data.DataRow row in brandsTable.Rows)
+                                {
+                                    BrandProduct brand = new BrandProduct();
+                                    brand.brand_id = Int32.Parse(row["brand_id"].ToString());
+                                    brand.brand_name = row["brand_name"] + "";
+                                    brand.brand_description = row["brand_description"] + "";
+                                    brand.images = row["images"] + "";
+                                    brand.create_date = row["create_date"].ToString() == "" ? nullableDateTime : (DateTime)row["create_date"];
+                                    brand.product_count = Int32.Parse(row["product_count"].ToString());
+                                    brands.Add(brand);
+                                }
+
+                                homeModel.Brands = brands;
+                            }
+
+                            if (dts.Count > 1)
+                            {
+                                //get colours with same store id
+                                var coloursTable = dts[1];
+                                if (coloursTable.Rows.Count > 0)
+                                {
+                                    List<ColourProduct> colours = new List<ColourProduct>();
+                                    foreach (System.Data.DataRow row in coloursTable.Rows)
+                                    {
+                                        ColourProduct colour = new ColourProduct();
+                                        colour.colour_id = Int32.Parse(row["colour_id"].ToString());
+                                        colour.colour_name = row["colour_name"] + "";
+                                        colour.colour_description = row["colour_description"] + "";
+                                        colour.create_date = row["create_date"].ToString() == "" ? nullableDateTime : (DateTime)row["create_date"];
+                                        colour.product_count = Int32.Parse(row["product_count"].ToString());
+                                        colours.Add(colour);
+                                    }
+
+                                    homeModel.Colours = colours;
+                                }
+                            }
+                        }
+
+                        //get products with same category id
+                        var relativeProductsTable = ds.Tables[1];
+                        if (relativeProductsTable.Rows.Count > 0)
+                        {
+                            List<ProductCurrency> relativeProducts = new List<ProductCurrency>();
+                            foreach (System.Data.DataRow row in relativeProductsTable.Rows)
+                            {
+                                ProductCurrency productDeatail = new ProductCurrency();
+                                productDeatail.product_id = Int32.Parse(row["product_id"].ToString());
+                                productDeatail.product_name = row["product_name"] + "";
+                                productDeatail.product_description = row["product_description"] + "";
+                                productDeatail.product_images = row["product_images"] + "";
+                                productDeatail.brand_id = Int32.Parse(row["brand_id"] + "");
+                                productDeatail.category_id = Int32.Parse(row["category_id"] + "");
+                                productDeatail.model_year = Int32.Parse(row["model_year"] + "");
+                                productDeatail.list_price = Decimal.Parse(row["list_price"] + "");
+                                productDeatail.create_date = row["create_date"].ToString() == "" ? nullableDateTime : (DateTime)row["create_date"];
+                                productDeatail.create_by = row["create_by"] + "";
+                                productDeatail.is_publish = row["is_publish"].ToString() == "" ? nullableBool : bool.Parse(row["is_publish"] + "");
+                                productDeatail.is_featured = row["is_featured"].ToString() == "" ? nullableBool : bool.Parse(row["is_featured"] + "");
+                                productDeatail.is_sale = row["is_sale"].ToString() == "" ? nullableBool : bool.Parse(row["is_sale"] + "");
+                                productDeatail.is_new = row["is_new"].ToString() == "" ? nullableBool : bool.Parse(row["is_new"] + "");
+                                productDeatail.is_gift = row["is_gift"].ToString() == "" ? nullableBool : bool.Parse(row["is_gift"] + "");
+                                productDeatail.colour_id = row["colour_id"].ToString() == "" ? nullableInteger : Int32.Parse(row["colour_id"] + "");
+                                productDeatail.colour_name = row["colour_name"] + "";
+                                productDeatail.colour_description = row["colour_description"] + "";
+                                productDeatail.currency_id = row["currency_id"].ToString() == "" ? nullableInteger : Int32.Parse(row["currency_id"] + "");
+                                if (row["currency_id"].ToString() == "")
+                                {
+                                    productDeatail.currency_name = defaultCurrencyName;
+                                    productDeatail.currency_code = defaultCurrencyCode;
+                                    productDeatail.currency_symbol = defaultCurrencySymbol;
+                                }
+                                else
+                                {
+                                    productDeatail.currency_name = row["currency_name"] + "";
+                                    productDeatail.currency_code = row["currency_code"] + "";
+                                    productDeatail.currency_symbol = row["currency_symbol"] + "";
+                                }
+                                relativeProducts.Add(productDeatail);
+                            }
+
+                            homeModel.RelativeProducts = relativeProducts;
                         }
                     }
 
@@ -279,6 +395,838 @@ public class ProductController
                 }
             }
 
+        }
+    }
+
+
+    /// <summary>
+    /// Get product detail which has currency info by list of product_id
+    /// </summary>
+    /// <param name="ids">List of product id</param>
+    /// <returns>ProductControllerModel</returns>
+    public static ProductControllerModel GetProductCurrency(int[] ids)
+    {
+        ProductControllerModel homeModel = new ProductControllerModel();
+
+        string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        //
+        // In a using statement, acquire the SqlConnection as a resource.
+        //
+        using (System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection(connectionString))
+        {
+            con.Open();
+            //Query to get this product detail
+            string query = "SELECT pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol, col.colour_name, col.colour_description FROM production.products pro"
+                + " left join production.currency cur on pro.currency_id = cur.currency_id left join production.colours col on pro.colour_id = col.colour_id";
+            string whereCls = "";
+            if (ids.Length > 0) {
+                whereCls = " where ";
+                for (int i = 0; i < ids.Length; i++)
+                {
+                    int id = ids[i];
+                    if (i == ids.Length - 1)
+                    {
+                        whereCls += "pro.product_id = " + id;
+                    }
+                    else
+                    {
+                        whereCls += "pro.product_id = " + id + " or ";
+                    }
+                }
+            }
+            query += whereCls;
+            using (System.Data.SqlClient.SqlCommand command = new System.Data.SqlClient.SqlCommand(query, con))
+            {
+                System.Data.SqlClient.SqlDataAdapter adapter = new System.Data.SqlClient.SqlDataAdapter();
+                System.Data.DataSet ds = new System.Data.DataSet();
+                try
+                {
+                    adapter.SelectCommand = command;
+                    adapter.Fill(ds);
+
+                    //Init variable to use during get data from cell
+                    int? nullableInteger = null;
+                    DateTime? nullableDateTime = null;
+                    bool? nullableBool = null;
+                    string globalDateTimeFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateTimeFormat"];
+
+                    //Get default currency from web.config
+                    string defaultCurrency = System.Configuration.ConfigurationManager.AppSettings["DefaultCurrency"];
+                    string[] defaultCurrencyInfo = defaultCurrency.Split(',');
+                    string defaultCurrencyName = defaultCurrencyInfo[0];
+                    string defaultCurrencyCode = defaultCurrencyInfo[1];
+                    string defaultCurrencySymbol = defaultCurrencyInfo[2];
+
+                    //get product detail
+                    var productDetailTable = ds.Tables[0];
+                    if (productDetailTable.Rows.Count > 0)
+                    {
+                        List<ProductCurrency> products = new List<ProductCurrency>();
+                        
+                        for (int i = 0; i < productDetailTable.Rows.Count; i++)
+                        {
+                            System.Data.DataRow item = productDetailTable.Rows[i];
+                            ProductCurrency productDeatail = new ProductCurrency();
+
+                            productDeatail.product_id = Int32.Parse(item["product_id"].ToString());
+                            productDeatail.product_name = item["product_name"] + "";
+                            productDeatail.product_description = item["product_description"] + "";
+                            productDeatail.product_images = item["product_images"] + "";
+                            productDeatail.brand_id = Int32.Parse(item["brand_id"] + "");
+                            productDeatail.category_id = Int32.Parse(item["category_id"] + "");
+                            productDeatail.model_year = Int32.Parse(item["model_year"] + "");
+                            productDeatail.list_price = Decimal.Parse(item["list_price"] + "");
+                            productDeatail.create_date = item["create_date"].ToString() == "" ? nullableDateTime : (DateTime)item["create_date"];
+                            productDeatail.create_by = item["create_by"] + "";
+                            productDeatail.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
+                            productDeatail.is_featured = item["is_featured"].ToString() == "" ? nullableBool : bool.Parse(item["is_featured"] + "");
+                            productDeatail.is_sale = item["is_sale"].ToString() == "" ? nullableBool : bool.Parse(item["is_sale"] + "");
+                            productDeatail.is_new = item["is_new"].ToString() == "" ? nullableBool : bool.Parse(item["is_new"] + "");
+                            productDeatail.is_gift = item["is_gift"].ToString() == "" ? nullableBool : bool.Parse(item["is_gift"] + "");
+                            productDeatail.colour_id = item["colour_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["colour_id"] + "");
+                            productDeatail.colour_name = item["colour_name"] + "";
+                            productDeatail.colour_description = item["colour_description"] + "";
+                            productDeatail.currency_id = item["currency_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["currency_id"] + "");
+                            if (item["currency_id"].ToString() == "")
+                            {
+                                productDeatail.currency_name = defaultCurrencyName;
+                                productDeatail.currency_code = defaultCurrencyCode;
+                                productDeatail.currency_symbol = defaultCurrencySymbol;
+                            }
+                            else
+                            {
+                                productDeatail.currency_name = item["currency_name"] + "";
+                                productDeatail.currency_code = item["currency_code"] + "";
+                                productDeatail.currency_symbol = item["currency_symbol"] + "";
+                            }
+                            products.Add(productDeatail);
+                        }
+                        homeModel.ProductItems = products;
+                    }
+
+                    return homeModel;
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Log("App_Code\\ProductHelper.cs", LogHelper.ErrorType.Error, ex);
+                    return null;
+                }
+                finally
+                {
+                    adapter.Dispose();
+                    command.Dispose();
+                    con.Close();
+                }
+            }
+
+        }
+    }
+
+
+    /// <summary>
+    /// Get products which contain currency info by category id
+    /// </summary>
+    /// <param name="category_id">Category id</param>
+    /// <returns>ProductControllerModel</returns>
+    public static ProductControllerModel GetProductByCategory(int category_id, int store_id = 0)
+    {
+        ProductControllerModel homeModel = new ProductControllerModel();
+        //
+        // First access the connection string.
+        // ... This may be autogenerated in Visual Studio.
+        //
+        string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        //
+        // In a using statement, acquire the SqlConnection as a resource.
+        //
+        using (System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection(connectionString))
+        {
+            con.Open();
+            //Query to get this product detail
+            string query = "";
+
+            //Pagination----------------------------------------------------------------------------------------
+            int pagenum = 0;
+            Int32.TryParse(HttpContext.Current.Request.QueryString["pagenum"], out pagenum);
+            int pagesize = 0;
+            Int32.TryParse(HttpContext.Current.Request.QueryString["pagesize"], out pagesize);
+            string orderby = HttpContext.Current.Request.QueryString["orderby"];
+            string sort = HttpContext.Current.Request.QueryString["sort"];
+            string mode = HttpContext.Current.Request.QueryString["mode"];
+            string brand_ids = HttpContext.Current.Request.QueryString["brand_id"];
+            string colour_ids = HttpContext.Current.Request.QueryString["colour_id"];
+            string orderbyClause = "";
+            if (pagenum == 0 && pagesize == 0)
+            {
+                pagenum = 1;
+                pagesize = 60;
+            }
+            //Design order by clause
+            if (!String.IsNullOrEmpty(orderby))
+            {
+                orderbyClause = " order by pro." + orderby + " " + sort;
+            }
+            else
+            {
+                orderbyClause = " order by pro.create_date desc";
+            }
+
+            //Start --- Create mode where clause 
+            string modeWhereClause = "";
+            if (!String.IsNullOrEmpty(mode))
+            {
+                if (mode.ToLower() == "sale")
+                {
+                    modeWhereClause = " and pro.is_sale = 1 ";
+                } else if (mode.ToLower() == "gift")
+                {
+                    modeWhereClause = " and pro.is_gift = 1 ";
+                }
+                else if (mode.ToLower() == "new")
+                {
+                    modeWhereClause = " and pro.is_new = 1 ";
+                }
+            }
+            //End --- Create mode where clause 
+
+            //Start --- Create brand where clause 
+            string brandWhereClause = "";
+            int brandCounter = 0;
+            if (!String.IsNullOrEmpty(brand_ids))
+            {
+                string[] ids = brand_ids.Split(',');
+                if (ids.Count() > 0)
+                {
+                    brandWhereClause += " and ( ";
+                    for (int i = 0; i < ids.Count(); i++)
+                    {
+                        string id = ids[i];
+                        if (!String.IsNullOrEmpty(id))
+                        {
+                            brandCounter++;
+                            if (i == 0)
+                            {
+                                brandWhereClause += "pro.brand_id = " + id;
+                            } else
+                            {
+                                brandWhereClause += " or pro.brand_id = " + id;
+                            }
+                        }
+                    }
+                    brandWhereClause += ") ";
+                }
+            }
+            if (brandCounter == 0)
+            {
+                brandWhereClause = "";
+            }
+            //End --- Create brand where clause 
+
+            //Start --- Create colour where clause 
+            string colourWhereClause = "";
+            int colourCounter = 0;
+            if (!String.IsNullOrEmpty(colour_ids))
+            {
+                string[] ids = colour_ids.Split(',');
+                if (ids.Count() > 0)
+                {
+                    if (store_id > 0)
+                    {
+                        colourWhereClause += " or ( ";
+                    }
+                    else
+                    {
+                        colourWhereClause += " and ( ";
+                    }
+                    for (int i = 0; i < ids.Count(); i++)
+                    {
+                        string id = ids[i];
+                        if (!String.IsNullOrEmpty(id))
+                        {
+                            colourCounter++;
+                            if (i == 0)
+                            {
+                                colourWhereClause += "pro.colour_id = " + id;
+                            }
+                            else
+                            {
+                                colourWhereClause += " or pro.colour_id = " + id;
+                            }
+                        }
+                    }
+                    colourWhereClause += ") ";
+                }
+            }
+            if (colourCounter == 0)
+            {
+                colourWhereClause = "";
+            }
+            //End --- Create colour where clause 
+            if (store_id == 0)
+            {
+                query = "WITH  Count_CTE AS (SELECT COUNT(*) AS TotalRows FROM production.products pro WHERE pro.category_id = " + category_id + " " + modeWhereClause + brandWhereClause + colourWhereClause + ")"
+                        + " SELECT pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol, col.colour_name, col.colour_description, Count_CTE.TotalRows As Total "
+                        + " FROM production.products pro LEFT JOIN production.currency cur on pro.currency_id = cur.currency_id LEFT JOIN production.colours col on pro.colour_id = col.colour_id"
+                        + " CROSS JOIN Count_CTE WHERE pro.category_id = " + category_id + " " + modeWhereClause + brandWhereClause + colourWhereClause + orderbyClause + " OFFSET (" + pagenum + " - 1) * " + pagesize + " ROWS FETCH NEXT " + pagesize + " ROWS ONLY;";
+            } else
+            {
+                query = "WITH  Count_CTE AS (SELECT COUNT(*) AS TotalRows FROM production.products pro "
+                        + " LEFT JOIN production.procategories cat on pro.category_id = cat.category_id LEFT JOIN sales.stores sto on cat.store_id = sto.store_id "
+                        + " WHERE sto.store_id = " + store_id + " " + modeWhereClause + brandWhereClause + colourWhereClause + ")"
+                        + " SELECT pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol, col.colour_name, col.colour_description, Count_CTE.TotalRows As Total "
+                        + " FROM production.products pro LEFT JOIN production.currency cur on pro.currency_id = cur.currency_id LEFT JOIN production.colours col on pro.colour_id = col.colour_id"
+                        + " LEFT JOIN production.procategories cat on pro.category_id = cat.category_id LEFT JOIN sales.stores sto on cat.store_id = sto.store_id "
+                        + " CROSS JOIN Count_CTE WHERE sto.store_id = " + store_id + " " + modeWhereClause + brandWhereClause + colourWhereClause + orderbyClause + " OFFSET (" + pagenum + " - 1) * " + pagesize + " ROWS FETCH NEXT " + pagesize + " ROWS ONLY;";
+            }
+            //Pagination----------------------------------------------------------------------------------------
+
+            //Query to get category that belong to this product
+            query += "select cat.*, sto.* from production.procategories cat left join sales.stores sto on cat.store_id = sto.store_id where cat.category_id = " + category_id + "; ";
+            using (System.Data.SqlClient.SqlCommand command = new System.Data.SqlClient.SqlCommand(query, con))
+            {
+                System.Data.SqlClient.SqlDataAdapter adapter = new System.Data.SqlClient.SqlDataAdapter();
+                System.Data.DataSet ds = new System.Data.DataSet();
+                try
+                {
+                    adapter.SelectCommand = command;
+                    adapter.Fill(ds);
+
+                    //Init variable to use during get data from cell
+                    int? nullableInteger = null;
+                    DateTime? nullableDateTime = null;
+                    bool? nullableBool = null;
+                    string globalDateTimeFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateTimeFormat"];
+
+                    //Get default currency from web.config
+                    string defaultCurrency = System.Configuration.ConfigurationManager.AppSettings["DefaultCurrency"];
+                    string[] defaultCurrencyInfo = defaultCurrency.Split(',');
+                    string defaultCurrencyName = defaultCurrencyInfo[0];
+                    string defaultCurrencyCode = defaultCurrencyInfo[1];
+                    string defaultCurrencySymbol = defaultCurrencyInfo[2];
+
+                    //get product detail
+                    var productDetailTable = ds.Tables[0];
+                    if (productDetailTable.Rows.Count > 0)
+                    {
+                        int totalProducts = 0;
+                        List<ProductCurrency> productItems = new List<ProductCurrency>();
+                        for (int i = 0; i < productDetailTable.Rows.Count; i++)
+                        {
+                            System.Data.DataRow item = productDetailTable.Rows[i];
+                            ProductCurrency productDeatail = new ProductCurrency();
+
+                            totalProducts = Int32.Parse(item["Total"].ToString());
+
+                            productDeatail.product_id = Int32.Parse(item["product_id"].ToString());
+                            productDeatail.product_name = item["product_name"] + "";
+                            productDeatail.product_description = item["product_description"] + "";
+                            productDeatail.product_images = item["product_images"] + "";
+                            productDeatail.brand_id = Int32.Parse(item["brand_id"] + "");
+                            productDeatail.category_id = Int32.Parse(item["category_id"] + "");
+                            productDeatail.model_year = Int32.Parse(item["model_year"] + "");
+                            productDeatail.list_price = Decimal.Parse(item["list_price"] + "");
+                            productDeatail.create_date = item["create_date"].ToString() == "" ? nullableDateTime : (DateTime)item["create_date"];
+                            productDeatail.create_by = item["create_by"] + "";
+                            productDeatail.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
+                            productDeatail.is_featured = item["is_featured"].ToString() == "" ? nullableBool : bool.Parse(item["is_featured"] + "");
+                            productDeatail.is_sale = item["is_sale"].ToString() == "" ? nullableBool : bool.Parse(item["is_sale"] + "");
+                            productDeatail.is_new = item["is_new"].ToString() == "" ? nullableBool : bool.Parse(item["is_new"] + "");
+                            productDeatail.is_gift = item["is_gift"].ToString() == "" ? nullableBool : bool.Parse(item["is_gift"] + "");
+                            productDeatail.colour_id = item["colour_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["colour_id"] + "");
+                            productDeatail.colour_name = item["colour_name"] + "";
+                            productDeatail.colour_description = item["colour_description"] + "";
+                            productDeatail.currency_id = item["currency_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["currency_id"] + "");
+                            if (item["currency_id"].ToString() == "")
+                            {
+                                productDeatail.currency_name = defaultCurrencyName;
+                                productDeatail.currency_code = defaultCurrencyCode;
+                                productDeatail.currency_symbol = defaultCurrencySymbol;
+                            }
+                            else
+                            {
+                                productDeatail.currency_name = item["currency_name"] + "";
+                                productDeatail.currency_code = item["currency_code"] + "";
+                                productDeatail.currency_symbol = item["currency_symbol"] + "";
+                            }
+                            productItems.Add(productDeatail);
+                        }
+                        homeModel.ProductItems = productItems;
+                        homeModel.TotalProducts = totalProducts;
+                    }
+
+                    //get category detail
+                    var categoryDetailTable = ds.Tables[1];
+                    if (categoryDetailTable.Rows.Count > 0 || store_id > 0)
+                    {
+                        procategory category = new procategory();
+                        if (store_id == 0)
+                        {
+                            System.Data.DataRow item = categoryDetailTable.Rows[0];
+
+                            category.category_id = Int32.Parse(item["category_id"].ToString());
+                            category.category_name = item["category_name"] + "";
+                            category.category_description = item["category_description"] + "";
+                            category.category_images = item["category_images"] + "";
+                            category.category_url = item["category_url"] + "";
+                            category.create_date = item["create_date"].ToString() == "" ? nullableDateTime : (DateTime)item["create_date"];
+                            category.parent_id = item["parent_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["parent_id"] + "");
+                            category.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
+                            category.is_menu = item["is_menu"].ToString() == "" ? nullableBool : bool.Parse(item["is_menu"] + "");
+                            category.is_label = item["is_label"].ToString() == "" ? nullableBool : bool.Parse(item["is_label"] + "");
+                            category.store_id = item["store_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["store_id"] + "");
+
+                            homeModel.Category = category;
+                            store sto = new store();
+                            sto.store_id = item["store_id"].ToString() == "" ? 0 : Int32.Parse(item["store_id"] + "");
+                            sto.store_name = item["store_name"] + "";
+                            sto.store_description = item["store_description"] + "";
+                            sto.store_images = item["store_images"] + "";
+                            sto.phone = item["phone"] + "";
+                            sto.email = item["email"] + "";
+                            sto.street = item["street"] + "";
+                            sto.city = item["city"] + "";
+                            sto.state = item["state"] + "";
+                            sto.zip_code = item["zip_code"] + "";
+                            homeModel.Store = sto;
+
+                            //get category with same store id
+                            query = "with LastResult As (SELECT c.category_id,c.category_name,c.category_description,c.category_images,"
+                                + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id,s.store_name,"
+                                + "COUNT(p.product_id) AS product_count FROM production.procategories AS c "
+                                + "LEFT JOIN production.products AS cp ON cp.category_id=c.category_id "
+                                + "LEFT JOIN production.products AS p ON p.product_id=cp.product_id LEFT JOIN sales.stores s ON c.store_id=s.store_id WHERE c.store_id = " + category.store_id + " "
+                                + "GROUP BY c.category_id,c.category_name,c.category_description,c.category_images,"
+                                + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id,s.store_name) "
+                                + "select  LastResult.category_id,LastResult.category_name,LastResult.category_description,LastResult.category_images,"
+                                + "LastResult.category_url,LastResult.create_date,LastResult.parent_id,LastResult.is_publish,"
+                                + "LastResult.is_menu,LastResult.is_label,LastResult.store_id,LastResult.store_name,LastResult.product_count from LastResult where LastResult.is_publish = 1; ";
+                        }
+                        else
+                        {
+                            query = "with LastResult As (SELECT c.category_id,c.category_name,c.category_description,c.category_images,"
+                                + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id,s.store_name,"
+                                + "COUNT(p.product_id) AS product_count FROM production.procategories AS c "
+                                + "LEFT JOIN production.products AS cp ON cp.category_id=c.category_id "
+                                + "LEFT JOIN production.products AS p ON p.product_id=cp.product_id LEFT JOIN sales.stores s ON c.store_id=s.store_id WHERE c.store_id = " + store_id + " "
+                                + "GROUP BY c.category_id,c.category_name,c.category_description,c.category_images,"
+                                + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id,s.store_name) "
+                                + "select  LastResult.category_id,LastResult.category_name,LastResult.category_description,LastResult.category_images,"
+                                + "LastResult.category_url,LastResult.create_date,LastResult.parent_id,LastResult.is_publish,"
+                                + "LastResult.is_menu,LastResult.is_label,LastResult.store_id,LastResult.store_name,LastResult.product_count from LastResult where LastResult.is_publish = 1; ";
+                            query += "select * from sales.stores where store_id=" + store_id + ";";
+                        }
+                        
+                        System.Data.SqlClient.SqlCommand newCommand = new System.Data.SqlClient.SqlCommand(query, con);
+                        adapter = new System.Data.SqlClient.SqlDataAdapter();
+                        ds = new System.Data.DataSet();
+                        adapter.SelectCommand = newCommand;
+                        adapter.Fill(ds);
+
+                        var categoriesTable = ds.Tables[0];
+                        if (categoriesTable.Rows.Count > 0)
+                        {
+                            List<CategoryProduct> categories = new List<CategoryProduct>();
+                            foreach (System.Data.DataRow row in categoriesTable.Rows)
+                            {
+                                CategoryProduct cat = new CategoryProduct();
+                                cat.category_id = Int32.Parse(row["category_id"].ToString());
+                                cat.category_name = row["category_name"] + "";
+                                cat.category_description = row["category_description"] + "";
+                                cat.category_images = row["category_images"] + "";
+                                cat.category_url = row["category_url"] + "";
+                                cat.create_date = row["create_date"].ToString() == "" ? nullableDateTime : (DateTime)row["create_date"];
+                                cat.parent_id = row["parent_id"].ToString() == "" ? nullableInteger : Int32.Parse(row["parent_id"] + "");
+                                cat.is_publish = row["is_publish"].ToString() == "" ? nullableBool : bool.Parse(row["is_publish"] + "");
+                                cat.is_menu = row["is_menu"].ToString() == "" ? nullableBool : bool.Parse(row["is_menu"] + "");
+                                cat.is_label = row["is_label"].ToString() == "" ? nullableBool : bool.Parse(row["is_label"] + "");
+                                cat.store_id = row["store_id"].ToString() == "" ? nullableInteger : Int32.Parse(row["store_id"] + "");
+                                cat.store_name = row["store_name"] + "";
+                                cat.product_count = Int32.Parse(row["product_count"].ToString());
+                                categories.Add(cat);
+                            }
+
+                            homeModel.Categories = categories;
+
+                            //Incase this category doesn't have any product. We will get all products from its decendant categories
+                            if (homeModel.ProductItems == null)
+                            {
+                                ProductControllerModel result = GetDecendantProductsOfCategory(homeModel.Category, homeModel.Categories, con);
+                                if (result != null)
+                                {
+                                    homeModel.ProductItems = result.ProductItems;
+                                    homeModel.TotalProducts = result.TotalProducts;
+                                }
+                            }
+                        }
+
+                        //Get store information
+                        if (store_id > 0)
+                        {
+                            var storeTable = ds.Tables[1];
+                            if (storeTable.Rows.Count > 0)
+                            {
+                                foreach (DataRow item in storeTable.Rows)
+                                {
+                                    store sto = new store();
+                                    sto.store_id = item["store_id"].ToString() == "" ? 0 : Int32.Parse(item["store_id"] + "");
+                                    sto.store_name = item["store_name"] + "";
+                                    sto.store_description = item["store_description"] + "";
+                                    sto.store_images = item["store_images"] + "";
+                                    sto.phone = item["phone"] + "";
+                                    sto.email = item["email"] + "";
+                                    sto.street = item["street"] + "";
+                                    sto.city = item["city"] + "";
+                                    sto.state = item["state"] + "";
+                                    sto.zip_code = item["zip_code"] + "";
+                                    homeModel.Store = sto;
+                                }
+                            }
+                        }
+
+                        List<DataTable> dts = GetBrandsAndColours(con, homeModel.Category, homeModel.Categories);
+                        if (dts.Count > 0)
+                        {
+                            //get brands with same store id
+                            var brandsTable = dts[0];
+                            if (brandsTable.Rows.Count > 0)
+                            {
+                                List<BrandProduct> brands = new List<BrandProduct>();
+                                foreach (System.Data.DataRow row in brandsTable.Rows)
+                                {
+                                    BrandProduct brand = new BrandProduct();
+                                    brand.brand_id = Int32.Parse(row["brand_id"].ToString());
+                                    brand.brand_name = row["brand_name"] + "";
+                                    brand.brand_description = row["brand_description"] + "";
+                                    brand.images = row["images"] + "";
+                                    brand.create_date = row["create_date"].ToString() == "" ? nullableDateTime : (DateTime)row["create_date"];
+                                    brand.product_count = Int32.Parse(row["product_count"].ToString());
+                                    brands.Add(brand);
+                                }
+
+                                homeModel.Brands = brands;
+                            }
+
+                            if (dts.Count > 1)
+                            {
+                                //get colours with same store id
+                                var coloursTable = dts[1];
+                                if (coloursTable.Rows.Count > 0)
+                                {
+                                    List<ColourProduct> colours = new List<ColourProduct>();
+                                    foreach (System.Data.DataRow row in coloursTable.Rows)
+                                    {
+                                        ColourProduct colour = new ColourProduct();
+                                        colour.colour_id = Int32.Parse(row["colour_id"].ToString());
+                                        colour.colour_name = row["colour_name"] + "";
+                                        colour.colour_description = row["colour_description"] + "";
+                                        colour.create_date = row["create_date"].ToString() == "" ? nullableDateTime : (DateTime)row["create_date"];
+                                        colour.product_count = Int32.Parse(row["product_count"].ToString());
+                                        colours.Add(colour);
+                                    }
+
+                                    homeModel.Colours = colours;
+                                }
+                            }
+                        }
+                    }
+
+                    return homeModel;
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Log("App_Code\\ProductHelper.cs", LogHelper.ErrorType.Error, ex);
+                    return null;
+                }
+                finally
+                {
+                    adapter.Dispose();
+                    command.Dispose();
+                    con.Close();
+                }
+            }
+
+        }
+    }
+
+    public static List<DataTable> GetBrandsAndColours(SqlConnection con, procategory category, List<CategoryProduct> categories)
+    {
+        string query = "";
+
+        string whereCondtion = "";
+        if (category != null)
+        {
+            if (HttpContext.Current.Request.QueryString["category_id"] != null || HttpContext.Current.Request.QueryString["product_id"] != null)
+            {
+                whereCondtion = " where (cat.category_id = " + category.category_id;
+                for (int i = 0; i < categories.Count; i++)
+                {
+                    CategoryProduct item = categories[i];
+                    if (item.parent_id == category.category_id)
+                    {
+                        whereCondtion += " or cat.category_id = " + item.category_id;
+                        for (int k = 0; k < categories.Count; k++)
+                        {
+                            CategoryProduct child = categories[k];
+                            if (child.parent_id == item.category_id)
+                            {
+                                whereCondtion += " or cat.category_id = " + child.category_id;
+                            }
+                        }
+                    }
+                }
+                whereCondtion += ") ";
+            }
+            else
+            {
+                whereCondtion = " where cat.store_id = " + category.store_id + " ";
+            }
+        } else if (categories != null)
+        {
+            if (categories.Count > 0)
+            {
+                CategoryProduct categoryPro = categories[0];
+                whereCondtion = " where cat.store_id = " + categoryPro.store_id + " ";
+            }
+        }
+
+        //get brand with same store id
+        query += "select bra.*, COUNT(pro.product_id) AS product_count from production.brands bra left join production.products pro on bra.brand_id = pro.brand_id left join "
+                + "production.procategories cat on pro.category_id = cat.category_id " + whereCondtion
+                + " GROUP BY bra.brand_id, bra.brand_name, bra.brand_description, bra.images, bra.create_date; ";
+        //get colour with same store id
+        query += "select col.*, COUNT(pro.product_id) AS product_count from production.colours col left join production.products pro on col.colour_id = pro.colour_id "
+                + "left join production.procategories cat on pro.category_id = cat.category_id " + whereCondtion
+                + " GROUP BY col.colour_id, col.colour_name, col.colour_description, col.create_date;";
+
+        System.Data.SqlClient.SqlCommand newCommand = new System.Data.SqlClient.SqlCommand(query, con);
+        var adapter = new System.Data.SqlClient.SqlDataAdapter();
+        var ds = new System.Data.DataSet();
+        adapter.SelectCommand = newCommand;
+        adapter.Fill(ds);
+
+        List<DataTable> dts = new List<DataTable>();
+        if (ds.Tables.Count > 0)
+        {
+            foreach (DataTable dt in ds.Tables)
+            {
+                dts.Add(dt);
+            }
+        }
+        return dts;
+    }
+
+    public static ProductControllerModel GetDecendantProductsOfCategory(procategory category, List<CategoryProduct> categories, SqlConnection con)
+    {
+        ProductControllerModel homeModel = new ProductControllerModel();
+        string whereCondtion = " where (pro.category_id = " + category.category_id;
+        for (int i = 0; i < categories.Count; i++)
+        {
+            CategoryProduct item = categories[i];
+            if (item.parent_id == category.category_id)
+            {
+                whereCondtion += " or pro.category_id = " + item.category_id;
+                for (int k = 0; k < categories.Count; k++)
+                {
+                    CategoryProduct child = categories[k];
+                    if (child.parent_id == item.category_id)
+                    {
+                        whereCondtion += " or pro.category_id = " + child.category_id;
+                    }
+                }
+            }
+        }
+        whereCondtion += ") ";
+
+        string query = "";
+
+        //Pagination----------------------------------------------------------------------------------------
+        int pagenum = 0;
+        Int32.TryParse(HttpContext.Current.Request.QueryString["pagenum"], out pagenum);
+        int pagesize = 0;
+        Int32.TryParse(HttpContext.Current.Request.QueryString["pagesize"], out pagesize);
+        string orderby = HttpContext.Current.Request.QueryString["orderby"];
+        string sort = HttpContext.Current.Request.QueryString["sort"];
+        string mode = HttpContext.Current.Request.QueryString["mode"];
+        string brand_ids = HttpContext.Current.Request.QueryString["brand_id"];
+        string colour_ids = HttpContext.Current.Request.QueryString["colour_id"];
+        string orderbyClause = "";
+        if (pagenum == 0 && pagesize == 0)
+        {
+            pagenum = 1;
+            pagesize = 60;
+        }
+        //Design order by clause
+        if (!String.IsNullOrEmpty(orderby))
+        {
+            orderbyClause = " order by pro." + orderby + " " + sort;
+        }
+        else
+        {
+            orderbyClause = " order by pro.create_date desc";
+        }
+
+        //Start --- Create mode where clause 
+        string modeWhereClause = "";
+        if (!String.IsNullOrEmpty(mode))
+        {
+            if (mode.ToLower() == "sale")
+            {
+                modeWhereClause = " and pro.is_sale = 1 ";
+            }
+            else if (mode.ToLower() == "gift")
+            {
+                modeWhereClause = " and pro.is_gift = 1 ";
+            }
+            else if (mode.ToLower() == "new")
+            {
+                modeWhereClause = " and pro.is_new = 1 ";
+            }
+        }
+        //End --- Create mode where clause 
+
+        //Start --- Create brand where clause 
+        string brandWhereClause = "";
+        int brandCounter = 0;
+        if (!String.IsNullOrEmpty(brand_ids))
+        {
+            string[] ids = brand_ids.Split(',');
+            if (ids.Count() > 0)
+            {
+                brandWhereClause += " and ( ";
+                for (int i = 0; i < ids.Count(); i++)
+                {
+                    string id = ids[i];
+                    if (!String.IsNullOrEmpty(id))
+                    {
+                        brandCounter++;
+                        if (i == 0)
+                        {
+                            brandWhereClause += "pro.brand_id = " + id;
+                        }
+                        else
+                        {
+                            brandWhereClause += " or pro.brand_id = " + id;
+                        }
+                    }
+                }
+                brandWhereClause += ") ";
+            }
+        }
+        if (brandCounter == 0)
+        {
+            brandWhereClause = "";
+        }
+        //End --- Create brand where clause 
+
+        //Start --- Create colour where clause 
+        string colourWhereClause = "";
+        int colourCounter = 0;
+        if (!String.IsNullOrEmpty(colour_ids))
+        {
+            string[] ids = colour_ids.Split(',');
+            if (ids.Count() > 0)
+            {
+                colourWhereClause += " and ( ";
+                for (int i = 0; i < ids.Count(); i++)
+                {
+                    string id = ids[i];
+                    if (!String.IsNullOrEmpty(id))
+                    {
+                        colourCounter++;
+                        if (i == 0)
+                        {
+                            colourWhereClause += "pro.colour_id = " + id;
+                        }
+                        else
+                        {
+                            colourWhereClause += " or pro.colour_id = " + id;
+                        }
+                    }
+                }
+                colourWhereClause += ") ";
+            }
+        }
+        if (colourCounter == 0)
+        {
+            colourWhereClause = "";
+        }
+        //End --- Create colour where clause 
+
+        query = "WITH  Count_CTE AS (SELECT COUNT(*) AS TotalRows FROM production.products pro" + whereCondtion + modeWhereClause + brandWhereClause + colourWhereClause + ")"
+            + " SELECT pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol, col.colour_name, col.colour_description, Count_CTE.TotalRows As Total "
+            + " FROM production.products pro LEFT JOIN production.currency cur on pro.currency_id = cur.currency_id LEFT JOIN production.colours col on pro.colour_id = col.colour_id"
+            + " CROSS JOIN Count_CTE " + whereCondtion + modeWhereClause + brandWhereClause + colourWhereClause + orderbyClause + " OFFSET (" + pagenum + " - 1) * " + pagesize + " ROWS FETCH NEXT " + pagesize + " ROWS ONLY;";
+        //Pagination----------------------------------------------------------------------------------------
+
+        System.Data.SqlClient.SqlCommand newCommand = new System.Data.SqlClient.SqlCommand(query, con);
+        var adapter = new System.Data.SqlClient.SqlDataAdapter();
+        var ds = new System.Data.DataSet();
+        adapter.SelectCommand = newCommand;
+        adapter.Fill(ds);
+
+        //get product detail
+        var productDetailTable = ds.Tables[0];
+        if (productDetailTable.Rows.Count > 0)
+        {
+            int totalProducts = 0;
+
+            //Init variable to use during get data from cell
+            int? nullableInteger = null;
+            DateTime? nullableDateTime = null;
+            bool? nullableBool = null;
+            string globalDateTimeFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateTimeFormat"];
+
+            //Get default currency from web.config
+            string defaultCurrency = System.Configuration.ConfigurationManager.AppSettings["DefaultCurrency"];
+            string[] defaultCurrencyInfo = defaultCurrency.Split(',');
+            string defaultCurrencyName = defaultCurrencyInfo[0];
+            string defaultCurrencyCode = defaultCurrencyInfo[1];
+            string defaultCurrencySymbol = defaultCurrencyInfo[2];
+
+            List<ProductCurrency> productItems = new List<ProductCurrency>();
+            for (int i = 0; i < productDetailTable.Rows.Count; i++)
+            {
+                System.Data.DataRow item = productDetailTable.Rows[i];
+                ProductCurrency productDeatail = new ProductCurrency();
+
+                totalProducts = Int32.Parse(item["Total"].ToString());
+
+                productDeatail.product_id = Int32.Parse(item["product_id"].ToString());
+                productDeatail.product_name = item["product_name"] + "";
+                productDeatail.product_description = item["product_description"] + "";
+                productDeatail.product_images = item["product_images"] + "";
+                productDeatail.brand_id = Int32.Parse(item["brand_id"] + "");
+                productDeatail.category_id = Int32.Parse(item["category_id"] + "");
+                productDeatail.model_year = Int32.Parse(item["model_year"] + "");
+                productDeatail.list_price = Decimal.Parse(item["list_price"] + "");
+                productDeatail.create_date = item["create_date"].ToString() == "" ? nullableDateTime : (DateTime)item["create_date"];
+                productDeatail.create_by = item["create_by"] + "";
+                productDeatail.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
+                productDeatail.is_featured = item["is_featured"].ToString() == "" ? nullableBool : bool.Parse(item["is_featured"] + "");
+                productDeatail.is_sale = item["is_sale"].ToString() == "" ? nullableBool : bool.Parse(item["is_sale"] + "");
+                productDeatail.is_new = item["is_new"].ToString() == "" ? nullableBool : bool.Parse(item["is_new"] + "");
+                productDeatail.is_gift = item["is_gift"].ToString() == "" ? nullableBool : bool.Parse(item["is_gift"] + "");
+                productDeatail.colour_id = item["colour_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["colour_id"] + "");
+                productDeatail.colour_name = item["colour_name"] + "";
+                productDeatail.colour_description = item["colour_description"] + "";
+                productDeatail.currency_id = item["currency_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["currency_id"] + "");
+                if (item["currency_id"].ToString() == "")
+                {
+                    productDeatail.currency_name = defaultCurrencyName;
+                    productDeatail.currency_code = defaultCurrencyCode;
+                    productDeatail.currency_symbol = defaultCurrencySymbol;
+                }
+                else
+                {
+                    productDeatail.currency_name = item["currency_name"] + "";
+                    productDeatail.currency_code = item["currency_code"] + "";
+                    productDeatail.currency_symbol = item["currency_symbol"] + "";
+                }
+                productItems.Add(productDeatail);
+            }
+            homeModel.ProductItems = productItems;
+            homeModel.TotalProducts = totalProducts;
+            return homeModel;
         }
         return null;
     }

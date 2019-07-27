@@ -99,7 +99,7 @@ public class Helper
 
     public static string GetHostURL()
     {
-        return HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);
+        return System.Configuration.ConfigurationManager.AppSettings["WebSiteUrl"];
     }
 
     /// <summary>

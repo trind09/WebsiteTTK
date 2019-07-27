@@ -40,6 +40,8 @@ public class StoreHelper
                 if (result != null)
                 {
                     result.store_name  = item.store_name;
+                    result.store_description = item.store_description;
+                    result.store_images = item.store_images;
                     result.phone = item.phone;
                     result.email = item.email;
                     result.street = item.street;
@@ -53,6 +55,8 @@ public class StoreHelper
                     {
                         store_id = item.store_id,
                         store_name = item.store_name,
+                        store_description = item.store_description,
+                        store_images = item.store_images,
                         phone = item.phone,
                         email = item.email,
                         street = item.street,

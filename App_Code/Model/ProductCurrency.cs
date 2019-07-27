@@ -28,4 +28,6 @@ public class ProductCurrency
     public string currency_name { get; set; }
     public string currency_code { get; set; }
     public string currency_symbol { get; set; }
+    public string colour_name { get; set; }
+    public string colour_description { get; set; }
 }

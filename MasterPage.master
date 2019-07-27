@@ -49,6 +49,7 @@
     <script language="JavaScript" type="text/javascript" src="js/front.js"></script>
 </head>
 <body>
+    <div runat="server" id="WebSiteUrl" style="display: none;"></div>
     <!-- navbar-->
     <header class="header mb-5">
         <!-- *** TOPBAR ***          _________________________________________________________ -->

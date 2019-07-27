@@ -8,19 +8,19 @@
         <EntityTypeShape EntityType="WebsiteTTKModel.C__MigrationHistory" Width="1.5" PointX="9.75" PointY="9.5" />
         <EntityTypeShape EntityType="WebsiteTTKModel.AspNetRole" Width="1.5" PointX="5.75" PointY="5.25" />
         <EntityTypeShape EntityType="WebsiteTTKModel.AspNetUserAddress" Width="1.5" PointX="9.75" PointY="12.5" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.AspNetUserClaim" Width="1.5" PointX="10.25" PointY="6.375" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.AspNetUserLogin" Width="1.5" PointX="10.25" PointY="3.875" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.AspNetUserClaim" Width="1.5" PointX="10.25" PointY="3.875" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.AspNetUserLogin" Width="1.5" PointX="10.25" PointY="6.5" />
         <EntityTypeShape EntityType="WebsiteTTKModel.AspNetUser" Width="1.5" PointX="8" PointY="4.125" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.brand" Width="1.5" PointX="1.5" PointY="19.25" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.brand" Width="1.5" PointX="1.5" PointY="23.375" />
         <EntityTypeShape EntityType="WebsiteTTKModel.colour" Width="1.5" PointX="11.75" PointY="9.5" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.procategory" Width="1.5" PointX="1.5" PointY="22.125" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.procategory" Width="1.5" PointX="1.5" PointY="19.375" />
         <EntityTypeShape EntityType="WebsiteTTKModel.product" Width="1.5" PointX="0.75" PointY="0.75" />
         <EntityTypeShape EntityType="WebsiteTTKModel.stock" Width="1.5" PointX="3" PointY="8.25" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.customer" Width="1.5" PointX="3" PointY="4.25" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.order_items" Width="1.5" PointX="7.5" PointY="11.5" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.order" Width="1.5" PointX="5.25" PointY="11.125" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.customer" Width="1.5" PointX="3" PointY="4.125" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.order_items" Width="1.5" PointX="7.5" PointY="11.375" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.order" Width="1.5" PointX="5.25" PointY="11" />
         <EntityTypeShape EntityType="WebsiteTTKModel.staff" Width="1.5" PointX="3" PointY="14.375" />
-        <EntityTypeShape EntityType="WebsiteTTKModel.store" Width="1.5" PointX="0.75" PointY="7.75" />
+        <EntityTypeShape EntityType="WebsiteTTKModel.store" Width="1.5" PointX="0.75" PointY="7.5" />
         <EntityTypeShape EntityType="WebsiteTTKModel.currency" Width="1.5" PointX="11.75" PointY="12.5" />
         <AssociationConnector Association="WebsiteTTKModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" />
         <AssociationConnector Association="WebsiteTTKModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" />

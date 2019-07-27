@@ -1,29 +1,188 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="product-detail.aspx.cs" Inherits="product_detail" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
-    <div runat="server" id="Product_Data" style="display: none;"></div>
-    <div runat="server" id="ThisProductCategory_Data" style="display: none;"></div>
-    <div runat="server" id="StoreCategories_Data" style="display: none;"></div>
+    <div runat="server" id="ProductControllerModel_Data" style="display: none;"></div>
     <script>
-        var currentHostUrl = window.location.protocol + '//' + $(location).attr('host');
+        var currentHostUrl = $('*[id*=WebSiteUrl]')[0].innerHTML;
 
         $(document).ready(function () {
-            var productDataJson = $("#<%=Product_Data.ClientID%>").text();
-            if (productDataJson) {
-                var product = jQuery.parseJSON(productDataJson);
-                MakeupProduct(product);
+            var ProductControllerModel_Json = $("#<%=ProductControllerModel_Data.ClientID%>").text();
+            if (ProductControllerModel_Json) {
+                var model = jQuery.parseJSON(ProductControllerModel_Json);
+
+                //Show product detail
+                MakeupProduct(model.Product);
 
                 //This will help to SEO this product
-                UpdateMetaTag(product);
+                UpdateMetaTag(model.Product);
 
-                var categoryDataJson = $("#<%=ThisProductCategory_Data.ClientID%>").text();
-                var category = jQuery.parseJSON(categoryDataJson);
+                //Show category tree menu
+                MakeupCategories(model.Category, model.Categories);
 
-                var storeCategoriesDataJson = $("#<%=StoreCategories_Data.ClientID%>").text();
-                var storeCategories = jQuery.parseJSON(storeCategoriesDataJson);
-                MakeupCategories(category, storeCategories);
+                //Show category path
+                MakeupCategoriesPath(model);
+
+                //Show brand tree menu
+                MakeupBrands(model.Category, model.Brands);
+
+                //Show colour tree menu
+                MakeupColours(model.Category, model.Colours);
+
+                //Show relative product
+                ShowRelativeProducts(model.RelativeProducts);
+
+                //Show products viewed recently
+                GetProductsViewedRecently(model.Product);
+
+                //Makeup sale, gift, and new link url
+                MakeupSaleGiftNewLink(model);
             }
         });
+
+        //Makeup sale, gift, and new link url
+        function MakeupSaleGiftNewLink(model) {
+            var category = model.Category;
+            var store = model.Store;
+            var urlWhereCls = "";
+            if (category) {
+                urlWhereCls = "category_id=" + category.category_id;
+            } else {
+                if (model.Store) {
+                    urlWhereCls = "store_id=" + model.Store.store_id;
+                }
+            }
+            if (category || store) {
+                var sale_link = currentHostUrl + "/category.aspx?" + urlWhereCls + "&mode=sale";
+                var gift_link = currentHostUrl + "/category.aspx?" + urlWhereCls + "&mode=gift";
+                var new_link = currentHostUrl + "/category.aspx?" + urlWhereCls + "&mode=new";
+
+                $('#sale_link').attr('href', sale_link);
+                $('#sale_link').html('<img src="img/sale.jpg" alt="Sales items" class="img-fluid">');
+
+                $('#gift_link').attr('href', gift_link);
+                $('#gift_link').html('<img src="img/gift.jpg" alt="Items with gifts" class="img-fluid">');
+
+                $('#new_link').attr('href', new_link);
+                $('#new_link').html('<img src="img/new.jpg" alt="New items" class="img-fluid">');
+            }
+        }
+
+        function AddToWishlist(product_id) {
+            console.log(product_id);
+            //TODO
+        }
+
+        //---------------------Start: Handle show recently viewed products--------------------//
+        function GetProductsViewedRecently(product) {
+            //EraseCookie("ttk_product_ids");
+            var product_ids = ReadCookie("ttk_product_ids");
+            if (product_ids != null) {
+                var product_ids = product_ids.split(',');
+
+                if (product_ids.length > 0) {
+                    var recent_product_ids = $.grep(product_ids, function (e) {
+                        return e != product.product_id;
+                    });
+                    //TODO with recent_product_ids
+                    var data = {};
+                    data.ids = recent_product_ids.join('|');
+                    $.ajax({
+                            type: "POST",
+                            url: currentHostUrl + "/WebServices/ProductWebService.asmx/HelloWorld",
+                            cache: false,
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(data),
+                            dataType: "json",
+                            success: ShowProductsViewedRecently,
+                            error: ajaxFailed
+                        });
+                    if (recent_product_ids.length > 6) {
+                        recent_product_ids.splice(0, 1);
+                    }
+                    recent_product_ids.push(product.product_id + "");
+                    CreateCookie("ttk_product_ids", recent_product_ids.join(','), 7);
+                } else {
+                    CreateCookie("ttk_product_ids", product.product_id + "", 7);
+                }
+            } else {
+                CreateCookie("ttk_product_ids", product.product_id + "", 7);
+            }
+        }
+
+        function ShowProductsViewedRecently(data, status) {
+            var relativeProductHtml = "<div class='col-md-3 col-sm-6'><div class='box same-height'><h3>Products viewed recently</h3></div></div>";
+            for (var count in data.d) {
+                var product = data.d[count];
+                var product_url = currentHostUrl + "/product-detail.aspx?product_id=" + product.product_id;
+                var imageItems = product.product_images.split(';');
+                var images = imageItems.filter(function (el) {
+                    return el != "";
+                });
+                var product_image = "";
+                var image_url = "";
+                if (images.length > 0) {
+                    product_image += "<div class='front'><a href='" + product_url + "'><img src='" + currentHostUrl + "/" + images[0] + "' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                    image_url = currentHostUrl + "/" + images[0];
+                    if (images.length > 1) {
+                        product_image += "<div class='back'><a href='" + product_url + "'><img src='" + currentHostUrl + "/" + images[1] + "' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                    } else {
+                        product_image += "<div class='back'><a href='" + product_url + "'><img src='" + currentHostUrl + "/img/no_image.jpg' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                    }
+                } else {
+                    image_url = currentHostUrl + "/img/no_image.jpg";
+                    product_image += "<div class='front'><a href='" + product_url + "'><img src='" + currentHostUrl + "/img/no_image.jpg' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                    product_image += "<div class='back'><a href='" + product_url + "'><img src='" + currentHostUrl + "/img/no_image.jpg' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                }
+
+                relativeProductHtml += "<div class='col-md-3 col-sm-6'>";
+                relativeProductHtml += "<div class='product same-height'>";
+                relativeProductHtml += "<div class='flip-container'><div class='flipper'>";
+                relativeProductHtml += product_image;
+                relativeProductHtml += "</div></div>";
+                if (image_url != "") {
+                    relativeProductHtml += "<a href='" + product_url + "' class='invisible'><img src='" + image_url + "' alt='' class='img-fluid'></a>";
+                }
+                relativeProductHtml += "<div class='text'><h3>" + product.product_name + "</h3><p class='price'>" + product.list_price + product.currency_symbol + "</p></div>";
+                relativeProductHtml += "</div>";
+                relativeProductHtml += "</div>";
+            }
+            $("#recentProducts").html(relativeProductHtml);
+        }
+
+        function ajaxFailed(xmlRequest) {
+            console.log(xmlRequest.status + ' \n\r ' + 
+                  xmlRequest.statusText + '\n\r' + 
+                  xmlRequest.responseText);
+        }
+        //---------------------End: Handle show recently viewed products--------------------//
+
+        //---------------------Start: Handle cookie--------------------//
+        function CreateCookie(name, value, days) {
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                var expires = "; expires=" + date.toGMTString();
+            }
+            else var expires = "";               
+
+            document.cookie = name + "=" + value + expires + "; path=/";
+        }
+
+        function ReadCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function EraseCookie(name) {
+            CreateCookie(name, "", -1);
+        }
+        //---------------------End: Handle cookie--------------------//
 
         function MakeupProduct(product) {
             if (product) {
@@ -156,7 +315,181 @@
 
                 $('#categories').html(menuLiItems);
             }
-            
+        }
+
+        function MakeupCategoriesPath(model) {
+            var category = model.Category;
+            var storeCategories = model.Categories;
+            var store = model.Store;
+            var menuLiItems = "<nav aria-label='breadcrumb'><ol class='breadcrumb'>";
+            var categoryHml = "";
+            var parentCategoryHml = "";
+            var grandParentCategoryHtml = "";
+            if (category != null) {
+                var category_url = currentHostUrl + "/category.aspx?category_id=" + category.category_id;
+                if (category.category_url)
+                {
+                    category_url = category.category_url;
+                }
+                var isLabel = category.is_label == null ? false : category.is_label;
+                if (isLabel) {
+                    categoryHml = "<li class='breadcrumb-item'><span style='cursor: pointer;'>" + category.category_name + "</span></li>";
+                }
+                else {
+                    categoryHml = "<li class='breadcrumb-item'><a href='" + category_url + "'>" + category.category_name + "</a></li>";
+                }
+
+                var parent_id = category.parent_id;
+                if (parent_id > 0) {
+                    var parentCategory = storeCategories.filter(x => x.category_id === parent_id);
+                    if (parentCategory.length > 0) {
+                        parentCategory = parentCategory[0];
+                        var parent_category_url = currentHostUrl + "/category.aspx?category_id=" + parentCategory.category_id;
+                        if (parentCategory.category_url)
+                        {
+                            parent_category_url = parentCategory.category_url;
+                        }
+                        isLabel = parentCategory.is_label == null ? false : parentCategory.is_label;
+                        if (isLabel) {
+                            parentCategoryHml = "<li class='breadcrumb-item'><span style='cursor: pointer;'>" + parentCategory.category_name + "</span></li>";
+                        }
+                        else {
+                            parentCategoryHml = "<li class='breadcrumb-item'><a href='" + parent_category_url + "'>" + parentCategory.category_name + "</a></li>";
+                        }
+
+                        var grand_parent_id = parentCategory.parent_id;
+                        if (grand_parent_id > 0) {
+                            var grandParentCategory = storeCategories.filter(x => x.category_id === grand_parent_id);
+                            if (grandParentCategory.length > 0) {
+                                grandParentCategory = grandParentCategory[0];
+                                var grand_parent_category_url = currentHostUrl + "/category.aspx?category_id=" + grandParentCategory.category_id;
+                                if (grandParentCategory.category_url)
+                                {
+                                    grand_parent_category_url = grandParentCategory.category_url;
+                                }
+                                isLabel = grandParentCategory.is_label == null ? false : grandParentCategory.is_label;
+                                if (isLabel) {
+                                    grandParentCategoryHtml = "<li class='breadcrumb-item'><span style='cursor: pointer;'>" + grandParentCategory.category_name + "</span></li>";
+                                }
+                                else {
+                                    grandParentCategoryHtml = "<li class='breadcrumb-item'><a href='" + grand_parent_category_url + "'>" + grandParentCategory.category_name + "</a></li>";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            var store_url = currentHostUrl + "/category.aspx?store_id=" + store.store_id;
+            menuLiItems += "<li class='breadcrumb-item'><a href='" + store_url + "'>" + store.store_name + "</a></li>"
+                + grandParentCategoryHtml + parentCategoryHml + categoryHml + "</ol></nav>";
+            $('#category_path').html(menuLiItems);
+        }
+
+        //This function will help to create brand tree menu
+        function MakeupBrands(category, brands) {
+            if (brands) {
+                var brandTreeHtml = "<div class='form-group'>";
+                for (var i = 0; i < brands.length; i++) {
+                    var brand = brands[i];
+                    var productCount = brand.product_count > 0 ? " (" + brand.product_count + ")" : ""
+                    brandTreeHtml += "<div class='checkbox'><label><input type='checkbox' name='brand' value='" + brand.brand_id + "' category='" + category.category_id + "'> " + brand.brand_name + productCount + "</label></div>";
+                }
+                brandTreeHtml += '</div><button onclick="return Filter(\'brand\');" class="btn btn-default btn-sm btn-primary"><i class="fa fa-pencil"></i>Apply</button>';
+                $('#brands').html(brandTreeHtml);
+            }
+        }
+
+        //This function will help to create colour tree menu
+        function MakeupColours(category, colours) {
+            if (colours) {
+                var colourTreeHtml = "<div class='form-group'>";
+                for (var i = 0; i < colours.length; i++) {
+                    var colour = colours[i];
+                    var productCount = colour.product_count > 0 ? " (" + colour.product_count + ")" : ""
+                    colourTreeHtml += "<div class='checkbox'><label><input type='checkbox' name='colour' value='" + colour.colour_id + "' category='" + category.category_id + "'> <span class='colour' style='background: " + colour.colour_name + "; border-radius: 10px;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> " + colour.colour_description + productCount + "</label></div>";
+                }
+                colourTreeHtml += '</div><button onclick="return Filter(\'colour\');" class="btn btn-default btn-sm btn-primary"><i class="fa fa-pencil"></i>Apply</button>';
+                $('#colours').html(colourTreeHtml);
+            }
+        }
+
+        function ShowRelativeProducts(relativeProducts) {
+            if (relativeProducts != null) {
+                if (relativeProducts.length > 0) {
+                    var relativeProductHtml = "<div class='col-md-3 col-sm-6'><div class='box same-height'><h3>You may also like these products</h3></div></div>";
+                    for (var i = 0; i < relativeProducts.length; i++) {
+                        var product = relativeProducts[i];
+                        var product_url = currentHostUrl + "/product-detail.aspx?product_id=" + product.product_id;
+                        var imageItems = product.product_images.split(';');
+                        var images = imageItems.filter(function (el) {
+                            return el != "";
+                        });
+                        var product_image = "";
+                        var image_url = "";
+                        if (images.length > 0) {
+                            product_image += "<div class='front'><a href='" + product_url + "'><img src='" + currentHostUrl + "/" + images[0] + "' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                            image_url = currentHostUrl + "/" + images[0];
+                            if (images.length > 1) {
+                                product_image += "<div class='back'><a href='" + product_url + "'><img src='" + currentHostUrl + "/" + images[1] + "' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                            } else {
+                                product_image += "<div class='back'><a href='" + product_url + "'><img src='" + currentHostUrl + "/img/no_image.jpg' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                            }
+                        } else {
+                            image_url = currentHostUrl + "/img/no_image.jpg";
+                            product_image += "<div class='front'><a href='" + product_url + "'><img src='" + currentHostUrl + "/img/no_image.jpg' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                            product_image += "<div class='back'><a href='" + product_url + "'><img src='" + currentHostUrl + "/img/no_image.jpg' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                        }
+
+                        relativeProductHtml += "<div class='col-md-3 col-sm-6'>";
+                        relativeProductHtml += "<div class='product same-height'>";
+                        relativeProductHtml += "<div class='flip-container'><div class='flipper'>";
+                        relativeProductHtml += product_image;
+                        relativeProductHtml += "</div></div>";
+                        if (image_url != "") {
+                            relativeProductHtml += "<a href='" + product_url + "' class='invisible'><img src='" + image_url + "' alt='' class='img-fluid'></a>";
+                        }
+                        relativeProductHtml += "<div class='text'><h3>" + product.product_name + "</h3><p class='price'>" + product.list_price + product.currency_symbol + "</p></div>";
+                        relativeProductHtml += "</div>";
+                        relativeProductHtml += "</div>";
+                    }
+                    $("#relativeProducts").html(relativeProductHtml);
+                }
+            }
+        }
+
+        //filter product
+        function Filter(element) {
+            var isProcess = false;
+            var brand_ids = new Array();
+            var brand_query = "";
+            var colour_ids = new Array();
+            var colour_query = "";
+            var category_id = 0;
+            $.each($("input[name='brand']:checked"), function(){            
+                brand_ids.push($(this).val());
+                category_id = $(this).attr('category');
+            });
+            if (brand_ids.length > 0) {
+                isProcess = true;
+                brand_query = "&brand_id=" + brand_ids.join(',');
+            }
+            $.each($("input[name='colour']:checked"), function(){            
+                colour_ids.push($(this).val());
+                category_id = $(this).attr('category');
+            });
+            if (colour_ids.length > 0) {
+                isProcess = true;
+                colour_query = "&colour_id=" + colour_ids.join(',');
+            }
+            if (isProcess) {
+                window.location.href = currentHostUrl + "/category.aspx?category_id=" + category_id + brand_query + colour_query;
+            }
+            return false;
+        }
+
+        //Clear filter product
+        function ClearFilter(element) {
+            return false;
         }
 
         //This will help to SEO this product
@@ -191,16 +524,7 @@
         <div id="content">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-12">
-                        <!-- breadcrumb-->
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item"><a href="#">Ladies</a></li>
-                                <li class="breadcrumb-item"><a href="#">Tops</a></li>
-                                <li aria-current="page" class="breadcrumb-item active">White Blouse Armani</li>
-                            </ol>
-                        </nav>
+                    <div class="col-lg-12" id="category_path">
                     </div>
                     <div class="col-lg-3 order-2 order-lg-1">
                         <!--
@@ -217,213 +541,41 @@
                         </div>
                         <div class="card sidebar-menu mb-4">
                             <div class="card-header">
-                                <h3 class="h4 card-title">Brands <a href="#" class="btn btn-sm btn-danger pull-right"><i class="fa fa-times-circle"></i>Clear</a></h3>
+                                <h3 class="h4 card-title">Brands <a href="#" class="btn btn-sm btn-danger pull-right" onclick="return ClearFilter('brand');"><i class="fa fa-times-circle"></i>Clear</a></h3>
                             </div>
-                            <div class="card-body">
-                                <form>
-                                    <div class="form-group">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox">
-                                                Armani  (10)
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox">
-                                                Versace  (12)
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox">
-                                                Carlo Bruni  (15)
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox">
-                                                Jack Honey  (14)
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-default btn-sm btn-primary"><i class="fa fa-pencil"></i>Apply</button>
-                                </form>
+                            <div class="card-body" id="brands">
+                                
                             </div>
                         </div>
                         <div class="card sidebar-menu mb-4">
                             <div class="card-header">
-                                <h3 class="h4 card-title">Colours <a href="#" class="btn btn-sm btn-danger pull-right"><i class="fa fa-times-circle"></i>Clear</a></h3>
+                                <h3 class="h4 card-title">Colours <a href="#" class="btn btn-sm btn-danger pull-right" onclick="return ClearFilter('colour');"><i class="fa fa-times-circle"></i>Clear</a></h3>
                             </div>
-                            <div class="card-body">
-                                <form>
-                                    <div class="form-group">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox"><span class="colour white"></span> White (14)
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox"><span class="colour blue"></span> Blue (10)
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox"><span class="colour green"></span>  Green (20)
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox"><span class="colour yellow"></span>  Yellow (13)
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox"><span class="colour red"></span>  Red (10)
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-default btn-sm btn-primary"><i class="fa fa-pencil"></i>Apply</button>
-                                </form>
+                            <div class="card-body" id="colours">
+                                
                             </div>
                         </div>
                         <!-- *** MENUS AND FILTERS END ***-->
-                        <div class="banner"><a href="#">
-                            <img src="img/banner.jpg" alt="sales 2014" class="img-fluid"></a></div>
+                        <div class="banner">
+                            <a id="sale_link" href="#"></a>
+                        </div>
+                        <div class="banner">
+                            <a id="gift_link" href="#"></a>
+                        </div>
+                        <div class="banner">
+                            <a id="new_link" href="#"></a>
+                        </div>
                     </div>
                     <div class="col-lg-9 order-1 order-lg-2">
                         <div id="productMain" runat="server" class="row">
                             
                         </div>
                         <div id="details" class="box"></div>
-                        <div class="row same-height-row">
-                            <div class="col-md-3 col-sm-6">
-                                <div class="box same-height">
-                                    <h3>You may also like these products</h3>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="product same-height">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product2.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product2_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product2.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3>Fur coat</h3>
-                                        <p class="price">$143</p>
-                                    </div>
-                                </div>
-                                <!-- /.product-->
-                            </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="product same-height">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product1.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product1_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product1.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3>Fur coat</h3>
-                                        <p class="price">$143</p>
-                                    </div>
-                                </div>
-                                <!-- /.product-->
-                            </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="product same-height">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product3.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product3_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product3.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3>Fur coat</h3>
-                                        <p class="price">$143</p>
-                                    </div>
-                                </div>
-                                <!-- /.product-->
-                            </div>
+                        <div class="row same-height-row" id="relativeProducts">
+                            
                         </div>
-                        <div class="row same-height-row">
-                            <div class="col-md-3 col-sm-6">
-                                <div class="box same-height">
-                                    <h3>Products viewed recently</h3>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="product same-height">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product2.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product2_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product2.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3>Fur coat</h3>
-                                        <p class="price">$143</p>
-                                    </div>
-                                </div>
-                                <!-- /.product-->
-                            </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="product same-height">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product1.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product1_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product1.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3>Fur coat</h3>
-                                        <p class="price">$143</p>
-                                    </div>
-                                </div>
-                                <!-- /.product-->
-                            </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="product same-height">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product3.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product3_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product3.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3>Fur coat</h3>
-                                        <p class="price">$143</p>
-                                    </div>
-                                </div>
-                                <!-- /.product-->
-                            </div>
+                        <div class="row same-height-row" id="recentProducts">
+                            
                         </div>
                     </div>
                     <!-- /.col-md-9-->

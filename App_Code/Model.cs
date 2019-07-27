@@ -304,6 +304,8 @@ public partial class store
 
     public int store_id { get; set; }
     public string store_name { get; set; }
+    public string store_description { get; set; }
+    public string store_images { get; set; }
     public string phone { get; set; }
     public string email { get; set; }
     public string street { get; set; }

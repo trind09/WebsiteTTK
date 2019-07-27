@@ -223,6 +223,8 @@ warning 6002: The table/view 'WebsiteTTK.production.currency' does not have a pr
           </Key>
           <Property Name="store_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="store_name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="store_description" Type="nvarchar(max)" />
+          <Property Name="store_images" Type="nvarchar" MaxLength="250" />
           <Property Name="phone" Type="nvarchar" MaxLength="50" />
           <Property Name="email" Type="nvarchar" MaxLength="255" />
           <Property Name="street" Type="nvarchar" MaxLength="255" />
@@ -826,6 +828,8 @@ warning 6002: The table/view 'WebsiteTTK.production.currency' does not have a pr
           </Key>
           <Property Name="store_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="store_name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="store_description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="store_images" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="email" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="street" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
@@ -1245,6 +1249,8 @@ warning 6002: The table/view 'WebsiteTTK.production.currency' does not have a pr
                 <ScalarProperty Name="street" ColumnName="street" />
                 <ScalarProperty Name="email" ColumnName="email" />
                 <ScalarProperty Name="phone" ColumnName="phone" />
+                <ScalarProperty Name="store_images" ColumnName="store_images" />
+                <ScalarProperty Name="store_description" ColumnName="store_description" />
                 <ScalarProperty Name="store_name" ColumnName="store_name" />
                 <ScalarProperty Name="store_id" ColumnName="store_id" />
               </MappingFragment>

@@ -1,3 +1,2 @@
-7/14/2019 8:36:42 AM - Error - Filepath = App_Code\ProductHelper.cs - StackTrack =    at System.Data.DataRow.GetDataColumn(String columnName)
-   at System.Data.DataRow.get_Item(String columnName)
-   at ProductController.GetProductDetailData(Int32 product_id) in E:\Projects\WebsiteTTK\App_Code\Controller\ProductController.cs:line 237 - Message = Column 'product_id' does not belong to table Table.
+7/27/2019 7:33:01 PM - Error - Filepath = App_Code\ProductHelper.cs - StackTrack =    at ProductController.GetDecendantProductsOfCategory(procategory category, List`1 categories, SqlConnection con) in E:\Projects\WebsiteTTK\App_Code\Controller\ProductController.cs:line 1014
+   at ProductController.GetProductByCategory(Int32 category_id, Int32 store_id) in E:\Projects\WebsiteTTK\App_Code\Controller\ProductController.cs:line 846 - Message = Object reference not set to an instance of an object.
