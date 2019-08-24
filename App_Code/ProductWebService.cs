@@ -28,7 +28,7 @@ public class ProductWebService : System.Web.Services.WebService
     //data.ids = recent_product_ids.join('|');
     //$.ajax({
     //type: "POST",
-    //        url: currentHostUrl + "/WebServices/ProductWebService.asmx/HelloWorld",
+    //        url: currentHostUrl + "/WebServices/ProductWebService.asmx/GetProducts",
     //        cache: false,
     //        contentType: "application/json; charset=utf-8",
     //        data: JSON.stringify(data),
@@ -36,11 +36,42 @@ public class ProductWebService : System.Web.Services.WebService
     //        success: ShowProductsViewedRecently,
     //        error: ajaxFailed
     //    });
-    public List<ProductCurrency> HelloWorld(string ids)
+    public List<ProductCurrency> GetProducts(string ids)
     {
-        int[] product_ids = Array.ConvertAll(ids.Split('|'), int.Parse);
-        ProductControllerModel model = ProductController.GetProductCurrency(product_ids);
-        return model.ProductItems;
+        if (!String.IsNullOrEmpty(ids))
+        {
+            int[] product_ids = Array.ConvertAll(ids.Split('|'), int.Parse);
+            ProductControllerModel model = ProductController.GetProductCurrency(product_ids);
+            return model.ProductItems;
+        } else
+        {
+            return null;
+        }
+    }
+
+    [WebMethod]
+    public ProductControllerModel AddToWishlist(string product_id)
+    {
+        ProductControllerModel model = ProductController.AddToWishlist(product_id);
+        return model;
+    }
+
+    [WebMethod]
+    public string GetCurrency(string param)
+    {
+        string[] pars = param.Split('|');
+        if (pars.Length == 3)
+        {
+            decimal amount = 0;
+            if (pars[0] != "null")
+            {
+                amount = Decimal.Parse(pars[0]);
+            }
+            string currency_code = pars[1];
+            string control_id = pars[2];
+            return Helper.FormatCurrency(amount, currency_code) + "|" + control_id;
+        }
+        return null;
     }
 
 }

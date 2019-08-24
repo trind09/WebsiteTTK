@@ -54,6 +54,8 @@
                                 <th>Shipped Date</th>
                                 <th>Store ID</th>
                                 <th>Staff ID<th>
+                                <th>Order Discount<th>
+                                <th>Order Discount Is Fixed<th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -68,6 +70,8 @@
                                 <td>{{ item.shipped_date | filterdate | date:'dd/MM/yyyy hh:mm:ss'}}</td>
                                 <td>{{ item.store_id }}</td>
                                 <td>{{ item.staff_id }}</td>
+                                <td>{{ item.order_discount }}</td>
+                                <td>{{ item.order_discount_is_fixed }}</td>
                                 <td>
                                     <a class="btn btn-warning btn-small" ng-click="editarItem(item.order_id)">
                                         <i class="icon-pencil icon-white"></i>Edit
@@ -131,6 +135,15 @@
                          <tr>
                             <td>Staff ID: </td>
                             <td><input type="text" ng-model="item.staff_id" placeholder="Staff ID" style="width: 500px;"></td>
+                        </tr>
+                        <tr>
+                            <td>Order Discount: </td>
+                            <td><input type="number" ng-model="item.order_discount" placeholder="Order Discount" style="width: 500px;"></td>
+                        </tr>
+                        <tr>
+                            <td title="If this option checked, discount be used as fixed discount. Or else discount will be used as percent.">Order Discount Is Fixed: </td>
+                            <td><input type="checkbox" ng-model="item.order_discount_is_fixed" class="input-small"></td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td colspan="2">

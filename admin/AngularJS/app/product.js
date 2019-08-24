@@ -49,6 +49,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
             product_id: newGeneratedproduct_id, product_name: $scope.item.product_name, product_images: $scope.item.product_images,
             product_description: escapedProductDescription, brand_id: $scope.item.brand_id,
             category_id: $scope.item.category_id, colour_id: $scope.item.colour_id, model_year: $scope.item.model_year, list_price: $scope.item.list_price,
+            shipping_fee: $scope.item.shipping_fee, free_shipping_amount: $scope.item.free_shipping_amount, tax: $scope.item.tax, taxed_countries: $scope.item.taxed_countries,
             create_date: today, create_by: $scope.item.create_by, is_publish: $scope.item.is_publish, is_featured: $scope.item.is_featured,
             is_sale: $scope.item.is_sale, is_new: $scope.item.is_new, is_gift: $scope.item.is_gift, currency_id: $scope.item.currency_id
         });
@@ -57,7 +58,8 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
             product_id: newGeneratedproduct_id, product_name: $scope.item.product_name, product_images: $scope.item.product_images,
             product_description: escapedProductDescription, brand_id: $scope.item.brand_id,
             category_id: $scope.item.category_id,
-            colour_id: $scope.item.colour_id, model_year: $scope.item.model_year, list_price: $scope.item.list_price,
+            colour_id: $scope.item.colour_id, model_year: $scope.item.model_year, list_price: $scope.item.list_price, shipping_fee: $scope.item.shipping_fee,
+            free_shipping_amount: $scope.item.free_shipping_amount, tax: $scope.item.tax, taxed_countries: $scope.item.taxed_countries,
             create_date: today, create_by: $scope.item.create_by, is_publish: $scope.item.is_publish, is_featured: $scope.item.is_featured,
             is_sale: $scope.item.is_sale, is_new: $scope.item.is_new, is_gift: $scope.item.is_gift, currency_id: $scope.item.currency_id
         });
@@ -99,6 +101,10 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         item1.colour_id = item.colour_id;
         item1.product_images = item.product_images;
         item1.list_price = item.list_price;
+        item1.shipping_fee = item.shipping_fee;
+        item1.free_shipping_amount = item.free_shipping_amount;
+        item1.tax = item.tax;
+        item1.taxed_countries = item.taxed_countries;
         item1.create_date = item.create_date;
         item1.create_by = item.create_by;
         item1.is_publish = item.is_publish;

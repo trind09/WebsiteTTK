@@ -2,9 +2,11 @@
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 using System.Web;
+using System.Web.Script.Serialization;
 
 public partial class MasterPage : System.Web.UI.MasterPage
 {
@@ -12,16 +14,35 @@ public partial class MasterPage : System.Web.UI.MasterPage
     {
         if (!IsPostBack)
         {
-            if (HttpContext.Current.User.Identity.IsAuthenticated)
+            var hostUrl = Helper.GetHostURL();
+            var defaultShippingFee = Helper.GetDefaultShippingFee();
+            var defaultTax = Helper.GetDefaultTax();
+            var countries = Helper.GetCountries();
+
+            var isUserLogedIn = HttpContext.Current.User.Identity.IsAuthenticated;
+            var userName = Page.User.Identity.Name;
+            var userStore = new Microsoft.AspNet.Identity.EntityFramework.UserStore<Microsoft.AspNet.Identity.EntityFramework.IdentityUser>();
+            var userManager = new Microsoft.AspNet.Identity.UserManager<Microsoft.AspNet.Identity.EntityFramework.IdentityUser>(userStore);
+            var user = userManager.FindByNameAsync(userName);
+            string userId = null;
+            if (user.Result != null)
             {
-                login_link.Visible = false;
-                register_link.Visible = false;
-                profile_link.Visible = true;
-                log_out_link.Visible = true;
-                log_out_hyperlink.HRef = "logout.aspx?redirect=" + Page.Request.Url.ToString();
+                userId = user.Result.Id;
             }
+
             PushDataToClient();
-            WebSiteUrl.InnerHtml = Helper.GetHostURL();
+
+            //Push master page data to client
+            MasterPageData data = new MasterPageData();
+            data.HostUrl = hostUrl;
+            data.IsUserLogedIn = isUserLogedIn;
+            data.User = user.Result;
+            data.Basket = ProductController.GetBasket(0, userId);
+            data.DefaultShippingFee = defaultShippingFee;
+            data.DefaultTax = defaultTax;
+            data.Countries = countries;
+            var dataJson = new JavaScriptSerializer().Serialize(data);
+            MasterPageDataDiv.InnerHtml = dataJson;
         }
     }
 
@@ -42,7 +63,8 @@ public partial class MasterPage : System.Web.UI.MasterPage
                                                           parent_id = s.parent_id,
                                                           is_publish = s.is_publish,
                                                           is_menu = s.is_menu,
-                                                          is_label = s.is_label
+                                                          is_label = s.is_label,
+                                                          is_collection = s.is_collection
                                                       }).ToList();
 
             string currentHostUrl = Helper.GetHostURL();
@@ -142,4 +164,15 @@ public partial class MasterPage : System.Web.UI.MasterPage
             Mega_Menu_UL.InnerHtml = menuLiItems;
         }
     }
+}
+
+public class MasterPageData
+{
+    public string HostUrl { get; set; }
+    public bool IsUserLogedIn { get; set; }
+    public BasketControllerModel Basket { get; set; }
+    public IdentityUser User { get; set; }
+    public decimal DefaultShippingFee { get; set; }
+    public double DefaultTax { get; set; }
+    public List<string> Countries { get; set; }
 }

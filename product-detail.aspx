@@ -3,9 +3,15 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div runat="server" id="ProductControllerModel_Data" style="display: none;"></div>
     <script>
-        var currentHostUrl = $('*[id*=WebSiteUrl]')[0].innerHTML;
+        var currentHostUrl = window.location.origin;
 
         $(document).ready(function () {
+            var MasterPageDataJson = $('*[id*=MasterPageDataDiv]')[0].innerHTML;
+            if (MasterPageDataJson) {
+                var masterPageData = jQuery.parseJSON(MasterPageDataJson);
+                currentHostUrl = masterPageData.HostUrl;
+            }
+
             var ProductControllerModel_Json = $("#<%=ProductControllerModel_Data.ClientID%>").text();
             if (ProductControllerModel_Json) {
                 var model = jQuery.parseJSON(ProductControllerModel_Json);
@@ -36,6 +42,8 @@
 
                 //Makeup sale, gift, and new link url
                 MakeupSaleGiftNewLink(model);
+            } else {
+                $('#details').html("<h3>No product selected!</h3>");
             }
         });
 
@@ -68,8 +76,38 @@
         }
 
         function AddToWishlist(product_id) {
-            console.log(product_id);
-            //TODO
+            var data = {};
+            data.product_id = product_id;
+            $.ajax({
+                type: "POST",
+                url: currentHostUrl + "/WebServices/ProductWebService.asmx/AddToWishlist",
+                cache: false,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(data),
+                dataType: "json",
+                success: ShowAddToWishlistMessage,
+                error: ajaxFailed
+            });
+        }
+
+        function AddToCart(url) {
+            if (isUserLogedIn) {
+                location.href = url;
+            } else {
+                $('#btn_login').click();
+            }
+        }
+
+        function ShowAddToWishlistMessage(data, status) {
+            var model = data.d;
+            if (model.Success) {
+                ShowMessage(model.ResultCode);
+                $('#wishlist_icon').attr('class', 'fa fa-heart');
+            } else {
+                if (model.ResultCode.Value[0] == 1) {
+                    $('#btn_login').click();
+                }
+            }
         }
 
         //---------------------Start: Handle show recently viewed products--------------------//
@@ -88,7 +126,7 @@
                     data.ids = recent_product_ids.join('|');
                     $.ajax({
                             type: "POST",
-                            url: currentHostUrl + "/WebServices/ProductWebService.asmx/HelloWorld",
+                            url: currentHostUrl + "/WebServices/ProductWebService.asmx/GetProducts",
                             cache: false,
                             contentType: "application/json; charset=utf-8",
                             data: JSON.stringify(data),
@@ -118,6 +156,10 @@
                 var images = imageItems.filter(function (el) {
                     return el != "";
                 });
+                var productPrice = 0;
+                if (product.list_price != null) {
+                    productPrice = product.list_price;
+                }
                 var product_image = "";
                 var image_url = "";
                 if (images.length > 0) {
@@ -142,11 +184,35 @@
                 if (image_url != "") {
                     relativeProductHtml += "<a href='" + product_url + "' class='invisible'><img src='" + image_url + "' alt='' class='img-fluid'></a>";
                 }
-                relativeProductHtml += "<div class='text'><h3>" + product.product_name + "</h3><p class='price'>" + product.list_price + product.currency_symbol + "</p></div>";
+                relativeProductHtml += "<div class='text'><h3>" + product.product_name + "</h3><p class='price price-" + product.product_id + "'>" + GetCurrency(productPrice, product.currency_code, 'price-' + product.product_id) + "</p></div>";
                 relativeProductHtml += "</div>";
                 relativeProductHtml += "</div>";
             }
             $("#recentProducts").html(relativeProductHtml);
+        }
+
+        function GetCurrency(amount, currency_code, control_id) {
+            var data = {};
+            data.param = amount + '|' + currency_code + '|' + control_id;
+            $.ajax({
+                type: "POST",
+                url: currentHostUrl + "/WebServices/ProductWebService.asmx/GetCurrency",
+                cache: false,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(data),
+                dataType: "json",
+                success: ShowCurrency,
+                error: ajaxFailed
+            });
+        }
+
+        function ShowCurrency(data, status) {
+            var str = data.d;
+            var items = str.split('|');
+            var priceLabels = $('.' + items[1]);
+            $.each(priceLabels, function (index, value) {
+                $(priceLabels[index]).text(items[0]);
+            });
         }
 
         function ajaxFailed(xmlRequest) {
@@ -448,7 +514,7 @@
                         if (image_url != "") {
                             relativeProductHtml += "<a href='" + product_url + "' class='invisible'><img src='" + image_url + "' alt='' class='img-fluid'></a>";
                         }
-                        relativeProductHtml += "<div class='text'><h3>" + product.product_name + "</h3><p class='price'>" + product.list_price + product.currency_symbol + "</p></div>";
+                        relativeProductHtml += "<div class='text'><h3>" + product.product_name + "</h3><p class='price price-" + product.product_id + "'>" + GetCurrency(product.list_price, product.currency_code, 'price-' + product.product_id) + "</p></div>"
                         relativeProductHtml += "</div>";
                         relativeProductHtml += "</div>";
                     }

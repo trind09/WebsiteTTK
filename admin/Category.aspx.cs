@@ -53,6 +53,10 @@ public partial class admin_Category : System.Web.UI.Page
                 bool.TryParse(Helper.GetPropValue(obj + "", "is_label") + "", out is_label);
                 item.is_label = is_label;
 
+                bool is_collection = true;
+                bool.TryParse(Helper.GetPropValue(obj + "", "is_collection") + "", out is_collection);
+                item.is_collection = is_collection;
+
                 int store_id = -1;
                 Int32.TryParse(Helper.GetPropValue(obj + "", "store_id") + "", out store_id);
                 item.store_id = store_id;
@@ -103,6 +107,7 @@ public partial class admin_Category : System.Web.UI.Page
                          is_publish = s.is_publish,
                          is_menu = s.is_menu,
                          is_label = s.is_label,
+                         is_collection = s.is_collection,
                          store_id = s.store_id
                      });
 

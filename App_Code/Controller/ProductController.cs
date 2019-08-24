@@ -29,9 +29,14 @@ public class ProductController
         using (System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection(connectionString))
         {
             con.Open();
+            //Query to get featured product
             string query = "SELECT pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol, col.colour_name, col.colour_description FROM production.products pro"
                 + " left join production.currency cur on pro.currency_id = cur.currency_id left join production.colours col on pro.colour_id = col.colour_id"
-                + " where pro.is_featured = 1 and pro.is_publish = 1";
+                + " where pro.is_featured = 1 and pro.is_publish = 1;";
+
+            //Query to get collection category
+            query += "select pro.* from production.procategories pro where pro.is_collection = 1";
+
             using (System.Data.SqlClient.SqlCommand command = new System.Data.SqlClient.SqlCommand(query, con))
             {
                 System.Data.SqlClient.SqlDataAdapter adapter = new System.Data.SqlClient.SqlDataAdapter();
@@ -45,6 +50,7 @@ public class ProductController
                     int? nullableInteger = null;
                     DateTime? nullableDateTime = null;
                     bool? nullableBool = null;
+                    Decimal? nullableDecimal = null;
                     string globalDateTimeFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateTimeFormat"];
 
                     //Get default currency from web.config
@@ -72,6 +78,10 @@ public class ProductController
                             productModel.category_id = Int32.Parse(item["category_id"] + "");
                             productModel.model_year = Int32.Parse(item["model_year"] + "");
                             productModel.list_price = Decimal.Parse(item["list_price"] + "");
+                            productModel.shipping_fee = item["shipping_fee"].ToString() == "" ? nullableDecimal : Decimal.Parse(item["shipping_fee"] + "");
+                            productModel.free_shipping_amount = item["free_shipping_amount"].ToString() == "" ? nullableDecimal : Decimal.Parse(item["free_shipping_amount"] + "");
+                            productModel.tax = item["tax"].ToString() == "" ? nullableDecimal : Decimal.Parse(item["tax"] + "");
+                            productModel.taxed_countries = item["taxed_countries"] + "";
                             productModel.create_date = item["create_date"].ToString() == "" ? nullableDateTime : (DateTime)item["create_date"];
                             productModel.create_by = item["create_by"] + "";
                             productModel.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
@@ -98,9 +108,35 @@ public class ProductController
                             featuredProducts.Add(productModel);
                         }
                         homeModel.FeaturedProducts = featuredProducts;
-
-                        return homeModel;
                     }
+
+                    var collectionCategoryTable = ds.Tables[1];
+                    if (collectionCategoryTable.Rows.Count > 0)
+                    {
+                        List<CategoryProduct> collectionCategories = new List<CategoryProduct>();
+                        foreach (System.Data.DataRow item in collectionCategoryTable.Rows)
+                        {
+                            CategoryProduct collectionCategory = new CategoryProduct();
+
+                            collectionCategory.category_id = Int32.Parse(item["category_id"].ToString());
+                            collectionCategory.category_name = item["category_name"] + "";
+                            collectionCategory.category_description = item["category_description"] + "";
+                            collectionCategory.category_images = item["category_images"] + "";
+                            collectionCategory.category_url = item["category_url"] + "";
+                            collectionCategory.create_date = item["create_date"].ToString() == "" ? nullableDateTime : (DateTime)item["create_date"];
+                            collectionCategory.parent_id = Int32.Parse(item["parent_id"].ToString());
+                            collectionCategory.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
+                            collectionCategory.is_menu = item["is_menu"].ToString() == "" ? nullableBool : bool.Parse(item["is_menu"] + "");
+                            collectionCategory.is_label = item["is_label"].ToString() == "" ? nullableBool : bool.Parse(item["is_label"] + "");
+                            collectionCategory.is_collection = item["is_collection"].ToString() == "" ? nullableBool : bool.Parse(item["is_collection"] + "");
+                            collectionCategory.store_id = Int32.Parse(item["store_id"].ToString());
+
+                            collectionCategories.Add(collectionCategory);
+                        }
+                        homeModel.Categories = collectionCategories;
+                    }
+
+                    return homeModel;
                 }
                 catch (Exception ex)
                 {
@@ -116,7 +152,858 @@ public class ProductController
             }
 
         }
-        return null;
+    }
+
+    /// <summary>
+    /// Add product to basket
+    /// </summary>
+    /// <param name="product_id">Product ID</param>
+    /// <param name="userId">Customer ID</param>
+    /// <returns></returns>
+    public static ProductControllerModel AddProductToBasket(int product_id, string userId = null)
+    {
+        ProductControllerModel model = new ProductControllerModel();
+        if (product_id != 0 && userId != null)
+        {
+            using (var context = new WebsiteTTKEntities())
+            {
+                try
+                {
+                    var product = context.products.SingleOrDefault(w => w.product_id == product_id);
+                    var category = context.procategories.Single(w => w.category_id == product.category_id);
+                    var order = context.orders.SingleOrDefault(w => w.customer_id == userId && w.order_status == (int)OrderStatus.Status.New);
+                    if (order != null)
+                    {
+                        var order_items = order.order_items;
+                        var isUpdate = false;
+                        foreach (var item in order_items)
+                        {
+                            if (item.product_id == product_id)
+                            {
+                                item.quantity = item.quantity + 1;
+                                item.list_price = product.list_price;
+                                item.shipping_fee = product.shipping_fee;
+                                item.free_shipping_amount = product.free_shipping_amount;
+                                item.tax = product.tax;
+                                item.taxed_countries = product.taxed_countries;
+                                isUpdate = true;
+                            }
+                        }
+                        if (!isUpdate)
+                        {
+                            context.order_items.Add(new order_items
+                            {
+                                order_id = order.order_id,
+                                product_id = product_id,
+                                quantity = 1,
+                                list_price = product.list_price,
+                                shipping_fee = product.shipping_fee,
+                                free_shipping_amount = product.free_shipping_amount,
+                                tax = product.tax,
+                                taxed_countries = product.taxed_countries
+                            });
+                        }
+
+                        context.SaveChanges();
+
+                        model.Order = order;
+                        model.order_items = order.order_items.ToList();
+                    }
+                    else
+                    {
+                        context.orders.Add(new order
+                        {
+                            customer_id = userId,
+                            order_status = (int)OrderStatus.Status.New,
+                            order_date = DateTime.UtcNow,
+                            required_date = DateTime.UtcNow,
+                            store_id = category.store_id == null ? 0 : category.store_id.Value
+                        });
+                        context.SaveChanges();
+
+                        var new_order = context.orders.SingleOrDefault(w => w.customer_id == userId && w.order_status == (int)OrderStatus.Status.New);
+                        context.order_items.Add(new order_items
+                        {
+                            order_id = new_order.order_id,
+                            product_id = product_id,
+                            quantity = 1,
+                            list_price = product.list_price,
+                            shipping_fee = product.shipping_fee,
+                            free_shipping_amount = product.free_shipping_amount,
+                            tax = product.tax,
+                            taxed_countries = product.taxed_countries
+                        });
+                        model.Order = new_order;
+                        model.order_items = new_order.order_items.ToList();
+                        context.SaveChanges();
+                    }
+                    model.Success = true;
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Log("App_Code\\Controller\\ProductController.cs", LogHelper.ErrorType.Error, ex);
+                    model.Success = false;
+                    if (ex.InnerException != null)
+                    {
+                        model.Message = ex.InnerException.InnerException.Message;
+                    }
+                    else
+                    {
+                        model.Message = ex.Message;
+                    }
+                }
+            }
+        } else
+        {
+            model.Success = false;
+            model.Message = "No product added to basket!";
+        }
+        return model;
+    }
+
+    /// <summary>
+    /// Get basket
+    /// </summary>
+    /// <param name="product_id">Product ID</param>
+    /// <param name="userId">Customer ID</param>
+    /// <returns></returns>
+    public static BasketControllerModel GetBasket(int product_id, string userId = null)
+    {
+        BasketControllerModel model = new BasketControllerModel();
+
+        string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        //
+        // In a using statement, acquire the SqlConnection as a resource.
+        //
+        using (System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection(connectionString))
+        {
+            con.Open();
+            //Query to get this product detail
+            string query = "SELECT pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol, col.colour_name, col.colour_description FROM production.products pro"
+                + " left join production.currency cur on pro.currency_id = cur.currency_id left join production.colours col on pro.colour_id = col.colour_id"
+                + " where pro.product_id = " + product_id + "; ";
+            //Query to get category and store detail
+            query += "select cat.*, sto.* from production.procategories cat left join production.products pro on cat.category_id = pro.category_id"
+                + " left join sales.stores sto on cat.store_id = sto.store_id where pro.product_id = " + product_id + "; ";
+            //Query to get order detail
+            query += "select * from sales.orders where customer_id = '" + userId + "' and order_status = '" + (int)OrderStatus.Status.New + "'; ";
+            //Query to get order's items detail
+            query += "select odt.*, pro.*, ord.*, cur.* from sales.order_items odt left join sales.orders ord on odt.order_id = ord.order_id"
+                + " left join production.products pro on odt.product_id = pro.product_id left join production.currency cur on pro.currency_id = cur.currency_id where ord.customer_id = '" + userId + "'"
+                + " and ord.order_status = '" + (int)OrderStatus.Status.New + "';";
+            using (System.Data.SqlClient.SqlCommand command = new System.Data.SqlClient.SqlCommand(query, con))
+            {
+                System.Data.SqlClient.SqlDataAdapter adapter = new System.Data.SqlClient.SqlDataAdapter();
+                System.Data.DataSet ds = new System.Data.DataSet();
+                try
+                {
+                    adapter.SelectCommand = command;
+                    adapter.Fill(ds);
+
+                    //Init variable to use during get data from cell
+                    int? nullableInteger = null;
+                    decimal? nullableDecimal = null;
+                    DateTime? nullableDateTime = null;
+                    bool? nullableBool = null;
+                    string globalDateTimeFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateTimeFormat"];
+
+                    //Get default currency from web.config
+                    string defaultCurrency = System.Configuration.ConfigurationManager.AppSettings["DefaultCurrency"];
+                    string[] defaultCurrencyInfo = defaultCurrency.Split(',');
+                    string defaultCurrencyName = defaultCurrencyInfo[0];
+                    string defaultCurrencyCode = defaultCurrencyInfo[1];
+                    string defaultCurrencySymbol = defaultCurrencyInfo[2];
+
+                    //get product detail
+                    var productTable = ds.Tables[0];
+                    if (productTable.Rows.Count > 0)
+                    {
+                        System.Data.DataRow productData = productTable.Rows[0];
+                        ProductCurrency productDeatail = new ProductCurrency();
+
+                        productDeatail.product_id = Int32.Parse(productData["product_id"].ToString());
+                        productDeatail.product_name = productData["product_name"] + "";
+                        productDeatail.product_description = productData["product_description"] + "";
+                        productDeatail.product_images = productData["product_images"] + "";
+                        productDeatail.brand_id = Int32.Parse(productData["brand_id"] + "");
+                        productDeatail.category_id = Int32.Parse(productData["category_id"] + "");
+                        productDeatail.model_year = Int32.Parse(productData["model_year"] + "");
+                        productDeatail.list_price = Decimal.Parse(productData["list_price"] + "");
+                        productDeatail.shipping_fee = productData["shipping_fee"].ToString() == "" ? nullableDecimal : Decimal.Parse(productData["shipping_fee"] + "");
+                        productDeatail.free_shipping_amount = productData["free_shipping_amount"].ToString() == "" ? nullableDecimal : Decimal.Parse(productData["free_shipping_amount"] + "");
+                        productDeatail.tax = productData["tax"].ToString() == "" ? nullableDecimal : Decimal.Parse(productData["tax"] + "");
+                        productDeatail.taxed_countries = productData["taxed_countries"] + "";
+                        productDeatail.create_date = productData["create_date"].ToString() == "" ? nullableDateTime : (DateTime)productData["create_date"];
+                        productDeatail.create_by = productData["create_by"] + "";
+                        productDeatail.is_publish = productData["is_publish"].ToString() == "" ? nullableBool : bool.Parse(productData["is_publish"] + "");
+                        productDeatail.is_featured = productData["is_featured"].ToString() == "" ? nullableBool : bool.Parse(productData["is_featured"] + "");
+                        productDeatail.is_sale = productData["is_sale"].ToString() == "" ? nullableBool : bool.Parse(productData["is_sale"] + "");
+                        productDeatail.is_new = productData["is_new"].ToString() == "" ? nullableBool : bool.Parse(productData["is_new"] + "");
+                        productDeatail.is_gift = productData["is_gift"].ToString() == "" ? nullableBool : bool.Parse(productData["is_gift"] + "");
+                        productDeatail.colour_id = productData["colour_id"].ToString() == "" ? nullableInteger : Int32.Parse(productData["colour_id"] + "");
+                        productDeatail.colour_name = productData["colour_name"] + "";
+                        productDeatail.colour_description = productData["colour_description"] + "";
+                        productDeatail.currency_id = productData["currency_id"].ToString() == "" ? nullableInteger : Int32.Parse(productData["currency_id"] + "");
+                        if (productData["currency_id"].ToString() == "")
+                        {
+                            productDeatail.currency_name = defaultCurrencyName;
+                            productDeatail.currency_code = defaultCurrencyCode;
+                            productDeatail.currency_symbol = defaultCurrencySymbol;
+                        }
+                        else
+                        {
+                            productDeatail.currency_name = productData["currency_name"] + "";
+                            productDeatail.currency_code = productData["currency_code"] + "";
+                            productDeatail.currency_symbol = productData["currency_symbol"] + "";
+                        }
+                        model.Product = productDeatail;
+                    }
+
+                    //get category detail
+                    var categoryAndStoreTable = ds.Tables[1];
+                    if (categoryAndStoreTable.Rows.Count > 0)
+                    {
+                        System.Data.DataRow item = categoryAndStoreTable.Rows[0];
+
+                        procategory category = new procategory();
+
+                        category.category_id = Int32.Parse(item["category_id"].ToString());
+                        category.category_name = item["category_name"] + "";
+                        category.category_description = item["category_description"] + "";
+                        category.category_images = item["category_images"] + "";
+                        category.category_url = item["category_url"] + "";
+                        category.create_date = item["create_date"].ToString() == "" ? nullableDateTime : (DateTime)item["create_date"];
+                        category.parent_id = item["parent_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["parent_id"] + "");
+                        category.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
+                        category.is_menu = item["is_menu"].ToString() == "" ? nullableBool : bool.Parse(item["is_menu"] + "");
+                        category.is_label = item["is_label"].ToString() == "" ? nullableBool : bool.Parse(item["is_label"] + "");
+                        category.is_collection = item["is_collection"].ToString() == "" ? nullableBool : bool.Parse(item["is_collection"] + "");
+                        category.store_id = item["store_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["store_id"] + "");
+                        model.Category = category;
+
+                        store sto = new store();
+                        sto.store_id = item["store_id"].ToString() == "" ? 0 : Int32.Parse(item["store_id"] + "");
+                        sto.store_name = item["store_name"] + "";
+                        sto.store_description = item["store_description"] + "";
+                        sto.store_images = item["store_images"] + "";
+                        sto.phone = item["phone"] + "";
+                        sto.email = item["email"] + "";
+                        sto.street = item["street"] + "";
+                        sto.city = item["city"] + "";
+                        sto.state = item["state"] + "";
+                        sto.zip_code = item["zip_code"] + "";
+                        model.Store = sto;
+                    }
+
+                    //get order detail
+                    var orderTable = ds.Tables[2];
+                    if (orderTable.Rows.Count > 0)
+                    {
+                        System.Data.DataRow item = orderTable.Rows[0];
+
+                        order order = new order();
+
+                        order.order_id = Int32.Parse(item["order_id"].ToString());
+                        order.customer_id = item["customer_id"] + "";
+                        order.order_status = Int32.Parse(item["order_status"] + "");
+                        order.order_date = (DateTime)item["order_date"];
+                        order.required_date = (DateTime)item["required_date"];
+                        order.shipped_date = item["shipped_date"].ToString() == "" ? nullableDateTime : (DateTime)item["shipped_date"];
+                        order.store_id = Int32.Parse(item["store_id"].ToString());
+                        order.staff_id = Int32.Parse(item["staff_id"].ToString());
+                        order.order_discount = item["order_discount"].ToString() == "" ? nullableInteger : Int32.Parse(item["order_discount"].ToString());
+                        order.order_discount_is_fixed = item["order_discount_is_fixed"].ToString() == "" ? nullableBool : bool.Parse(item["order_discount_is_fixed"].ToString());
+                        model.Order = order;
+                    }
+
+                    //get order detail
+                    var orderItemsTable = ds.Tables[3];
+                    if (orderItemsTable.Rows.Count > 0)
+                    {
+                        List<OrderItem> orderItemsList = new List<OrderItem>();
+                        foreach (System.Data.DataRow item in orderItemsTable.Rows)
+                        {
+                            OrderItem orderItem = new OrderItem();
+
+                            orderItem.order_id = Int32.Parse(item["order_id"].ToString());
+                            orderItem.item_id = Int32.Parse(item["item_id"].ToString());
+                            orderItem.product_id = Int32.Parse(item["product_id"] + "");
+                            orderItem.quantity = (Double)item["quantity"];
+                            orderItem.discount = item["discount"].ToString() == "" ? nullableDecimal : (Decimal)item["discount"];
+                            orderItem.product_name = item["product_name"] + "";
+                            orderItem.product_description = item["product_description"] + "";
+                            orderItem.product_images = item["product_images"] + "";
+                            orderItem.brand_id = Int32.Parse(item["brand_id"].ToString());
+                            orderItem.category_id = Int32.Parse(item["category_id"].ToString());
+                            orderItem.model_year = Int32.Parse(item["model_year"].ToString());
+                            orderItem.list_price = decimal.Parse(item["list_price"].ToString());
+                            orderItem.shipping_fee = item["shipping_fee"].ToString() == "" ? nullableDecimal : decimal.Parse(item["shipping_fee"].ToString());
+                            orderItem.free_shipping_amount = item["free_shipping_amount"].ToString() == "" ? nullableDecimal : decimal.Parse(item["free_shipping_amount"].ToString());
+                            orderItem.tax = item["tax"].ToString() == "" ? nullableDecimal : decimal.Parse(item["tax"].ToString());
+                            orderItem.taxed_countries = item["taxed_countries"] + "";
+                            orderItem.create_date = item["create_date"].ToString() == "" ? nullableDateTime : (DateTime)item["create_date"];
+                            orderItem.create_by = item["create_by"] + "";
+                            orderItem.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
+                            orderItem.is_featured = item["is_featured"].ToString() == "" ? nullableBool : bool.Parse(item["is_featured"] + "");
+                            orderItem.is_sale = item["is_sale"].ToString() == "" ? nullableBool : bool.Parse(item["is_sale"] + "");
+                            orderItem.is_new = item["is_new"].ToString() == "" ? nullableBool : bool.Parse(item["is_new"] + "");
+                            orderItem.is_gift = item["is_gift"].ToString() == "" ? nullableBool : bool.Parse(item["is_gift"] + "");
+                            orderItem.colour_id = item["colour_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["colour_id"] + "");
+                            orderItem.currency_id = item["currency_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["currency_id"] + "");
+                            if (orderItem.currency_id == null)
+                            {
+                                orderItem.currency_name = defaultCurrencyName;
+                                orderItem.currency_code = defaultCurrencyCode;
+                                orderItem.currency_symbol = defaultCurrencySymbol;
+                            }
+                            else
+                            {
+                                orderItem.currency_name = item["currency_name"] + "";
+                                orderItem.currency_code = item["currency_code"] + "";
+                                orderItem.currency_symbol = item["currency_symbol"] + "";
+                            }
+                            orderItemsList.Add(orderItem);
+                        }
+
+                        model.OrderItems = orderItemsList;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Log("App_Code\\ProductHelper.cs", LogHelper.ErrorType.Error, ex);
+                }
+                finally
+                {
+                    adapter.Dispose();
+                    command.Dispose();
+                    con.Close();
+                }
+            }
+        }
+
+        var totalItem = 0.0;
+        var orderTotal = 0.0;
+        var shippingTotal = 0.0;
+        var taxTotal = 0.0;
+        var currencyCode = "";
+        var defaultCountry = Helper.GetDefaultCountry();
+        var defaultTax = Helper.GetDefaultTax();
+        var defaultShippingFee = Helper.GetDefaultShippingFee();
+
+        if (model.OrderItems != null)
+        {
+
+            for (var i = 0; i < model.OrderItems.Count; i++)
+            {
+                var order_item = model.OrderItems[i];
+
+                currencyCode = order_item.currency_code;
+                var free_shipping_amount = order_item.free_shipping_amount == null ? 0.0 : (double)order_item.free_shipping_amount;
+
+                //Discount
+                var discount = order_item.discount;
+                if (order_item.discount == null)
+                {
+                    discount = 0;
+                }
+
+                //Tax
+                var tax = 0.0;
+                var taxed_countries = order_item.taxed_countries;
+                if (taxed_countries != null)
+                {
+                    var taxed_countries_list = taxed_countries.Split(';');
+                    for (var k = 0; k < taxed_countries_list.Length; k++)
+                    {
+                        if (taxed_countries_list[k].ToUpper() == defaultCountry.ToUpper())
+                        {
+                            tax = order_item.tax == null ? 0.0 : Double.Parse(order_item.tax + "");
+                            if (tax == 0)
+                            {
+                                tax = defaultTax;
+                            }
+                        }
+                    }
+                }
+
+                //Order item total
+                var totalPrice = order_item.quantity * (double)order_item.list_price;
+                totalPrice = totalPrice - (double)discount;
+                if (order_item.quantity < free_shipping_amount)
+                {
+                    shippingTotal += order_item.shipping_fee == null ? 0.0 : (double)order_item.shipping_fee;
+                }
+
+                //get tax total
+                if (tax > 0)
+                {
+                    taxTotal += (totalPrice * tax) / 100;
+                }
+
+                //Order total
+                orderTotal += totalPrice;
+
+                //Total item
+                totalItem += order_item.quantity;
+
+                order_item.total_price = totalPrice;
+            }
+            //In case this order's products do not have shipping fee, we get default shipping fee from web.config
+            if (shippingTotal == 0)
+            {
+                shippingTotal = (double)defaultShippingFee;
+            }
+
+            var grandTotal = orderTotal + shippingTotal + taxTotal;
+            int order_discount = model.Order.order_discount == null ? 0 : (int)model.Order.order_discount;
+            if (order_discount > 0)
+            {
+                bool order_discount_is_fixed = model.Order.order_discount_is_fixed == null ? true : (bool)model.Order.order_discount_is_fixed;
+                if (order_discount_is_fixed)
+                {
+                    grandTotal = grandTotal - order_discount;
+                }
+                else
+                {
+                    grandTotal = grandTotal - (grandTotal * order_discount / 100);
+                }
+            }
+            model.ShippingTotal = shippingTotal;
+            model.TaxTotal = taxTotal;
+            model.TotalItem = totalItem;
+            model.GrandTotal = grandTotal;
+            model.CurrencyCode = currencyCode;
+        }
+
+        return model;
+    }
+
+    /// <summary>
+    /// Remove product from order. This can be used to update basket
+    /// </summary>
+    /// <param name="productId">Product Id to be removed from order</param>
+    /// <param name="orderId">Order Id to find the order that has product to be removed</param>
+    /// <param name="userId">User ID is used as a condition to find order</param>
+    /// <param name="status">Order status is used as a condition to find order</param>
+    public static ProductControllerModel RemoveProductFromOrder(int productId, int orderId, string userId, OrderStatus.Status status)
+    {
+        ProductControllerModel model = new ProductControllerModel();
+        using (var context = new WebsiteTTKEntities())
+        {
+            try
+            {
+                var order = context.orders.SingleOrDefault(w => w.customer_id == userId && w.order_id == orderId && w.order_status == (int)status);
+                if (order != null)
+                {
+                    order.order_items.Remove(order.order_items.Single(s => s.product_id == productId));
+                    context.SaveChanges();
+                    model.Success = true;
+                    model.Message = "Remove product from basket successful!";
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("App_Code\\Controller\\ProductController.cs", LogHelper.ErrorType.Error, ex);
+                model.Success = false;
+                if (ex.InnerException != null)
+                {
+                    model.Message = ex.InnerException.InnerException.Message;
+                }
+                else
+                {
+                    model.Message = ex.Message;
+                }
+            }
+        }
+        return model;
+    }
+
+    /// <summary>
+    /// Update order's items for only quantity
+    /// </summary>
+    /// <param name="ids">order_item id to be update</param>
+    /// <param name="quantities">order_item quantity to be update</param>
+    /// <param name="userId">User ID is used as a condition to find order</param>
+    /// <param name="status">Order status is used as a condition to find order</param>
+    public static ProductControllerModel UpdateOrderQuantity(string ids, string quantities, int orderId, string userId, OrderStatus.Status status)
+    {
+        ProductControllerModel model = new ProductControllerModel();
+        using (var context = new WebsiteTTKEntities())
+        {
+            try
+            {
+                var order = context.orders.SingleOrDefault(w => w.customer_id == userId && w.order_id == orderId && w.order_status == (int)status);
+                List<order_items> objs = order.order_items.ToList();
+                if (order != null)
+                {
+                    string[] item_ids = ids.Split(';');
+                    string[] item_quantities = quantities.Split(';');
+                    for (int i = 0; i < item_ids.Length; i++)
+                    {
+                        var item_id = item_ids[i];
+                        int index = objs.FindIndex(x => x.item_id == int.Parse(item_id));
+                        order_items order_item = objs[index];
+                        order_item.quantity = Double.Parse(item_quantities[i]);
+                    }
+                    context.SaveChanges();
+                    model.Success = true;
+                    model.Message = "Remove product from basket successful!";
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("App_Code\\Controller\\ProductController.cs", LogHelper.ErrorType.Error, ex);
+                model.Success = false;
+                if (ex.InnerException != null)
+                {
+                    model.Message = ex.InnerException.InnerException.Message;
+                }
+                else
+                {
+                    model.Message = ex.Message;
+                }
+            }
+        }
+        return model;
+    }
+
+    /// <summary>
+    /// Update order discount
+    /// </summary>
+    /// <param name="couponCode">Coupon code used by customer</param>
+    /// <param name="orderId">Order Id to find the order that has product to be removed</param>
+    /// <param name="userId">User ID is used as a condition to find order</param>
+    /// <param name="status">Order status is used as a condition to find order</param>
+    /// <returns></returns>
+    public static ProductControllerModel UpdateOrderDiscount(string couponCode, int orderId, string userId, OrderStatus.Status status)
+    {
+        ProductControllerModel model = new ProductControllerModel();
+        using (var context = new WebsiteTTKEntities())
+        {
+            try
+            {
+                var voucher = context.vouchers.SingleOrDefault(w => w.voucher_code == couponCode);
+                if (voucher != null)
+                {
+                    //The number of uses currently
+                    int voucher_uses = 0;
+                    Int32.TryParse(voucher.voucher_uses + "", out voucher_uses);
+
+                    //The max uses this voucher has
+                    int voucher_max_uses = 0;
+                    Int32.TryParse(voucher.voucher_max_uses + "", out voucher_max_uses);
+
+                    //How many times a user can use this voucher.
+                    int voucher_max_uses_user = 0;
+                    Int32.TryParse(voucher.voucher_max_uses_user + "", out voucher_max_uses_user);
+
+                    //The type can be: voucher, discount, sale. What ever you want.
+                    VoucherType.Type voucher_type = voucher.voucher_type == null? VoucherType.Type.Voucher : (VoucherType.Type)voucher.voucher_type;
+
+                    //The amount to discount by (in pennies) in this example.
+                    int voucher_discount_amount = 0;
+                    Int32.TryParse(voucher.voucher_discount_amount + "", out voucher_discount_amount);
+
+                    //Whether or not the voucher is a percentage or a fixed price.
+                    bool voucher_is_fixed = false;
+                    bool.TryParse(voucher.voucher_is_fixed + "", out voucher_is_fixed);
+
+                    //When the voucher begins
+                    DateTime voucher_starts_at = DateTime.UtcNow;
+                    DateTime.TryParse(voucher.voucher_starts_at + "", out voucher_starts_at);
+
+                    //When the voucher ends
+                    DateTime voucher_expires_at = DateTime.UtcNow;
+                    DateTime.TryParse(voucher.voucher_expires_at + "", out voucher_expires_at);
+
+                    //Product id this voucher apply to
+                    int voucher_product_id = 0;
+                    Int32.TryParse(voucher.voucher_product_id + "", out voucher_product_id);
+
+                    //User id this voucher apply to
+                    string voucher_user_id = voucher.voucher_user_id;
+
+                    var tobe_continue = true;
+                    if (voucher_discount_amount > 0 && voucher_max_uses > 0 && voucher_expires_at > voucher_starts_at && voucher_starts_at <= DateTime.UtcNow && voucher_expires_at >= DateTime.UtcNow)
+                    {
+                        if (voucher_product_id > 0)
+                        {
+                            if (voucher_user_id != null)
+                            {
+                                if (voucher_user_id != userId)
+                                {
+                                    tobe_continue = false;
+                                }
+                            }
+
+                            if (tobe_continue)
+                            {
+                                if (voucher_uses < voucher_max_uses)
+                                {
+                                    order order = context.orders.SingleOrDefault(w => w.order_id == orderId && w.order_status == (int)OrderStatus.Status.New);
+                                    if (order != null)
+                                    {
+                                        List<order_items> items = context.order_items.Where(w => w.order_id == orderId).ToList();
+                                        for (int i = 0; i < items.Count; i++)
+                                        {
+                                            order_items item = items[i];
+                                            if (item.product_id == voucher_product_id)
+                                            {
+                                                if (voucher_is_fixed)
+                                                {
+                                                    //If voucher is fixed price
+                                                    item.discount = voucher_discount_amount;
+                                                }
+                                                else
+                                                {
+                                                    //If voucher is percent
+                                                    item.discount = (item.list_price * voucher_discount_amount) / 100;
+                                                }
+                                            }
+                                        }
+                                        voucher.voucher_uses = voucher_uses + 1;
+                                    }
+                                }
+                            }
+                        }
+                        else if (voucher_user_id != null)
+                        {
+                            if (voucher_user_id != userId)
+                            {
+                                tobe_continue = false;
+                            }
+                            if (tobe_continue)
+                            {
+                                if (voucher_uses < voucher_max_uses)
+                                {
+                                    order order = context.orders.SingleOrDefault(w => w.order_id == orderId && w.order_status == (int)OrderStatus.Status.New);
+                                    if (order != null)
+                                    {
+                                        order.order_discount = voucher_discount_amount;
+                                        order.order_discount_is_fixed = voucher_is_fixed;
+                                        voucher.voucher_uses = voucher_uses + 1;
+                                    }
+                                }
+                            }
+                        } else
+                        {
+                            if (voucher_uses < voucher_max_uses)
+                            {
+                                order order = context.orders.SingleOrDefault(w => w.order_id == orderId && w.order_status == (int)OrderStatus.Status.New);
+                                if (order != null)
+                                {
+                                    order.order_discount = voucher_discount_amount;
+                                    order.order_discount_is_fixed = voucher_is_fixed;
+                                    voucher.voucher_uses = voucher_uses + 1;
+                                }
+                            }
+                        }
+                    }
+
+                    context.SaveChanges();
+                    model.Success = true;
+                    model.Message = "Update order discount successful!";
+                } else
+                {
+                    model.Success = false;
+                    model.Message = "Voucher doesn't exist!";
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("App_Code\\Controller\\ProductController.cs", LogHelper.ErrorType.Error, ex);
+                model.Success = false;
+                if (ex.InnerException != null)
+                {
+                    model.Message = ex.InnerException.InnerException.Message;
+                }
+                else
+                {
+                    model.Message = ex.Message;
+                }
+            }
+        }
+        return model;
+    }
+
+    /// <summary>
+    /// Get wishlist of user
+    /// </summary>
+    /// <param name="userId">User id</param>
+    /// <returns>ProductControllerModel</returns>
+    public static ProductControllerModel GetWishlist(string userId)
+    {
+        ProductControllerModel homeModel = new ProductControllerModel();
+
+        string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        //
+        // In a using statement, acquire the SqlConnection as a resource.
+        //
+        using (System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection(connectionString))
+        {
+            con.Open();
+            //Query to get this product detail
+            string query = "select wis.*, pro.*, cur.*, col.* from sales.wishlists wis left join production.products pro on wis.product_id = pro.product_id"
+                    + " left join production.currency cur on pro.currency_id = cur.currency_id left join production.colours col on pro.colour_id = col.colour_id"
+                    + " where wis.user_id = '" + userId + "'; ";
+            using (System.Data.SqlClient.SqlCommand command = new System.Data.SqlClient.SqlCommand(query, con))
+            {
+                System.Data.SqlClient.SqlDataAdapter adapter = new System.Data.SqlClient.SqlDataAdapter();
+                System.Data.DataSet ds = new System.Data.DataSet();
+                try
+                {
+                    adapter.SelectCommand = command;
+                    adapter.Fill(ds);
+
+                    //Init variable to use during get data from cell
+                    int? nullableInteger = null;
+                    DateTime? nullableDateTime = null;
+                    Decimal? nullableDeimal = null;
+                    bool? nullableBool = null;
+                    string globalDateTimeFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateTimeFormat"];
+
+                    //Get default currency from web.config
+                    string defaultCurrency = System.Configuration.ConfigurationManager.AppSettings["DefaultCurrency"];
+                    string[] defaultCurrencyInfo = defaultCurrency.Split(',');
+                    string defaultCurrencyName = defaultCurrencyInfo[0];
+                    string defaultCurrencyCode = defaultCurrencyInfo[1];
+                    string defaultCurrencySymbol = defaultCurrencyInfo[2];
+
+                    //get product detail
+                    var productDetailTable = ds.Tables[0];
+                    if (productDetailTable.Rows.Count > 0)
+                    {
+                        List<ProductCurrency> products = new List<ProductCurrency>();
+
+                        for (int i = 0; i < productDetailTable.Rows.Count; i++)
+                        {
+                            System.Data.DataRow item = productDetailTable.Rows[i];
+                            ProductCurrency productDeatail = new ProductCurrency();
+
+                            productDeatail.product_id = Int32.Parse(item["product_id"].ToString());
+                            productDeatail.product_name = item["product_name"] + "";
+                            productDeatail.product_description = item["product_description"] + "";
+                            productDeatail.product_images = item["product_images"] + "";
+                            productDeatail.brand_id = Int32.Parse(item["brand_id"] + "");
+                            productDeatail.category_id = Int32.Parse(item["category_id"] + "");
+                            productDeatail.model_year = Int32.Parse(item["model_year"] + "");
+                            productDeatail.list_price = Decimal.Parse(item["list_price"] + "");
+                            productDeatail.shipping_fee = item["shipping_fee"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["shipping_fee"] + "");
+                            productDeatail.free_shipping_amount = item["free_shipping_amount"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["free_shipping_amount"] + "");
+                            productDeatail.tax = item["tax"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["tax"] + "");
+                            productDeatail.taxed_countries = item["taxed_countries"] + "";
+                            productDeatail.create_date = item["create_date"].ToString() == "" ? nullableDateTime : (DateTime)item["create_date"];
+                            productDeatail.create_by = item["create_by"] + "";
+                            productDeatail.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
+                            productDeatail.is_featured = item["is_featured"].ToString() == "" ? nullableBool : bool.Parse(item["is_featured"] + "");
+                            productDeatail.is_sale = item["is_sale"].ToString() == "" ? nullableBool : bool.Parse(item["is_sale"] + "");
+                            productDeatail.is_new = item["is_new"].ToString() == "" ? nullableBool : bool.Parse(item["is_new"] + "");
+                            productDeatail.is_gift = item["is_gift"].ToString() == "" ? nullableBool : bool.Parse(item["is_gift"] + "");
+                            productDeatail.colour_id = item["colour_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["colour_id"] + "");
+                            productDeatail.colour_name = item["colour_name"] + "";
+                            productDeatail.colour_description = item["colour_description"] + "";
+                            productDeatail.currency_id = item["currency_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["currency_id"] + "");
+                            if (item["currency_id"].ToString() == "")
+                            {
+                                productDeatail.currency_name = defaultCurrencyName;
+                                productDeatail.currency_code = defaultCurrencyCode;
+                                productDeatail.currency_symbol = defaultCurrencySymbol;
+                            }
+                            else
+                            {
+                                productDeatail.currency_name = item["currency_name"] + "";
+                                productDeatail.currency_code = item["currency_code"] + "";
+                                productDeatail.currency_symbol = item["currency_symbol"] + "";
+                            }
+                            products.Add(productDeatail);
+                        }
+                        homeModel.ProductItems = products;
+                    }
+
+                    return homeModel;
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Log("App_Code\\ProductHelper.cs", LogHelper.ErrorType.Error, ex);
+                    return null;
+                }
+                finally
+                {
+                    adapter.Dispose();
+                    command.Dispose();
+                    con.Close();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Add product to wishlist
+    /// </summary>
+    /// <param name="product_id"></param>
+    /// <returns></returns>
+    public static ProductControllerModel AddToWishlist(string product_id)
+    {
+        ProductControllerModel model = new ProductControllerModel();
+        int id = 0;
+        Int32.TryParse(product_id, out id);
+        if (id > 0)
+        {
+            //Get loged in user info
+            System.Web.UI.Page page = new System.Web.UI.Page();
+            System.Threading.Tasks.Task<Microsoft.AspNet.Identity.EntityFramework.IdentityUser> user;
+            if (page.User.Identity.IsAuthenticated)
+            {
+                var userName = page.User.Identity.Name;
+                var userStore = new Microsoft.AspNet.Identity.EntityFramework.UserStore<Microsoft.AspNet.Identity.EntityFramework.IdentityUser>();
+                var userManager = new Microsoft.AspNet.Identity.UserManager<Microsoft.AspNet.Identity.EntityFramework.IdentityUser>(userStore);
+                user = userManager.FindByNameAsync(userName);
+                if (user.Result != null)
+                {
+                    string userId = user.Result.Id;
+                    using (var context = new WebsiteTTKEntities())
+                    {
+                        var wishlistItem = context.wishlists.SingleOrDefault(w => w.user_id == userId && w.product_id == id);
+                        if (wishlistItem != null)
+                        {
+                            wishlistItem.quantity = wishlistItem.quantity + 1;
+                            context.SaveChanges();
+                        }
+                        else
+                        {
+                            context.wishlists.Add(new wishlist
+                            {
+                                product_id = Int32.Parse(product_id),
+                                user_id = userId,
+                                quantity = 1,
+                                purchase_date = DateTime.UtcNow,
+
+                            });
+
+                            context.SaveChanges();
+                        }
+                        model.Success = true;
+                        model.ResultCode = ResultCode.AddToWishlistSuccess;
+                        return model;
+                    }
+                } else
+                {
+                    model.Success = false;
+                    model.ResultCode = ResultCode.LoginToWishlist;
+                    return model;
+                }
+            } else
+            {
+                model.Success = false;
+                model.ResultCode = ResultCode.LoginToWishlist;
+                return model;
+            }
+        } else
+        {
+            model.Success = false;
+            model.ResultCode = ResultCode.ProductDoesNotExist;
+            return model;
+        }
     }
 
     /// <summary>
@@ -125,8 +1012,10 @@ public class ProductController
     /// </summary>
     /// <param name="product_id"></param>
     /// <returns>ProductControllerModel</returns>
-    public static ProductControllerModel GetProductDetailData(int product_id)
+    public static ProductControllerModel GetProductDetailData(int product_id, System.Threading.Tasks.Task<Microsoft.AspNet.Identity.EntityFramework.IdentityUser> user)
     {
+        System.Web.UI.Page page = new System.Web.UI.Page();
+
         ProductControllerModel homeModel = new ProductControllerModel();
 
         string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
@@ -140,7 +1029,7 @@ public class ProductController
             string query = "SELECT pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol, col.colour_name, col.colour_description FROM production.products pro"
                 + " left join production.currency cur on pro.currency_id = cur.currency_id left join production.colours col on pro.colour_id = col.colour_id"
                 + " where pro.product_id = " + product_id + "; ";
-            //Query to get category that belong to this product
+            //Query to get category, and store that belong to this product
             query += "select cat.*, sto.* from production.procategories cat left join production.products pro on cat.category_id = pro.category_id"
                 + " left join sales.stores sto on cat.store_id = sto.store_id where pro.product_id = " + product_id + "; ";
             using (System.Data.SqlClient.SqlCommand command = new System.Data.SqlClient.SqlCommand(query, con))
@@ -155,6 +1044,7 @@ public class ProductController
                     //Init variable to use during get data from cell
                     int? nullableInteger = null;
                     DateTime? nullableDateTime = null;
+                    Decimal? nullableDeimal = null;
                     bool? nullableBool = null;
                     string globalDateTimeFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateTimeFormat"];
 
@@ -180,6 +1070,10 @@ public class ProductController
                         productDeatail.category_id = Int32.Parse(item["category_id"] + "");
                         productDeatail.model_year = Int32.Parse(item["model_year"] + "");
                         productDeatail.list_price = Decimal.Parse(item["list_price"] + "");
+                        productDeatail.shipping_fee = item["shipping_fee"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["shipping_fee"] + "");
+                        productDeatail.free_shipping_amount = item["free_shipping_amount"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["free_shipping_amount"] + "");
+                        productDeatail.tax = item["tax"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["tax"] + "");
+                        productDeatail.taxed_countries = item["taxed_countries"] + "";
                         productDeatail.create_date = item["create_date"].ToString() == "" ? nullableDateTime : (DateTime)item["create_date"];
                         productDeatail.create_by = item["create_by"] + "";
                         productDeatail.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
@@ -224,6 +1118,7 @@ public class ProductController
                         category.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
                         category.is_menu = item["is_menu"].ToString() == "" ? nullableBool : bool.Parse(item["is_menu"] + "");
                         category.is_label = item["is_label"].ToString() == "" ? nullableBool : bool.Parse(item["is_label"] + "");
+                        category.is_collection = item["is_collection"].ToString() == "" ? nullableBool : bool.Parse(item["is_collection"] + "");
                         category.store_id = item["store_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["store_id"] + "");
 
                         homeModel.Category = category;
@@ -242,20 +1137,30 @@ public class ProductController
 
                         //get category with same store id
                         query = "with LastResult As (SELECT c.category_id,c.category_name,c.category_description,c.category_images,"
-                            + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id,s.store_name,"
+                            + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.is_collection,c.store_id,s.store_name,"
                             + "COUNT(p.product_id) AS product_count FROM production.procategories AS c "
                             + "LEFT JOIN production.products AS cp ON cp.category_id=c.category_id "
                             + "LEFT JOIN production.products AS p ON p.product_id=cp.product_id LEFT JOIN sales.stores s ON c.store_id=s.store_id WHERE c.store_id = " + category.store_id + " "
                             + "GROUP BY c.category_id,c.category_name,c.category_description,c.category_images,"
-                            + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id,s.store_name) "
+                            + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.is_collection,c.store_id,s.store_name) "
                             + "select  LastResult.category_id,LastResult.category_name,LastResult.category_description,LastResult.category_images,"
                             + "LastResult.category_url,LastResult.create_date,LastResult.parent_id,LastResult.is_publish,"
-                            + "LastResult.is_menu,LastResult.is_label,LastResult.store_id,LastResult.store_name,LastResult.product_count from LastResult where LastResult.is_publish = 1; ";
+                            + "LastResult.is_menu,LastResult.is_label,LastResult.is_collection,LastResult.store_id,LastResult.store_name,LastResult.product_count from LastResult where LastResult.is_publish = 1; ";
 
                         //get products (relative products) with same category id, get top 10 and order by created date desc
                         query += "SELECT top 10 pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol, col.colour_name, col.colour_description FROM production.products pro "
                             + "left join production.currency cur on pro.currency_id = cur.currency_id left join production.colours col on pro.colour_id = col.colour_id "
                             + " where pro.category_id = " + category.category_id + " and pro.product_id != " + homeModel.Product.product_id + " order by pro.create_date desc;";
+
+                        //Get wishlist item
+                        if (user != null)
+                        {
+                            if (user.Result != null)
+                            {
+                                query += "select wis.* from sales.wishlists wis where wis.user_id = '" + user.Result.Id + "' and wis.product_id = '" + homeModel.Product.product_id + "';";
+                            }
+                        }
+
                         System.Data.SqlClient.SqlCommand newCommand = new System.Data.SqlClient.SqlCommand(query, con);
                         adapter = new System.Data.SqlClient.SqlDataAdapter();
                         ds = new System.Data.DataSet();
@@ -279,6 +1184,7 @@ public class ProductController
                                 cat.is_publish = row["is_publish"].ToString() == "" ? nullableBool : bool.Parse(row["is_publish"] + "");
                                 cat.is_menu = row["is_menu"].ToString() == "" ? nullableBool : bool.Parse(row["is_menu"] + "");
                                 cat.is_label = row["is_label"].ToString() == "" ? nullableBool : bool.Parse(row["is_label"] + "");
+                                cat.is_collection = row["is_collection"].ToString() == "" ? nullableBool : bool.Parse(row["is_collection"] + "");
                                 cat.store_id = row["store_id"].ToString() == "" ? nullableInteger : Int32.Parse(row["store_id"] + "");
                                 cat.store_name = row["store_name"] + "";
                                 cat.product_count = Int32.Parse(row["product_count"].ToString());
@@ -350,6 +1256,10 @@ public class ProductController
                                 productDeatail.category_id = Int32.Parse(row["category_id"] + "");
                                 productDeatail.model_year = Int32.Parse(row["model_year"] + "");
                                 productDeatail.list_price = Decimal.Parse(row["list_price"] + "");
+                                productDeatail.shipping_fee = row["shipping_fee"].ToString() == "" ? nullableDeimal : Decimal.Parse(row["shipping_fee"] + "");
+                                productDeatail.free_shipping_amount = row["free_shipping_amount"].ToString() == "" ? nullableDeimal : Decimal.Parse(row["free_shipping_amount"] + "");
+                                productDeatail.tax = row["tax"].ToString() == "" ? nullableDeimal : Decimal.Parse(row["tax"] + "");
+                                productDeatail.taxed_countries = row["taxed_countries"] + "";
                                 productDeatail.create_date = row["create_date"].ToString() == "" ? nullableDateTime : (DateTime)row["create_date"];
                                 productDeatail.create_by = row["create_by"] + "";
                                 productDeatail.is_publish = row["is_publish"].ToString() == "" ? nullableBool : bool.Parse(row["is_publish"] + "");
@@ -377,6 +1287,29 @@ public class ProductController
                             }
 
                             homeModel.RelativeProducts = relativeProducts;
+
+                            if (user != null)
+                            {
+                                if (user.Result != null)
+                                {
+                                    var wishlistDt = ds.Tables[2];
+                                    if (wishlistDt.Rows.Count > 0)
+                                    {
+                                        List<wishlist> wishList = new List<wishlist>();
+                                        foreach (System.Data.DataRow row in wishlistDt.Rows)
+                                        {
+                                            wishlist wis = new wishlist();
+                                            wis.wish_id = Int32.Parse(row["wish_id"] + "");
+                                            wis.product_id = Int32.Parse(row["product_id"] + "");
+                                            wis.user_id = row["user_id"] + "";
+                                            wis.quantity = Decimal.Parse(row["quantity"] + "");
+                                            wis.purchase_date = (DateTime)row["purchase_date"];
+                                            wishList.Add(wis);
+                                        }
+                                        homeModel.Wishlists = wishList;
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -447,6 +1380,7 @@ public class ProductController
                     //Init variable to use during get data from cell
                     int? nullableInteger = null;
                     DateTime? nullableDateTime = null;
+                    Decimal? nullableDeimal = null;
                     bool? nullableBool = null;
                     string globalDateTimeFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateTimeFormat"];
 
@@ -476,6 +1410,10 @@ public class ProductController
                             productDeatail.category_id = Int32.Parse(item["category_id"] + "");
                             productDeatail.model_year = Int32.Parse(item["model_year"] + "");
                             productDeatail.list_price = Decimal.Parse(item["list_price"] + "");
+                            productDeatail.shipping_fee = item["shipping_fee"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["shipping_fee"] + "");
+                            productDeatail.free_shipping_amount = item["free_shipping_amount"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["free_shipping_amount"] + "");
+                            productDeatail.tax = item["tax"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["tax"] + "");
+                            productDeatail.taxed_countries = item["taxed_countries"] + "";
                             productDeatail.create_date = item["create_date"].ToString() == "" ? nullableDateTime : (DateTime)item["create_date"];
                             productDeatail.create_by = item["create_by"] + "";
                             productDeatail.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
@@ -528,7 +1466,7 @@ public class ProductController
     /// </summary>
     /// <param name="category_id">Category id</param>
     /// <returns>ProductControllerModel</returns>
-    public static ProductControllerModel GetProductByCategory(int category_id, int store_id = 0)
+    public static ProductControllerModel GetProductByCategory(int category_id = 0, int store_id = 0, string search_val = null)
     {
         ProductControllerModel homeModel = new ProductControllerModel();
         //
@@ -662,13 +1600,13 @@ public class ProductController
                 colourWhereClause = "";
             }
             //End --- Create colour where clause 
-            if (store_id == 0)
+            if (category_id > 0)
             {
                 query = "WITH  Count_CTE AS (SELECT COUNT(*) AS TotalRows FROM production.products pro WHERE pro.category_id = " + category_id + " " + modeWhereClause + brandWhereClause + colourWhereClause + ")"
                         + " SELECT pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol, col.colour_name, col.colour_description, Count_CTE.TotalRows As Total "
                         + " FROM production.products pro LEFT JOIN production.currency cur on pro.currency_id = cur.currency_id LEFT JOIN production.colours col on pro.colour_id = col.colour_id"
                         + " CROSS JOIN Count_CTE WHERE pro.category_id = " + category_id + " " + modeWhereClause + brandWhereClause + colourWhereClause + orderbyClause + " OFFSET (" + pagenum + " - 1) * " + pagesize + " ROWS FETCH NEXT " + pagesize + " ROWS ONLY;";
-            } else
+            } else if (store_id > 0)
             {
                 query = "WITH  Count_CTE AS (SELECT COUNT(*) AS TotalRows FROM production.products pro "
                         + " LEFT JOIN production.procategories cat on pro.category_id = cat.category_id LEFT JOIN sales.stores sto on cat.store_id = sto.store_id "
@@ -677,6 +1615,12 @@ public class ProductController
                         + " FROM production.products pro LEFT JOIN production.currency cur on pro.currency_id = cur.currency_id LEFT JOIN production.colours col on pro.colour_id = col.colour_id"
                         + " LEFT JOIN production.procategories cat on pro.category_id = cat.category_id LEFT JOIN sales.stores sto on cat.store_id = sto.store_id "
                         + " CROSS JOIN Count_CTE WHERE sto.store_id = " + store_id + " " + modeWhereClause + brandWhereClause + colourWhereClause + orderbyClause + " OFFSET (" + pagenum + " - 1) * " + pagesize + " ROWS FETCH NEXT " + pagesize + " ROWS ONLY;";
+            } else if (search_val != null)
+            {
+                query = "WITH  Count_CTE AS (SELECT COUNT(*) AS TotalRows FROM production.products pro WHERE pro.product_name like '%" + search_val + "%' " + modeWhereClause + brandWhereClause + colourWhereClause + ")"
+                        + " SELECT pro.*, cur.currency_name, cur.currency_code, cur.currency_symbol, col.colour_name, col.colour_description, Count_CTE.TotalRows As Total "
+                        + " FROM production.products pro LEFT JOIN production.currency cur on pro.currency_id = cur.currency_id LEFT JOIN production.colours col on pro.colour_id = col.colour_id"
+                        + " CROSS JOIN Count_CTE WHERE pro.product_name like '%" + search_val + "%' " + modeWhereClause + brandWhereClause + colourWhereClause + orderbyClause + " OFFSET (" + pagenum + " - 1) * " + pagesize + " ROWS FETCH NEXT " + pagesize + " ROWS ONLY;";
             }
             //Pagination----------------------------------------------------------------------------------------
 
@@ -694,6 +1638,7 @@ public class ProductController
                     //Init variable to use during get data from cell
                     int? nullableInteger = null;
                     DateTime? nullableDateTime = null;
+                    Decimal? nullableDeimal = null;
                     bool? nullableBool = null;
                     string globalDateTimeFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateTimeFormat"];
 
@@ -725,6 +1670,10 @@ public class ProductController
                             productDeatail.category_id = Int32.Parse(item["category_id"] + "");
                             productDeatail.model_year = Int32.Parse(item["model_year"] + "");
                             productDeatail.list_price = Decimal.Parse(item["list_price"] + "");
+                            productDeatail.shipping_fee = item["shipping_fee"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["shipping_fee"] + "");
+                            productDeatail.free_shipping_amount = item["free_shipping_amount"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["free_shipping_amount"] + "");
+                            productDeatail.tax = item["tax"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["tax"] + "");
+                            productDeatail.taxed_countries = item["taxed_countries"] + "";
                             productDeatail.create_date = item["create_date"].ToString() == "" ? nullableDateTime : (DateTime)item["create_date"];
                             productDeatail.create_by = item["create_by"] + "";
                             productDeatail.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
@@ -773,6 +1722,7 @@ public class ProductController
                             category.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");
                             category.is_menu = item["is_menu"].ToString() == "" ? nullableBool : bool.Parse(item["is_menu"] + "");
                             category.is_label = item["is_label"].ToString() == "" ? nullableBool : bool.Parse(item["is_label"] + "");
+                            category.is_collection = item["is_collection"].ToString() == "" ? nullableBool : bool.Parse(item["is_collection"] + "");
                             category.store_id = item["store_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["store_id"] + "");
 
                             homeModel.Category = category;
@@ -791,28 +1741,28 @@ public class ProductController
 
                             //get category with same store id
                             query = "with LastResult As (SELECT c.category_id,c.category_name,c.category_description,c.category_images,"
-                                + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id,s.store_name,"
+                                + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.is_collection,c.store_id,s.store_name,"
                                 + "COUNT(p.product_id) AS product_count FROM production.procategories AS c "
                                 + "LEFT JOIN production.products AS cp ON cp.category_id=c.category_id "
                                 + "LEFT JOIN production.products AS p ON p.product_id=cp.product_id LEFT JOIN sales.stores s ON c.store_id=s.store_id WHERE c.store_id = " + category.store_id + " "
                                 + "GROUP BY c.category_id,c.category_name,c.category_description,c.category_images,"
-                                + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id,s.store_name) "
+                                + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.is_collection,c.store_id,s.store_name) "
                                 + "select  LastResult.category_id,LastResult.category_name,LastResult.category_description,LastResult.category_images,"
                                 + "LastResult.category_url,LastResult.create_date,LastResult.parent_id,LastResult.is_publish,"
-                                + "LastResult.is_menu,LastResult.is_label,LastResult.store_id,LastResult.store_name,LastResult.product_count from LastResult where LastResult.is_publish = 1; ";
+                                + "LastResult.is_menu,LastResult.is_label,LastResult.is_collection,LastResult.store_id,LastResult.store_name,LastResult.product_count from LastResult where LastResult.is_publish = 1; ";
                         }
                         else
                         {
                             query = "with LastResult As (SELECT c.category_id,c.category_name,c.category_description,c.category_images,"
-                                + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id,s.store_name,"
+                                + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.is_collection,c.store_id,s.store_name,"
                                 + "COUNT(p.product_id) AS product_count FROM production.procategories AS c "
                                 + "LEFT JOIN production.products AS cp ON cp.category_id=c.category_id "
                                 + "LEFT JOIN production.products AS p ON p.product_id=cp.product_id LEFT JOIN sales.stores s ON c.store_id=s.store_id WHERE c.store_id = " + store_id + " "
                                 + "GROUP BY c.category_id,c.category_name,c.category_description,c.category_images,"
-                                + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.store_id,s.store_name) "
+                                + "c.category_url,c.create_date,c.parent_id,c.is_publish,c.is_menu,c.is_label,c.is_collection,c.store_id,s.store_name) "
                                 + "select  LastResult.category_id,LastResult.category_name,LastResult.category_description,LastResult.category_images,"
                                 + "LastResult.category_url,LastResult.create_date,LastResult.parent_id,LastResult.is_publish,"
-                                + "LastResult.is_menu,LastResult.is_label,LastResult.store_id,LastResult.store_name,LastResult.product_count from LastResult where LastResult.is_publish = 1; ";
+                                + "LastResult.is_menu,LastResult.is_label,LastResult.is_collection,LastResult.store_id,LastResult.store_name,LastResult.product_count from LastResult where LastResult.is_publish = 1; ";
                             query += "select * from sales.stores where store_id=" + store_id + ";";
                         }
                         
@@ -839,6 +1789,7 @@ public class ProductController
                                 cat.is_publish = row["is_publish"].ToString() == "" ? nullableBool : bool.Parse(row["is_publish"] + "");
                                 cat.is_menu = row["is_menu"].ToString() == "" ? nullableBool : bool.Parse(row["is_menu"] + "");
                                 cat.is_label = row["is_label"].ToString() == "" ? nullableBool : bool.Parse(row["is_label"] + "");
+                                cat.is_collection = row["is_collection"].ToString() == "" ? nullableBool : bool.Parse(row["is_collection"] + "");
                                 cat.store_id = row["store_id"].ToString() == "" ? nullableInteger : Int32.Parse(row["store_id"] + "");
                                 cat.store_name = row["store_name"] + "";
                                 cat.product_count = Int32.Parse(row["product_count"].ToString());
@@ -986,6 +1937,13 @@ public class ProductController
             {
                 CategoryProduct categoryPro = categories[0];
                 whereCondtion = " where cat.store_id = " + categoryPro.store_id + " ";
+            }
+        }
+        if (HttpContext.Current.Request.QueryString["store_id"] != null)
+        {
+            if (whereCondtion == "")
+            {
+                whereCondtion = " where cat.store_id = " + HttpContext.Current.Request.QueryString["store_id"] + " ";
             }
         }
 
@@ -1173,6 +2131,7 @@ public class ProductController
             //Init variable to use during get data from cell
             int? nullableInteger = null;
             DateTime? nullableDateTime = null;
+            Decimal? nullableDeimal = null;
             bool? nullableBool = null;
             string globalDateTimeFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateTimeFormat"];
 
@@ -1199,6 +2158,10 @@ public class ProductController
                 productDeatail.category_id = Int32.Parse(item["category_id"] + "");
                 productDeatail.model_year = Int32.Parse(item["model_year"] + "");
                 productDeatail.list_price = Decimal.Parse(item["list_price"] + "");
+                productDeatail.shipping_fee = item["shipping_fee"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["shipping_fee"] + "");
+                productDeatail.free_shipping_amount = item["free_shipping_amount"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["free_shipping_amount"] + "");
+                productDeatail.tax = item["tax"].ToString() == "" ? nullableDeimal : Decimal.Parse(item["tax"] + "");
+                productDeatail.taxed_countries = item["taxed_countries"] + "";
                 productDeatail.create_date = item["create_date"].ToString() == "" ? nullableDateTime : (DateTime)item["create_date"];
                 productDeatail.create_by = item["create_by"] + "";
                 productDeatail.is_publish = item["is_publish"].ToString() == "" ? nullableBool : bool.Parse(item["is_publish"] + "");

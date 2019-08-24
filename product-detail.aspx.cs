@@ -22,8 +22,18 @@ public partial class product_detail : System.Web.UI.Page
         {
             using (var context = new WebsiteTTKEntities())
             {
+                //Get loged in user info
+                System.Threading.Tasks.Task<Microsoft.AspNet.Identity.EntityFramework.IdentityUser> user = null;
+                if (User.Identity.IsAuthenticated)
+                {
+                    var userName = User.Identity.Name;
+                    var userStore = new Microsoft.AspNet.Identity.EntityFramework.UserStore<Microsoft.AspNet.Identity.EntityFramework.IdentityUser>();
+                    var userManager = new Microsoft.AspNet.Identity.UserManager<Microsoft.AspNet.Identity.EntityFramework.IdentityUser>(userStore);
+                    user = userManager.FindByNameAsync(userName);
+                }
+
                 //Get product data
-                ProductControllerModel model = ProductController.GetProductDetailData(product_id);
+                ProductControllerModel model = ProductController.GetProductDetailData(product_id, user);
                 if (model != null)
                 {
                     //Throw data to client for script to generate the interface of product
@@ -32,7 +42,7 @@ public partial class product_detail : System.Web.UI.Page
 
                     //Because product slider cannot be modify after script carousel is loaded. 
                     //Thus, we generate the slider on server first to help slider load before carousel script run.
-                    MakeupProduct(model.Product);
+                    MakeupProduct(model);
                 }
             }
         }
@@ -40,8 +50,11 @@ public partial class product_detail : System.Web.UI.Page
 
     //Because product slider cannot be modify after script carousel is loaded. 
     //Thus, we generate the slider on server first to help slider load before carousel script run.
-    private void MakeupProduct(ProductCurrency qProduct)
+    private void MakeupProduct(ProductControllerModel model)
     {
+        string hostUrl = Helper.GetHostURL();
+        ProductCurrency qProduct = model.Product;
+        List<wishlist> wishlists = model.Wishlists;
         var no_image = "img/no_image.jpg";
         var product_image = "img/no_image.jpg";
         var itemHtml = "<div class='col-md-6'>";
@@ -55,13 +68,13 @@ public partial class product_detail : System.Web.UI.Page
                 if (image != "")
                 {
                     product_image = image; //Set the first image of this product. Which could use as the fron image
-                    itemHtml += "<div class='item'><img src='" + image + "' alt='" + qProduct.product_name + "' class='img-fluid'></div>";
+                    itemHtml += "<div class='item'><img src='" + hostUrl + "/" + image + "' alt='" + qProduct.product_name + "' class='img-fluid'></div>";
                 }
             }
         }
         else
         {
-            itemHtml += "<div class='item'><img src='" + no_image + "' alt='" + qProduct.product_name + "' class='img-fluid'></div>";
+            itemHtml += "<div class='item'><img src='" + hostUrl + "/" + no_image + "' alt='" + qProduct.product_name + "' class='img-fluid'></div>";
         }
         itemHtml += "</div>";
 
@@ -95,13 +108,21 @@ public partial class product_detail : System.Web.UI.Page
         itemHtml += "<div class='box'>";
         itemHtml += "<h1 class='text-center'>" + qProduct.product_name + "</h1>";
         itemHtml += "<p class='goToDescription'><a href='#details' class='scroll-to'>Scroll to product details, material &amp; care and sizing</a></p>";
-        itemHtml += "<p class='goToDescription'><p class='price'>" + qProduct.list_price + qProduct.currency_symbol + "</p>";
+        itemHtml += "<p class='goToDescription'><p class='price'>" + Helper.FormatCurrency(qProduct.list_price, qProduct.currency_code) + "</p>";
         if (qProduct.colour_id > 0)
         {
             itemHtml += "<p class='goToDescription'><span class='colour' style='background: " + qProduct.colour_name + "; border-radius: 10px;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> " + qProduct.colour_description + "</p>";
         }
-        itemHtml += "<p class='text-center buttons'><a href='basket.aspx?product_id=" + qProduct.product_id + "' class='btn btn-primary'><i class='fa fa-shopping-cart'></i>Add to cart</a><a style='cursor: pointer;' onclick=\"return AddToWishlist('" + qProduct.product_id + "');\" class='btn "
-            + "btn-outline-primary'><i class='fa fa-heart'></i> Add to wishlist</a></p>";
+        itemHtml += "<p class='text-center buttons'><a onclick=\"return AddToCart('" + hostUrl + "/basket.aspx?product_id=" + qProduct.product_id + "');\" style='cursor: pointer;' class='btn btn-primary'><i class='fa fa-shopping-cart'></i>Add to cart</a><a style='cursor: pointer;' onclick=\"return AddToWishlist('" + qProduct.product_id + "');\" class='btn "
+            + "btn-outline-primary'>";
+        if (wishlists != null)
+        {
+            itemHtml += "<i class='fa fa-heart' id='wishlist_icon'></i> Add to wishlist</a></p>";
+        }
+        else
+        {
+            itemHtml += "<i class='fa fa-heart-o' id='wishlist_icon'></i> Add to wishlist</a></p>";
+        }
         itemHtml += "</div>";
 
         //Create thumber buttons
@@ -115,14 +136,14 @@ public partial class product_detail : System.Web.UI.Page
                 if (image != "")
                 {
                     product_image = image; //Set the first image of this product. Which could use as the fron image
-                    itemHtml += "<button class='owl-thumb-item'><img src='" + image + "' alt='" + qProduct.product_name + "' class='img-fluid'></button>";
+                    itemHtml += "<button class='owl-thumb-item'><img src='" + hostUrl + "/" + image + "' alt='" + qProduct.product_name + "' class='img-fluid'></button>";
                 }
             }
             itemHtml += "</div>";
         }
         else
         {
-            itemHtml += "<div data-slider-id='1' class='owl-thumbs'><button class='owl-thumb-item'><img src='" + no_image + "' alt='" + qProduct.product_name + "' class='img-fluid'></button></div>";
+            itemHtml += "<div data-slider-id='1' class='owl-thumbs'><button class='owl-thumb-item'><img src='" + hostUrl + "/" + no_image + "' alt='" + qProduct.product_name + "' class='img-fluid'></button></div>";
         }
 
         itemHtml += "</div>";

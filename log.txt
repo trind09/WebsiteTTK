@@ -1,2 +1,4 @@
-7/27/2019 7:33:01 PM - Error - Filepath = App_Code\ProductHelper.cs - StackTrack =    at ProductController.GetDecendantProductsOfCategory(procategory category, List`1 categories, SqlConnection con) in E:\Projects\WebsiteTTK\App_Code\Controller\ProductController.cs:line 1014
-   at ProductController.GetProductByCategory(Int32 category_id, Int32 store_id) in E:\Projects\WebsiteTTK\App_Code\Controller\ProductController.cs:line 846 - Message = Object reference not set to an instance of an object.
+8/24/2019 5:35:27 AM - Error - Filepath = App_Code\ProductHelper.cs - StackTrack =    at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseInt32(String s, NumberStyles style, NumberFormatInfo info)
+   at System.Int32.Parse(String s)
+   at ProductController.GetBasket(Int32 product_id, String userId) in E:\Projects\WebsiteTTK\App_Code\Controller\ProductController.cs:line 414 - Message = Input string was not in a correct format.

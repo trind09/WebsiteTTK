@@ -9,4 +9,9 @@
 3.	WebSiteUrl 
 	Web.config 
 		Backend: Helper.GetHostURL()
-		Frontend: MasterPage.master <div runat="server" id="WebSiteUrl" style="display: none;"></div> | var currentHostUrl = $('*[id*=WebSiteUrl]')[0].innerHTML;
+		Frontend: 
+		var MasterPageDataJson = $('*[id*=MasterPageDataDiv]')[0].innerHTML;
+            if (MasterPageDataJson) {
+                var masterPageData = jQuery.parseJSON(MasterPageDataJson);
+                currentHostUrl = masterPageData.HostUrl;
+            }

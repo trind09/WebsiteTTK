@@ -45,13 +45,13 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         $scope.items.push({
             order_id: newGeneratedorder_id, customer_id: $scope.item.customer_id, order_status: $scope.item.order_status,
             order_date: $scope.item.order_date, required_date: $scope.item.required_date, shipped_date: $scope.item.shipped_date,
-            store_id: $scope.item.store_id, staff_id: $scope.item.staff_id, address: $scope.item.address
+            store_id: $scope.item.store_id, staff_id: $scope.item.staff_id, order_discount: $scope.item.order_discount, order_discount_is_fixed: $scope.item.order_discount_is_fixed
         });
 
         $scope.addedOrUpdatedItems.push({
             order_id: newGeneratedorder_id, customer_id: $scope.item.customer_id, order_status: $scope.item.order_status,
             order_date: $scope.item.order_date, required_date: $scope.item.required_date, shipped_date: $scope.item.shipped_date,
-            store_id: $scope.item.store_id, staff_id: $scope.item.staff_id,
+            store_id: $scope.item.store_id, staff_id: $scope.item.staff_id, order_discount: $scope.item.order_discount, order_discount_is_fixed: $scope.item.order_discount_is_fixed
         });
 
         $scope.item.order_id = '';
@@ -83,6 +83,8 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         item1.shipped_date = item.shipped_date;
         item1.store_id = item.store_id;
         item1.staff_id = item.staff_id;
+        item1.order_discount = item.order_discount;
+        item1.order_discount_is_fixed = item.order_discount_is_fixed;
         var existedUpdatedItem = $scope.addedOrUpdatedItems.find(x => x.order_id == item.order_id);
         if (existedUpdatedItem != null) {
             existedUpdatedItem = item1;

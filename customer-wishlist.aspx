@@ -1,6 +1,32 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="customer-wishlist.aspx.cs" Inherits="customer_wishlist" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
+    <div runat="server" id="Wishlist_Data" style="display: none;"></div>
+    <script>
+        var currentHostUrl = window.location.origin;
+        $(document).ready(function () {
+            var MasterPageDataJson = $('*[id*=MasterPageDataDiv]')[0].innerHTML;
+            if (MasterPageDataJson) {
+                var masterPageData = jQuery.parseJSON(MasterPageDataJson);
+                currentHostUrl = masterPageData.HostUrl;
+            }
+
+            var Wishlist_Data_Json = $("#<%=Wishlist_Data.ClientID%>").text();
+            if (Wishlist_Data_Json) {
+                var model = jQuery.parseJSON(Wishlist_Data_Json);
+                $('#totalProducts').text(" (" + model.TotalProducts + ")");
+                MakeupLinks(model);
+            }
+        });
+
+        function MakeupLinks(model) {
+            $('#home_link').attr('href', currentHostUrl);
+            $('#wishlist_link').attr('href', currentHostUrl + "/customer-wishlist.aspx");
+            $('#my_account_link').attr('href', currentHostUrl + "/customer-account.aspx");
+            $('#logout_link').attr('href', currentHostUrl + "/logout.aspx?redirect=" + window.location.href);
+            $('#my_order_link').attr('href', currentHostUrl + "/customer-orders.aspx");
+        }
+    </script>
     <div id="all">
         <div id="content">
             <div class="container">
@@ -9,7 +35,7 @@
                         <!-- breadcrumb-->
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item"><a href="#" id="home_link">Home</a></li>
                                 <li aria-current="page" class="breadcrumb-item active">My wishlist</li>
                             </ol>
                         </nav>
@@ -24,247 +50,22 @@
                                 <h3 class="h4 card-title">Customer section</h3>
                             </div>
                             <div class="card-body">
-                                <ul class="nav nav-pills flex-column"><a href="customer-orders.aspx" class="nav-link active"><i class="fa fa-list"></i>My orders</a><a href="customer-wishlist.aspx" class="nav-link"><i class="fa fa-heart"></i> My wishlist</a><a href="customer-account.aspx" class="nav-link"><i class="fa fa-user"></i> My account</a><a href="Default.aspx" class="nav-link"><i class="fa fa-sign-out"></i> Logout</a></ul>
+                                <ul class="nav nav-pills flex-column">
+                                    <a href="customer-orders.aspx" class="nav-link" id="my_order_link">
+                                        <i class="fa fa-list"></i>My orders</a><a href="customer-wishlist.aspx" class="nav-link active" id="wishlist_link"><i class="fa fa-heart"></i> My wishlist</a>
+                                    <a href="customer-account.aspx" class="nav-link" id="my_account_link"><i class="fa fa-user"></i> My account</a>
+                                    <a href="Default.aspx" class="nav-link" id="logout_link"><i class="fa fa-sign-out"></i> Logout</a>
+                                </ul>
                             </div>
                         </div>
                         <!-- /.col-lg-3-->
                         <!-- *** CUSTOMER MENU END ***-->
                     </div>
                     <div id="wishlist" class="col-lg-9">
-                        <ul class="breadcrumb">
-                            <li><a href="#">Home</a></li>
-                            <li>Ladies</li>
-                        </ul>
                         <div class="box">
-                            <h1>My wishlist</h1>
-                            <p class="lead">Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
+                            <h1>My wishlist<span id="totalProducts"></span></h1>
                         </div>
-                        <div class="row products">
-                            <div class="col-lg-3 col-md-4">
-                                <div class="product">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product1.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product1_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product1.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3><a href="product-detail.aspx">Fur coat with very but very very long name</a></h3>
-                                        <p class="price">
-                                            <del></del>$143.00
-                                        </p>
-                                        <p class="buttons"><a href="product-detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
-                                    </div>
-                                    <!-- /.text-->
-                                </div>
-                                <!-- /.product            -->
-                            </div>
-                            <div class="col-lg-3 col-md-4">
-                                <div class="product">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product2.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product2_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product2.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3><a href="product-detail.aspx">White Blouse Armani</a></h3>
-                                        <p class="price">
-                                            <del>$280</del>$143.00
-                                        </p>
-                                        <p class="buttons"><a href="product-detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
-                                    </div>
-                                    <!-- /.text-->
-                                    <div class="ribbon sale">
-                                        <div class="theribbon">SALE</div>
-                                        <div class="ribbon-background"></div>
-                                    </div>
-                                    <!-- /.ribbon-->
-                                    <div class="ribbon new">
-                                        <div class="theribbon">NEW</div>
-                                        <div class="ribbon-background"></div>
-                                    </div>
-                                    <!-- /.ribbon-->
-                                    <div class="ribbon gift">
-                                        <div class="theribbon">GIFT</div>
-                                        <div class="ribbon-background"></div>
-                                    </div>
-                                    <!-- /.ribbon-->
-                                </div>
-                                <!-- /.product            -->
-                            </div>
-                            <div class="col-lg-3 col-md-4">
-                                <div class="product">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product3.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product3_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product3.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3><a href="product-detail.aspx">Black Blouse Versace</a></h3>
-                                        <p class="price">
-                                            <del></del>$143.00
-                                        </p>
-                                        <p class="buttons"><a href="product-detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
-                                    </div>
-                                    <!-- /.text-->
-                                </div>
-                                <!-- /.product            -->
-                            </div>
-                            <div class="col-lg-3 col-md-4">
-                                <div class="product">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product3.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product3_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product3.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3><a href="product-detail.aspx">Black Blouse Versace</a></h3>
-                                        <p class="price">
-                                            <del></del>$143.00
-                                        </p>
-                                        <p class="buttons"><a href="product-detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
-                                    </div>
-                                    <!-- /.text-->
-                                </div>
-                                <!-- /.product            -->
-                            </div>
-                            <div class="col-lg-3 col-md-4">
-                                <div class="product">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product2.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product2_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product2.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3><a href="product-detail.aspx">White Blouse Versace</a></h3>
-                                        <p class="price">
-                                            <del></del>$143.00
-                                        </p>
-                                        <p class="buttons"><a href="product-detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
-                                    </div>
-                                    <!-- /.text-->
-                                    <div class="ribbon new">
-                                        <div class="theribbon">NEW</div>
-                                        <div class="ribbon-background"></div>
-                                    </div>
-                                    <!-- /.ribbon-->
-                                </div>
-                                <!-- /.product            -->
-                            </div>
-                            <div class="col-lg-3 col-md-4">
-                                <div class="product">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product1.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product1_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product1.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3><a href="product-detail.aspx">Fur coat</a></h3>
-                                        <p class="price">
-                                            <del></del>$143.00
-                                        </p>
-                                        <p class="buttons"><a href="product-detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
-                                    </div>
-                                    <!-- /.text-->
-                                    <div class="ribbon gift">
-                                        <div class="theribbon">GIFT</div>
-                                        <div class="ribbon-background"></div>
-                                    </div>
-                                    <!-- /.ribbon-->
-                                </div>
-                                <!-- /.product            -->
-                            </div>
-                            <div class="col-lg-3 col-md-4">
-                                <div class="product">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product2.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product2_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product2.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3><a href="product-detail.aspx">White Blouse Armani</a></h3>
-                                        <p class="price">
-                                            <del>$280</del>$143.00
-                                        </p>
-                                        <p class="buttons"><a href="product-detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
-                                    </div>
-                                    <!-- /.text-->
-                                    <div class="ribbon sale">
-                                        <div class="theribbon">SALE</div>
-                                        <div class="ribbon-background"></div>
-                                    </div>
-                                    <!-- /.ribbon-->
-                                    <div class="ribbon new">
-                                        <div class="theribbon">NEW</div>
-                                        <div class="ribbon-background"></div>
-                                    </div>
-                                    <!-- /.ribbon-->
-                                    <div class="ribbon gift">
-                                        <div class="theribbon">GIFT</div>
-                                        <div class="ribbon-background"></div>
-                                    </div>
-                                    <!-- /.ribbon-->
-                                </div>
-                                <!-- /.product            -->
-                            </div>
-                            <div class="col-lg-3 col-md-4">
-                                <div class="product">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product3.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product3_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product3.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3><a href="product-detail.aspx">Black Blouse Versace</a></h3>
-                                        <p class="price">
-                                            <del></del>$143.00
-                                        </p>
-                                        <p class="buttons"><a href="product-detail.aspx" class="btn btn-outline-secondary">View detail</a><a href="basket.aspx" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a></p>
-                                    </div>
-                                    <!-- /.text-->
-                                </div>
-                                <!-- /.product            -->
-                            </div>
-                            <!-- /.products-->
+                        <div class="row products" runat="server" id="wishlist_region">
                         </div>
                     </div>
                 </div>

@@ -16,6 +16,10 @@ public class ProductCurrency
     public int category_id { get; set; }
     public int model_year { get; set; }
     public decimal list_price { get; set; }
+    public decimal? shipping_fee { get; set; }
+    public decimal? free_shipping_amount { get; set; }
+    public decimal? tax { get; set; }
+    public string taxed_countries { get; set; }
     public DateTime? create_date { get; set; }
     public string create_by { get; set; }
     public bool? is_publish { get; set; }

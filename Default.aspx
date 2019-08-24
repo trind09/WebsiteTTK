@@ -83,21 +83,7 @@ vertical-align: middle; color: #a53f3f; text-shadow: #DA7A7A 1px 0 10px; padding
         *** GET INSPIRED ***
         _________________________________________________________
         -->
-            <div class="container">
-                <div class="col-md-12">
-                    <div class="box slideshow">
-                        <h3>Thien Kim Collections</h3>
-                        <p class="lead">Get the inspiration from our Thien Kim Fashion</p>
-                        <div id="get-inspired" class="owl-carousel owl-theme">
-                            <div class="item"><a href="#">
-                                <img src="img/getinspired1.jpg" alt="Get inspired" class="img-fluid"></a></div>
-                            <div class="item"><a href="#">
-                                <img src="img/getinspired2.jpg" alt="Get inspired" class="img-fluid"></a></div>
-                            <div class="item"><a href="#">
-                                <img src="img/getinspired3.jpg" alt="Get inspired" class="img-fluid"></a></div>
-                        </div>
-                    </div>
-                </div>
+            <div class="container" runat="server" id="collection_panel">
             </div>
             <!-- *** GET INSPIRED END ***-->
             <!--

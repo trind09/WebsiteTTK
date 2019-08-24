@@ -18,4 +18,11 @@ public class ProductControllerModel
     public List<ProductCurrency> ProductItems { get; set; }
     public int TotalProducts { get; set; }
     public store Store { get; set; }
+    public List<wishlist> Wishlists { get; set; }
+    public string Message { get; set; }
+    public bool Success { get; set; }
+    public ResultCode ResultCode { get; set; }
+    public order Order { get; set; }
+    public List<OrderItem> OrderItems { get; set; }
+    public List<order_items> order_items { get; set; }
 }

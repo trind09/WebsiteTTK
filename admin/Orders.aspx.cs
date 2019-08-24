@@ -30,30 +30,36 @@ public partial class admin_Orders : System.Web.UI.Page
             {
                 order item = new order();
 
-                int order_id = -1;
+                int order_id = 0;
                 Int32.TryParse(Helper.GetPropValue(obj + "", "order_id") + "", out order_id);
                 item.order_id = order_id;
 
-                int customer_id = -1;
-                Int32.TryParse(Helper.GetPropValue(obj + "", "order_id") + "", out customer_id);
-                item.customer_id = customer_id;
+                item.customer_id = Helper.GetPropValue(obj + "", "order_id") + "";
 
                 Int32 order_status = -1;
                 Int32.TryParse(Helper.GetPropValue(obj + "", "order_status") + "", out order_status);
-                item.customer_id = customer_id;
+                item.order_status = order_status;
 
                 item.order_date = Helper.ConverToDateTime(Helper.GetPropValue(obj + "", "order_date") + "") ?? DateTime.Now.ToLocalTime();
                 item.required_date = Helper.ConverToDateTime(Helper.GetPropValue(obj + "", "required_date") + "") ?? DateTime.Now.ToLocalTime();
 
                 item.shipped_date = Helper.ConverToDateTime(Helper.GetPropValue(obj + "", "shipped_date") + "");
 
-                int store_id = -1;
+                int store_id = 0;
                 Int32.TryParse(Helper.GetPropValue(obj + "", "store_id") + "", out store_id);
                 item.store_id = store_id;
 
-                int staff_id = -1;
+                int staff_id = 0;
                 Int32.TryParse(Helper.GetPropValue(obj + "", "staff_id") + "", out staff_id);
                 item.staff_id = staff_id;
+
+                int order_discount = 0;
+                Int32.TryParse(Helper.GetPropValue(obj + "", "order_discount") + "", out order_discount);
+                item.order_discount = order_discount;
+
+                bool order_discount_is_fixed = true;
+                bool.TryParse(Helper.GetPropValue(obj + "", "order_discount_is_fixed") + "", out order_discount_is_fixed);
+                item.order_discount_is_fixed = order_discount_is_fixed;
 
                 orders.Add(item);
             }
@@ -98,6 +104,8 @@ public partial class admin_Orders : System.Web.UI.Page
                 s.shipped_date,
                 s.store_id,
                 s.staff_id,
+                s.order_discount,
+                s.order_discount_is_fixed
             }).ToList();
             var json = new JavaScriptSerializer().Serialize(list);
             Server_Data.InnerText = json;

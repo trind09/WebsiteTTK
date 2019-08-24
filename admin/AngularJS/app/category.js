@@ -48,13 +48,13 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         $scope.items.push({
             category_id: newGeneratedcategory_id, category_name: $scope.item.category_name, category_url: $scope.item.category_url, category_images: $scope.item.category_images,
             category_description: escapedCategoryDescription, create_date: today, is_publish: $scope.item.is_publish, parent_id: $scope.item.parent_id,
-            is_menu: $scope.item.is_menu, is_label: $scope.item.is_label, store_id: $scope.item.store_id
+            is_menu: $scope.item.is_menu, is_label: $scope.item.is_label, is_collection: $scope.item.is_collection, store_id: $scope.item.store_id
         });
 
         $scope.addedOrUpdatedItems.push({
             category_id: newGeneratedcategory_id, category_name: $scope.item.category_name, category_url: $scope.item.category_url, category_images: $scope.item.category_images,
             category_description: escapedCategoryDescription, parent_id: $scope.item.parent_id, create_date: today, is_publish: $scope.item.is_publish,
-            is_menu: $scope.item.is_menu, is_label: $scope.item.is_label, store_id: $scope.item.store_id
+            is_menu: $scope.item.is_menu, is_label: $scope.item.is_label, is_collection: $scope.item.is_collection, store_id: $scope.item.store_id
         });
 
         $scope.item.category_id = '';
@@ -97,6 +97,7 @@ app.controller('TodoController', ['$scope', '$filter', function ($scope, $filter
         item1.is_publish = item.is_publish;
         item1.is_menu = item.is_menu;
         item1.is_label = item.is_label;
+        item1.is_collection = item.is_collection;
 
         var existedUpdatedItem = $scope.addedOrUpdatedItems.find(x => x.category_id == item.category_id);
         if (existedUpdatedItem != null) {

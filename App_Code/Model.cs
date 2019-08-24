@@ -136,29 +136,6 @@ public partial class currency
     public string currency_symbol { get; set; }
 }
 
-public partial class customer
-{
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-    public customer()
-    {
-        this.orders = new HashSet<order>();
-    }
-
-    public int customer_id { get; set; }
-    public string first_name { get; set; }
-    public string last_name { get; set; }
-    public string phone { get; set; }
-    public string email { get; set; }
-    public string street { get; set; }
-    public string city { get; set; }
-    public string state { get; set; }
-    public string zip_code { get; set; }
-    public string address { get; set; }
-
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    public virtual ICollection<order> orders { get; set; }
-}
-
 public partial class order
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -168,18 +145,18 @@ public partial class order
     }
 
     public int order_id { get; set; }
-    public Nullable<int> customer_id { get; set; }
-    public byte order_status { get; set; }
+    public string customer_id { get; set; }
+    public int order_status { get; set; }
     public System.DateTime order_date { get; set; }
     public System.DateTime required_date { get; set; }
     public Nullable<System.DateTime> shipped_date { get; set; }
     public int store_id { get; set; }
     public int staff_id { get; set; }
+    public Nullable<int> order_discount { get; set; }
+    public Nullable<bool> order_discount_is_fixed { get; set; }
 
-    public virtual customer customer { get; set; }
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<order_items> order_items { get; set; }
-    public virtual staff staff { get; set; }
     public virtual store store { get; set; }
 }
 
@@ -188,9 +165,13 @@ public partial class order_items
     public int order_id { get; set; }
     public int item_id { get; set; }
     public int product_id { get; set; }
-    public int quantity { get; set; }
+    public double quantity { get; set; }
     public decimal list_price { get; set; }
-    public decimal discount { get; set; }
+    public Nullable<decimal> shipping_fee { get; set; }
+    public Nullable<decimal> discount { get; set; }
+    public Nullable<decimal> free_shipping_amount { get; set; }
+    public Nullable<decimal> tax { get; set; }
+    public string taxed_countries { get; set; }
 
     public virtual product product { get; set; }
     public virtual order order { get; set; }
@@ -214,6 +195,7 @@ public partial class procategory
     public Nullable<bool> is_publish { get; set; }
     public Nullable<bool> is_menu { get; set; }
     public Nullable<bool> is_label { get; set; }
+    public Nullable<bool> is_collection { get; set; }
     public Nullable<int> store_id { get; set; }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -237,6 +219,10 @@ public partial class product
     public int category_id { get; set; }
     public short model_year { get; set; }
     public decimal list_price { get; set; }
+    public Nullable<decimal> shipping_fee { get; set; }
+    public Nullable<decimal> free_shipping_amount { get; set; }
+    public Nullable<decimal> tax { get; set; }
+    public string taxed_countries { get; set; }
     public Nullable<System.DateTime> create_date { get; set; }
     public string create_by { get; set; }
     public Nullable<bool> is_publish { get; set; }
@@ -260,7 +246,6 @@ public partial class staff
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
     public staff()
     {
-        this.orders = new HashSet<order>();
         this.staffs1 = new HashSet<staff>();
     }
 
@@ -274,8 +259,6 @@ public partial class staff
     public Nullable<int> manager_id { get; set; }
     public string address { get; set; }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    public virtual ICollection<order> orders { get; set; }
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<staff> staffs1 { get; set; }
     public virtual staff staff1 { get; set; }
@@ -319,4 +302,31 @@ public partial class store
     public virtual ICollection<order> orders { get; set; }
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<staff> staffs { get; set; }
+}
+
+public partial class voucher
+{
+    public int voucher_id { get; set; }
+    public string voucher_code { get; set; }
+    public string voucher_name { get; set; }
+    public string voucher_description { get; set; }
+    public Nullable<int> voucher_uses { get; set; }
+    public Nullable<int> voucher_max_uses { get; set; }
+    public Nullable<int> voucher_max_uses_user { get; set; }
+    public Nullable<byte> voucher_type { get; set; }
+    public Nullable<int> voucher_discount_amount { get; set; }
+    public Nullable<bool> voucher_is_fixed { get; set; }
+    public Nullable<System.DateTime> voucher_starts_at { get; set; }
+    public Nullable<System.DateTime> voucher_expires_at { get; set; }
+    public Nullable<int> voucher_product_id { get; set; }
+    public string voucher_user_id { get; set; }
+}
+
+public partial class wishlist
+{
+    public int wish_id { get; set; }
+    public int product_id { get; set; }
+    public string user_id { get; set; }
+    public decimal quantity { get; set; }
+    public System.DateTime purchase_date { get; set; }
 }

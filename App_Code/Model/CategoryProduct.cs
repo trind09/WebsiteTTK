@@ -12,6 +12,7 @@ public class CategoryProduct
     public bool? is_publish { get; set; }
     public bool? is_menu { get; set; }
     public bool? is_label { get; set; }
+    public bool? is_collection { get; set; }
     public int? store_id { get; set; }
     public string store_name { get; set; }
     public int product_count { get; set; }

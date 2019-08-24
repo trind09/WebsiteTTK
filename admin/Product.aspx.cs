@@ -52,8 +52,22 @@ public partial class admin_Product :  System.Web.UI.Page
                 item.model_year = model_year;
 
                 decimal list_price = -1;
-                decimal.TryParse(Helper.GetPropValue(obj + "", "model_year") + "", out list_price);
+                decimal.TryParse(Helper.GetPropValue(obj + "", "list_price") + "", out list_price);
                 item.list_price = list_price;
+
+                decimal shipping_fee = -1;
+                decimal.TryParse(Helper.GetPropValue(obj + "", "shipping_fee") + "", out shipping_fee);
+                item.shipping_fee = shipping_fee;
+
+                decimal free_shipping_amount = 0;
+                decimal.TryParse(Helper.GetPropValue(obj + "", "free_shipping_amount") + "", out free_shipping_amount);
+                item.free_shipping_amount = free_shipping_amount;
+
+                decimal tax = 0;
+                decimal.TryParse(Helper.GetPropValue(obj + "", "tax") + "", out tax);
+                item.tax = tax;
+
+                item.taxed_countries = Helper.GetPropValue(obj + "", "taxed_countries") + "";
 
                 item.create_date = Helper.ConverToDateTime(Helper.GetPropValue(obj + "", "create_date") + "");
 
@@ -128,6 +142,10 @@ public partial class admin_Product :  System.Web.UI.Page
                 s.colour_id,
                 s.model_year,
                 s.list_price,
+                s.shipping_fee,
+                s.free_shipping_amount,
+                s.tax,
+                s.taxed_countries,
                 s.create_date,
                 s.create_by,
                 s.is_publish,
@@ -191,6 +209,9 @@ public partial class admin_Product :  System.Web.UI.Page
             var currenciesJson = new JavaScriptSerializer().Serialize(listOfCurrency);
             Currency_Data.InnerText = currenciesJson;
 
+            List<string> countries = Helper.GetCountries();
+            var countriesJson = new JavaScriptSerializer().Serialize(countries);
+            Countries_Data.InnerText = countriesJson;
         }
     }
 }

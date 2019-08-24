@@ -62,6 +62,10 @@
                                 <th>Colour ID</th>
                                 <th>Model Year</th>
                                 <th>List Price</th>
+                                <th>Shipping Fee</th>
+                                <th title="If an order with amount of product meet this number, it will have free shipping fee.">Free Shipping Amount</th>
+                                <th>Tax</th>
+                                <th title="Countries list that will be taxed when buy this product.">Taxed Countries</th>
                                 <th ng-click="sortBy('create_date')" style="text-decoration: underline; cursor: pointer;">Create Date</th>
                                 <th>Create By</th>
                                 <th>Publish</th>
@@ -84,6 +88,10 @@
                                 <td>{{ item.colour_id }}</td>
                                 <td>{{ item.model_year }}</td>
                                 <td>{{ item.list_price }}</td>
+                                <td>{{ item.shipping_fee }}</td>
+                                <td>{{ item.free_shipping_amount }}</td>
+                                <td>{{ item.tax }}</td>
+                                <td>{{ item.taxed_countries }}</td>
                                 <td>{{ item.create_date | filterdate | date:'dd/MM/yyyy hh:mm:ss' }}</td>
                                 <td>{{ item.create_by }}</td>
                                 <td>{{ item.is_publish }}</td>
@@ -182,6 +190,30 @@
                             <td></td>
                         </tr>
                         <tr>
+                            <td>Shipping Fee: </td>
+                            <td><input type="number" ng-model="item.shipping_fee" placeholder="Shipping Fee" class="input-small" style="width: 500px;"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Free Shiping Amount: </td>
+                            <td><input type="number" ng-model="item.free_shipping_amount" placeholder="Free Shiping Amount" class="input-small" style="width: 500px;"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Tax: </td>
+                            <td><input type="number" ng-model="item.tax" placeholder="Tax" class="input-small" style="width: 500px;"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Taxed Countries: </td>
+                            <td><input type="text" readonly ng-model="item.taxed_countries" placeholder="Taxed Countries" class="input-small" required style="width: 500px;"></td>
+                            <td>Select Taxed Country: 
+                                <select ng-model="item.taxed_countries">
+                                  <option ng-repeat="x in countries" value="{{x}}">{{x}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
                             <td>Create Date: </td>
                             <td><input type="date" ng-model="item.create_date" placeholder="Create Date" class="input-small" style="width: 500px;"></td>
                             <td></td>
@@ -274,6 +306,9 @@
                     var currencyDataJson = $("#<%=Currency_Data.ClientID%>").text();
                     scope.currencies = jQuery.parseJSON(currencyDataJson);
 
+                    var countriesDataJson = $("#<%=Countries_Data.ClientID%>").text();
+                    scope.countries = jQuery.parseJSON(countriesDataJson);
+
                     scope.$watch('searchValue', function () {
                         scope.filteredItems = myFilter('filter')(scope.items, scope.searchValue);
                         scope.totalItem = scope.filteredItems.length;
@@ -340,6 +375,7 @@
             <div runat="server" id="Category_Data" style="display: none;"></div>
             <div runat="server" id="Colour_Data" style="display: none;"></div>
             <div runat="server" id="Currency_Data" style="display: none;"></div>
+            <div runat="server" id="Countries_Data" style="display: none;"></div>
 
             <div class="popup" style="display: none; z-index: 10001">
                 <div class="container"><div class="text" id="popup_container">

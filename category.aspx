@@ -3,8 +3,14 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div runat="server" id="Server_Data" style="display: none;"></div>
     <script>
-        var currentHostUrl = $('*[id*=WebSiteUrl]')[0].innerHTML;
+        var currentHostUrl = window.location.origin;
         $(document).ready(function () {
+            var MasterPageDataJson = $('*[id*=MasterPageDataDiv]')[0].innerHTML;
+            if (MasterPageDataJson) {
+                var masterPageData = jQuery.parseJSON(MasterPageDataJson);
+                currentHostUrl = masterPageData.HostUrl;
+            }
+
             var Server_Data_Json = $("#<%=Server_Data.ClientID%>").text();
             if (Server_Data_Json) {
                 var model = jQuery.parseJSON(Server_Data_Json);
@@ -14,32 +20,49 @@
                     mode = "&mode=" + $.urlParam('mode');
                 }
 
-                //This will help to SEO this product
-                UpdateMetaTag(model);
+                //Show only search products
+                if ($.urlParam('search_val')) {
+                    if (model.ProductItems != null) {
+                        ShowProducts(model.ProductItems);
 
-                //Show category detail
-                MakeupCategory(model);
+                        //Show product count
+                        ShowPagination(model, mode);
+                    } else {
+                        $('#lblMessage').text('No products were found matching for "' + $.urlParam('search_val') + '"');
+                        $('#categoryDetail').hide();
+                    }
+                    $('#category_panel').hide();
+                    $('#brand_panel').hide();
+                    $('#colour_panel').hide();
+                    $('#category_product_panel').attr('class', '');
+                } else {
+                    //This will help to SEO this product
+                    UpdateMetaTag(model);
 
-                //Show category tree menu
-                MakeupCategories(model.Category, model.Categories);
+                    //Show category detail
+                    MakeupCategory(model);
 
-                //Show category path
-                MakeupCategoriesPath(model);
+                    //Show category tree menu
+                    MakeupCategories(model.Category, model.Categories);
 
-                //Show brand tree menu
-                MakeupBrands(model, mode);
+                    //Show category path
+                    MakeupCategoriesPath(model);
 
-                //Show colour tree menu
-                MakeupColours(model, mode);
+                    //Show brand tree menu
+                    MakeupBrands(model, mode);
 
-                //Show relative product
-                ShowProducts(model.ProductItems);
+                    //Show colour tree menu
+                    MakeupColours(model, mode);
 
-                //Show product count
-                ShowPagination(model, mode);
+                    //Show relative product
+                    ShowProducts(model.ProductItems);
 
-                //Makeup sale, gift, and new link url
-                MakeupSaleGiftNewLink(model);
+                    //Show product count
+                    ShowPagination(model, mode);
+
+                    //Makeup sale, gift, and new link url
+                    MakeupSaleGiftNewLink(model);
+                }
             } else {
                 $('#categoryDetail').html('<h3>No category has selected!');
             }
@@ -81,14 +104,18 @@
             var urlWhereCls = "";
             if (category) {
                 urlWhereCls = "category_id=" + category.category_id;
-            } else {
-                if (model.Store) {
-                    urlWhereCls = "store_id=" + model.Store.store_id;
-                }
+            } else if (model.Store) {
+                urlWhereCls = "store_id=" + model.Store.store_id;
+            } else if ($.urlParam('search_val')) {
+                urlWhereCls = "search_val=" + $.urlParam('search_val');
             }
             if (products) {
                 //Makeup now showing amount and total
                 $('#productCount').html("Showing <strong>" + products.length + "</strong> of <strong>" + total + "</strong> products");
+
+                if ($.urlParam('search_val')) {
+                    $('#categoryDetail').text(total + ' items found for "' + $.urlParam('search_val') + '"');
+                }
 
                 //Makeup number per page list
                 var orderby = "create_date";
@@ -171,6 +198,9 @@
             var store_id = $.urlParam('store_id');
             if (!category_id) {
                 urlWhereCls = "store_id=" + store_id;
+            }
+            if ($.urlParam('search_val')) {
+                urlWhereCls += "&search_val=" + $.urlParam('search_val')
             }
 
             var currentPageIndex = 1;
@@ -278,7 +308,7 @@
                         if (image_url != "") {
                             productHtml += "<a href='" + product_url + "' class='invisible'><img src='" + image_url + "' alt='' class='img-fluid'></a>";
                         }
-                        productHtml += "<div class='text'><h3><a href='" + product_url + "'>" + product.product_name + "</a></h3><p class='price'><del></del>" + product.list_price + product.currency_symbol + "</p>";
+                        productHtml += "<div class='text'><h3><a href='" + product_url + "'>" + product.product_name + "</a></h3><p class='price'><del></del><span id='price-" + product.product_id + "'>" + GetCurrency(product.list_price, product.currency_code, 'price-' + product.product_id) + "</span></p>";
                         
                         if (product.is_sale)
                         {
@@ -445,15 +475,17 @@
                     }
                 }
             }
-            var store_url = currentHostUrl + "/category.aspx?store_id=" + store.store_id;
-            menuLiItems += "<li class='breadcrumb-item'><a href='" + store_url + "'>" + store.store_name + "</a></li>"
-                + grandParentCategoryHtml + parentCategoryHml + categoryHml + "</ol></nav>";
+            if (store != null) {
+                var store_url = currentHostUrl + "/category.aspx?store_id=" + store.store_id;
+                menuLiItems += "<li class='breadcrumb-item'><a href='" + store_url + "'>" + store.store_name + "</a></li>"
+                    + grandParentCategoryHtml + parentCategoryHml + categoryHml + "</ol></nav>";
+            }
             $('#category_path').html(menuLiItems);
         }
 
         //Genrate category tree menu. Apply for three levels only
         function MakeupCategories(category, storeCategories) {
-            if (storeCategories.length > 0) {
+            if (storeCategories != null) {
                 var menuLiItems = "<ul class='nav nav-pills flex-column category-menu'>";
                 var grandFatherCategories = storeCategories.filter(x => x.parent_id === 0);
                 if (grandFatherCategories.length > 0) {
@@ -699,6 +731,10 @@
             if (!category_id) {
                 urlWhereCls = "store_id=" + store_id;
             }
+            if ($.urlParam('search_val')) {
+                urlWhereCls += "&search_val=" + $.urlParam('search_val')
+            }
+
             var value = element.value;
             var url = currentHostUrl;
             if (value == "1") {
@@ -748,6 +784,35 @@
 
             return (results !== null) ? results[1] || 0 : false;
         }
+
+        //Start: Util functions---------------------------------------------
+        function GetCurrency(amount, currency_code, control_id) {
+            var data = {};
+            data.param = amount + '|' + currency_code + '|' + control_id;
+            $.ajax({
+                type: "POST",
+                url: currentHostUrl + "/WebServices/ProductWebService.asmx/GetCurrency",
+                cache: false,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(data),
+                dataType: "json",
+                success: ShowCurrency,
+                error: ajaxFailed
+            });
+        }
+
+        function ShowCurrency(data, status) {
+            var str = data.d;
+            var items = str.split('|');
+            $('#' + items[1]).text(items[0]);
+        }
+
+        function ajaxFailed(xmlRequest) {
+            console.log(xmlRequest.status + ' \n\r ' + 
+                  xmlRequest.statusText + '\n\r' + 
+                  xmlRequest.responseText);
+        }
+        //End: Util functions---------------------------------------------
     </script>
     <div id="all">
         <div id="content">
@@ -760,21 +825,21 @@
               *** MENUS AND FILTERS ***
               _________________________________________________________
               -->
-                        <div class="card sidebar-menu mb-4">
+                        <div class="card sidebar-menu mb-4" id="category_panel">
                             <div class="card-header">
                                 <h3 class="h4 card-title">Categories</h3>
                             </div>
                             <div class="card-body" id="categories">
                             </div>
                         </div>
-                        <div class="card sidebar-menu mb-4">
+                        <div class="card sidebar-menu mb-4" id="brand_panel">
                             <div class="card-header">
                                 <h3 class="h4 card-title">Brands <a style="cursor: pointer;" onclick="ClearFilter('brand');" class="btn btn-sm btn-danger pull-right"><i class="fa fa-times-circle"></i>Clear</a></h3>
                             </div>
                             <div class="card-body" id="brands">
                             </div>
                         </div>
-                        <div class="card sidebar-menu mb-4">
+                        <div class="card sidebar-menu mb-4" id="colour_panel">
                             <div class="card-header">
                                 <h3 class="h4 card-title">Colours <a style="cursor: pointer;" onclick="ClearFilter('colour');" class="btn btn-sm btn-danger pull-right"><i class="fa fa-times-circle"></i>Clear</a></h3>
                             </div>
@@ -792,7 +857,7 @@
                             <a id="new_link" href="#"></a>
                         </div>
                     </div>
-                    <div class="col-lg-9">
+                    <div class="col-lg-9" id="category_product_panel">
                         <div class="box" id="categoryDetail">
                         </div>
                         <div class="box info-bar">
@@ -806,6 +871,7 @@
                                     </form>
                                 </div>
                             </div>
+                            <h3 id="lblMessage"></h3>
                         </div>
                         <div class="row products" id="productItems">
                         </div>
