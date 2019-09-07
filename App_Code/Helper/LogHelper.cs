@@ -32,7 +32,13 @@ public class LogHelper
         string log = "";
         if (ex.InnerException != null)
         {
-            log = DateTime.UtcNow.ToLocalTime() + " - " + errorType.ToString() + " - Filepath = " + filePath + " - StackTrack = " + ex.StackTrace + " - Message = " + ex.InnerException.InnerException.Message;
+            if (ex.InnerException.InnerException != null)
+            {
+                log = DateTime.UtcNow.ToLocalTime() + " - " + errorType.ToString() + " - Filepath = " + filePath + " - StackTrack = " + ex.StackTrace + " - Message = " + ex.InnerException.InnerException.Message;
+            } else
+            {
+                log = DateTime.UtcNow.ToLocalTime() + " - " + errorType.ToString() + " - Filepath = " + filePath + " - StackTrack = " + ex.StackTrace + " - Message = " + ex.InnerException.Message;
+            }
         }
         else
         {

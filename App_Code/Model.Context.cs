@@ -35,10 +35,11 @@ public partial class WebsiteTTKEntities : DbContext
     public virtual DbSet<procategory> procategories { get; set; }
     public virtual DbSet<product> products { get; set; }
     public virtual DbSet<stock> stocks { get; set; }
+    public virtual DbSet<delivery_methods> delivery_methods { get; set; }
     public virtual DbSet<order_items> order_items { get; set; }
     public virtual DbSet<order> orders { get; set; }
     public virtual DbSet<staff> staffs { get; set; }
     public virtual DbSet<store> stores { get; set; }
-    public virtual DbSet<wishlist> wishlists { get; set; }
     public virtual DbSet<voucher> vouchers { get; set; }
+    public virtual DbSet<wishlist> wishlists { get; set; }
 }

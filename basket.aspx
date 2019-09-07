@@ -20,7 +20,10 @@
 
                 InitControls(model);
 
-                SetUpMessage(model);
+                SetUpBasket(model);
+
+                //Show products viewed recently
+                GetProductsViewedRecently(model);
             }
         });
 
@@ -33,7 +36,7 @@
             }
         }
 
-        function SetUpMessage(model) {
+        function SetUpBasket(model) {
             if (model.OrderItems != null) {
                 var basket_product_tbody = "";
                 for (var i = 0; i < model.OrderItems.length; i++) {
@@ -68,8 +71,6 @@
                     $('#tax_total').html("<span class='tax_total'>" + GetCurrency(model.TaxTotal, model.CurrencyCode, 'tax_total') + "</span>");
                 }
 
-                var grandTotal = model.OrderTotal + model.ShippingTotal + model.TaxTotal;
-
                 var basket_product_tfoot = "<tr><th colspan='5'>Total</th><th colspan='2'><span class='ordertotal'>" + GetCurrency(model.OrderTotal, model.CurrencyCode, 'ordertotal') + "</span></th></tr>";
                 
                 $('#basket_message').html("You currently have " + model.TotalItem + " item(s) in your cart.");
@@ -77,8 +78,93 @@
                 $('#basket_product_tfoot').html(basket_product_tfoot);
                 $('#order_subtotal').html("<span class='order_subtotal'>" + GetCurrency(model.OrderTotal, model.CurrencyCode, 'order_subtotal') + "</span>");
                 $('#shipping_total').html("<span class='shipping_total'>" + GetCurrency(model.ShippingTotal, model.CurrencyCode, 'shipping_total') + "</span>");
+                if (model.TotalDiscount > 0) {
+                    $('#total_discount').html("<span class='total_discount'>" + GetCurrency(model.TotalDiscount, model.CurrencyCode, 'total_discount') + "</span>");
+                } else {
+                    $('#discount_cell').hide();
+                }
                 $('#grand_total').html("<span class='grand_total'>" + GetCurrency(model.GrandTotal, model.CurrencyCode, 'grand_total') + "</span>");
             }
+        }
+
+        function GetProductsViewedRecently(model) {
+            //EraseCookie("ttk_product_ids");
+            var product_ids = ReadCookie("ttk_product_ids");
+            if (product_ids != null) {
+                var product_ids = product_ids.split(',');
+
+                if (product_ids.length > 0) {
+                    var recent_product_ids = product_ids;
+                    if (model.OrderItems != null) {
+                        for (var i = 0; i < model.OrderItems.length; i++) {
+                            var order_item = model.OrderItems[i];
+                            recent_product_ids = $.grep(recent_product_ids, function (e) {
+                                return e != order_item.product_id;
+                            });
+                        }
+                    }
+                    //TODO with recent_product_ids
+                    var data = {};
+                    data.ids = recent_product_ids.join('|');
+                    $.ajax({
+                            type: "POST",
+                            url: currentHostUrl + "/WebServices/ProductWebService.asmx/GetProducts",
+                            cache: false,
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(data),
+                            dataType: "json",
+                            success: ShowProductsViewedRecently,
+                            error: ajaxFailed
+                        });
+                    if (recent_product_ids.length > 6) {
+                        recent_product_ids.splice(0, 1);
+                    }
+                }
+            }
+        }
+
+        function ShowProductsViewedRecently(data, status) {
+            var relativeProductHtml = "<div class='col-md-3 col-sm-6'><div class='box same-height'><h3>You may also like these products</h3></div></div>";
+            for (var count in data.d) {
+                var product = data.d[count];
+                var product_url = currentHostUrl + "/product-detail.aspx?product_id=" + product.product_id;
+                var imageItems = product.product_images.split(';');
+                var images = imageItems.filter(function (el) {
+                    return el != "";
+                });
+                var productPrice = 0;
+                if (product.list_price != null) {
+                    productPrice = product.list_price;
+                }
+                var product_image = "";
+                var image_url = "";
+                if (images.length > 0) {
+                    product_image += "<div class='front'><a href='" + product_url + "'><img src='" + currentHostUrl + "/" + images[0] + "' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                    image_url = currentHostUrl + "/" + images[0];
+                    if (images.length > 1) {
+                        product_image += "<div class='back'><a href='" + product_url + "'><img src='" + currentHostUrl + "/" + images[1] + "' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                    } else {
+                        product_image += "<div class='back'><a href='" + product_url + "'><img src='" + currentHostUrl + "/img/no_image.jpg' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                    }
+                } else {
+                    image_url = currentHostUrl + "/img/no_image.jpg";
+                    product_image += "<div class='front'><a href='" + product_url + "'><img src='" + currentHostUrl + "/img/no_image.jpg' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                    product_image += "<div class='back'><a href='" + product_url + "'><img src='" + currentHostUrl + "/img/no_image.jpg' alt='" + product.product_name + "' class='img-fluid'></a></div>"
+                }
+
+                relativeProductHtml += "<div class='col-md-3 col-sm-6'>";
+                relativeProductHtml += "<div class='product same-height'>";
+                relativeProductHtml += "<div class='flip-container'><div class='flipper'>";
+                relativeProductHtml += product_image;
+                relativeProductHtml += "</div></div>";
+                if (image_url != "") {
+                    relativeProductHtml += "<a href='" + product_url + "' class='invisible'><img src='" + image_url + "' alt='' class='img-fluid'></a>";
+                }
+                relativeProductHtml += "<div class='text'><h3>" + product.product_name + "</h3><p class='price price-" + product.product_id + "'>" + GetCurrency(productPrice, product.currency_code, 'price-' + product.product_id) + "</p></div>";
+                relativeProductHtml += "</div>";
+                relativeProductHtml += "</div>";
+            }
+            $("#recent_products").html(relativeProductHtml);
         }
         //End: Startup functions ---------------------------------------------------
 
@@ -98,12 +184,14 @@
             var ids_str = ids.join(';');
             var quantities_str = quantities.join(';');
             var update_cart_url = currentHostUrl + "/update-basket.aspx?ids=" + ids_str + "&quantities=" + quantities_str + "&order_id=" + order_id;
-            location.href = update_cart_url;
+            $('#myframe').attr('src', update_cart_url);
+            $('#center_div').show();
         }
 
         function RemoveProduct(url) {
             if (confirm('Do you agree to remove this product from your order?')) {
-                location.href = url;
+                $('#myframe').attr('src', url);
+                $('#center_div').show();
             }
         }
 
@@ -121,41 +209,12 @@
         //End: Process functions ---------------------------------------------------
 
         //Start: Util functions---------------------------------------------
-        function GetCurrency(amount, currency_code, control_id) {
-            var data = {};
-            data.param = amount + '|' + currency_code + '|' + control_id;
-            $.ajax({
-                type: "POST",
-                url: currentHostUrl + "/WebServices/ProductWebService.asmx/GetCurrency",
-                cache: false,
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(data),
-                dataType: "json",
-                success: ShowCurrency,
-                error: ajaxFailed
-            });
-        }
-
-        function ShowCurrency(data, status) {
-            var str = data.d;
-            var items = str.split('|');
-            var priceLabels = $('.' + items[1]);
-            $.each(priceLabels, function (index, value) {
-                $(priceLabels[index]).text(items[0]);
-            });
-        }
-
-        function ajaxFailed(xmlRequest) {
-            console.log(xmlRequest.status + ' \n\r ' + 
-                  xmlRequest.statusText + '\n\r' + 
-                  xmlRequest.responseText);
-        }
-
         window.CloseUpdateBasket = function () {
             $('#myframe').attr('src', "");
             $('#center_div').hide();
         }
         //End: Util functions---------------------------------------------
+
     </script>
     <div runat="server" id="Server_Data" style="display: none;" />
     <div id="all">
@@ -202,69 +261,8 @@
                             </div>
                         </div>
                         <!-- /.box-->
-                        <div class="row same-height-row">
-                            <div class="col-lg-3 col-md-6">
-                                <div class="box same-height">
-                                    <h3>You may also like these products</h3>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="product same-height">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product2.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product2_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product2.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3>Fur coat</h3>
-                                        <p class="price">$143</p>
-                                    </div>
-                                </div>
-                                <!-- /.product-->
-                            </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="product same-height">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product1.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product1_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product1.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3>Fur coat</h3>
-                                        <p class="price">$143</p>
-                                    </div>
-                                </div>
-                                <!-- /.product-->
-                            </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="product same-height">
-                                    <div class="flip-container">
-                                        <div class="flipper">
-                                            <div class="front"><a href="product-detail.aspx">
-                                                <img src="img/product3.jpg" alt="" class="img-fluid"></a></div>
-                                            <div class="back"><a href="product-detail.aspx">
-                                                <img src="img/product3_2.jpg" alt="" class="img-fluid"></a></div>
-                                        </div>
-                                    </div>
-                                    <a href="product-detail.aspx" class="invisible">
-                                        <img src="img/product3.jpg" alt="" class="img-fluid"></a>
-                                    <div class="text">
-                                        <h3>Fur coat</h3>
-                                        <p class="price">$143</p>
-                                    </div>
-                                </div>
-                                <!-- /.product-->
-                            </div>
+                        <div class="row same-height-row" id="recent_products">
+                            
                         </div>
                     </div>
                     <!-- /.col-lg-9-->
@@ -288,6 +286,10 @@
                                         <tr id="tax_cell">
                                             <td>Tax</td>
                                             <th id="tax_total"></th>
+                                        </tr>
+                                        <tr id="discount_cell">
+                                            <td>Discount</td>
+                                            <th id="total_discount"></th>
                                         </tr>
                                         <tr class="total">
                                             <td>Total</td>

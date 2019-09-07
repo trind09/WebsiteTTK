@@ -166,6 +166,17 @@
           <Property Name="product_id" Type="int" Nullable="false" />
           <Property Name="quantity" Type="int" />
         </EntityType>
+        <EntityType Name="delivery_methods">
+          <Key>
+            <PropertyRef Name="delivery_id" />
+          </Key>
+          <Property Name="delivery_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="delivery_name" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="delievery_description" Type="nvarchar" MaxLength="300" />
+          <Property Name="delivery_time" Type="int" />
+          <Property Name="delivery_time_unit" Type="nvarchar" MaxLength="50" />
+          <Property Name="delivery_cost" Type="decimal" Precision="10" Scale="2" />
+        </EntityType>
         <EntityType Name="order_items">
           <Key>
             <PropertyRef Name="order_id" />
@@ -196,6 +207,8 @@
           <Property Name="staff_id" Type="int" Nullable="false" />
           <Property Name="order_discount" Type="int" />
           <Property Name="order_discount_is_fixed" Type="bit" />
+          <Property Name="delivery_id" Type="int" />
+          <Property Name="currency_id" Type="int" />
         </EntityType>
         <EntityType Name="staffs">
           <Key>
@@ -226,12 +239,9 @@
           <Property Name="state" Type="nvarchar" MaxLength="50" />
           <Property Name="zip_code" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'WebsiteTTK.sales.vouchers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vouchers">
           <Key>
             <PropertyRef Name="voucher_id" />
-            <PropertyRef Name="voucher_code" />
           </Key>
           <Property Name="voucher_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="voucher_code" Type="nvarchar" MaxLength="50" Nullable="false" />
@@ -452,29 +462,13 @@ warning 6002: The table/view 'WebsiteTTK.sales.vouchers' does not have a primary
           <EntitySet Name="procategories" EntityType="Self.procategories" Schema="production" store:Type="Tables" />
           <EntitySet Name="products" EntityType="Self.products" Schema="production" store:Type="Tables" />
           <EntitySet Name="stocks" EntityType="Self.stocks" Schema="production" store:Type="Tables" />
+          <EntitySet Name="delivery_methods" EntityType="Self.delivery_methods" Schema="sales" store:Type="Tables" />
           <EntitySet Name="order_items" EntityType="Self.order_items" Schema="sales" store:Type="Tables" />
           <EntitySet Name="orders" EntityType="Self.orders" Schema="sales" store:Type="Tables" />
           <EntitySet Name="staffs" EntityType="Self.staffs" Schema="sales" store:Type="Tables" />
           <EntitySet Name="stores" EntityType="Self.stores" Schema="sales" store:Type="Tables" />
+          <EntitySet Name="vouchers" EntityType="Self.vouchers" Schema="sales" store:Type="Tables" />
           <EntitySet Name="wishlists" EntityType="Self.wishlists" Schema="sales" store:Type="Tables" />
-          <EntitySet Name="vouchers" EntityType="Self.vouchers" store:Type="Tables" store:Schema="sales">
-            <DefiningQuery>SELECT 
-    [vouchers].[voucher_id] AS [voucher_id], 
-    [vouchers].[voucher_code] AS [voucher_code], 
-    [vouchers].[voucher_name] AS [voucher_name], 
-    [vouchers].[voucher_description] AS [voucher_description], 
-    [vouchers].[voucher_uses] AS [voucher_uses], 
-    [vouchers].[voucher_max_uses] AS [voucher_max_uses], 
-    [vouchers].[voucher_max_uses_user] AS [voucher_max_uses_user], 
-    [vouchers].[voucher_type] AS [voucher_type], 
-    [vouchers].[voucher_discount_amount] AS [voucher_discount_amount], 
-    [vouchers].[voucher_is_fixed] AS [voucher_is_fixed], 
-    [vouchers].[voucher_starts_at] AS [voucher_starts_at], 
-    [vouchers].[voucher_expires_at] AS [voucher_expires_at], 
-    [vouchers].[voucher_product_id] AS [voucher_product_id], 
-    [vouchers].[voucher_user_id] AS [voucher_user_id]
-    FROM [sales].[vouchers] AS [vouchers]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="FK__order_ite__order__5DCAEF64" Association="Self.FK__order_ite__order__5DCAEF64">
             <End Role="orders" EntitySet="orders" />
             <End Role="order_items" EntitySet="order_items" />
@@ -545,12 +539,13 @@ warning 6002: The table/view 'WebsiteTTK.sales.vouchers' does not have a primary
           <EntitySet Name="procategories" EntityType="WebsiteTTKModel.procategory" />
           <EntitySet Name="products" EntityType="WebsiteTTKModel.product" />
           <EntitySet Name="stocks" EntityType="WebsiteTTKModel.stock" />
+          <EntitySet Name="delivery_methods" EntityType="WebsiteTTKModel.delivery_methods" />
           <EntitySet Name="order_items" EntityType="WebsiteTTKModel.order_items" />
           <EntitySet Name="orders" EntityType="WebsiteTTKModel.order" />
           <EntitySet Name="staffs" EntityType="WebsiteTTKModel.staff" />
           <EntitySet Name="stores" EntityType="WebsiteTTKModel.store" />
-          <EntitySet Name="wishlists" EntityType="WebsiteTTKModel.wishlist" />
           <EntitySet Name="vouchers" EntityType="WebsiteTTKModel.voucher" />
+          <EntitySet Name="wishlists" EntityType="WebsiteTTKModel.wishlist" />
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="WebsiteTTKModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaim" EntitySet="AspNetUserClaims" />
@@ -767,6 +762,17 @@ warning 6002: The table/view 'WebsiteTTK.sales.vouchers' does not have a primary
           <NavigationProperty Name="product" Relationship="WebsiteTTKModel.FK__stocks__product___534D60F1" FromRole="stock" ToRole="product" />
           <NavigationProperty Name="store" Relationship="WebsiteTTKModel.FK__stocks__store_id__5CD6CB2B" FromRole="stock" ToRole="store" />
         </EntityType>
+        <EntityType Name="delivery_methods">
+          <Key>
+            <PropertyRef Name="delivery_id" />
+          </Key>
+          <Property Name="delivery_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="delivery_name" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="delievery_description" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="delivery_time" Type="Int32" />
+          <Property Name="delivery_time_unit" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="delivery_cost" Type="Decimal" Precision="10" Scale="2" />
+        </EntityType>
         <EntityType Name="order_items">
           <Key>
             <PropertyRef Name="order_id" />
@@ -799,6 +805,8 @@ warning 6002: The table/view 'WebsiteTTK.sales.vouchers' does not have a primary
           <Property Name="staff_id" Type="Int32" Nullable="false" />
           <Property Name="order_discount" Type="Int32" />
           <Property Name="order_discount_is_fixed" Type="Boolean" />
+          <Property Name="delivery_id" Type="Int32" />
+          <Property Name="currency_id" Type="Int32" />
           <NavigationProperty Name="order_items" Relationship="WebsiteTTKModel.FK__order_ite__order__5DCAEF64" FromRole="order" ToRole="order_items" />
           <NavigationProperty Name="store" Relationship="WebsiteTTKModel.FK__orders__store_id__619B8048" FromRole="order" ToRole="store" />
         </EntityType>
@@ -837,20 +845,9 @@ warning 6002: The table/view 'WebsiteTTK.sales.vouchers' does not have a primary
           <NavigationProperty Name="orders" Relationship="WebsiteTTKModel.FK__orders__store_id__619B8048" FromRole="store" ToRole="order" />
           <NavigationProperty Name="staffs" Relationship="WebsiteTTKModel.FK__staffs__store_id__44FF419A" FromRole="store" ToRole="staff" />
         </EntityType>
-        <EntityType Name="wishlist">
-          <Key>
-            <PropertyRef Name="wish_id" />
-          </Key>
-          <Property Name="wish_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="product_id" Type="Int32" Nullable="false" />
-          <Property Name="user_id" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="quantity" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
-          <Property Name="purchase_date" Type="DateTime" Nullable="false" Precision="3" />
-        </EntityType>
         <EntityType Name="voucher">
           <Key>
             <PropertyRef Name="voucher_id" />
-            <PropertyRef Name="voucher_code" />
           </Key>
           <Property Name="voucher_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="voucher_code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -866,6 +863,16 @@ warning 6002: The table/view 'WebsiteTTK.sales.vouchers' does not have a primary
           <Property Name="voucher_expires_at" Type="DateTime" Precision="3" />
           <Property Name="voucher_product_id" Type="Int32" />
           <Property Name="voucher_user_id" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="wishlist">
+          <Key>
+            <PropertyRef Name="wish_id" />
+          </Key>
+          <Property Name="wish_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="product_id" Type="Int32" Nullable="false" />
+          <Property Name="user_id" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="quantity" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="purchase_date" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Type="WebsiteTTKModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
@@ -1190,6 +1197,18 @@ warning 6002: The table/view 'WebsiteTTK.sales.vouchers' does not have a primary
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="delivery_methods">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.delivery_methods">
+              <MappingFragment StoreEntitySet="delivery_methods">
+                <ScalarProperty Name="delivery_cost" ColumnName="delivery_cost" />
+                <ScalarProperty Name="delivery_time_unit" ColumnName="delivery_time_unit" />
+                <ScalarProperty Name="delivery_time" ColumnName="delivery_time" />
+                <ScalarProperty Name="delievery_description" ColumnName="delievery_description" />
+                <ScalarProperty Name="delivery_name" ColumnName="delivery_name" />
+                <ScalarProperty Name="delivery_id" ColumnName="delivery_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="order_items">
             <EntityTypeMapping TypeName="WebsiteTTKModel.order_items">
               <MappingFragment StoreEntitySet="order_items">
@@ -1209,6 +1228,8 @@ warning 6002: The table/view 'WebsiteTTK.sales.vouchers' does not have a primary
           <EntitySetMapping Name="orders">
             <EntityTypeMapping TypeName="WebsiteTTKModel.order">
               <MappingFragment StoreEntitySet="orders">
+                <ScalarProperty Name="currency_id" ColumnName="currency_id" />
+                <ScalarProperty Name="delivery_id" ColumnName="delivery_id" />
                 <ScalarProperty Name="order_discount_is_fixed" ColumnName="order_discount_is_fixed" />
                 <ScalarProperty Name="order_discount" ColumnName="order_discount" />
                 <ScalarProperty Name="staff_id" ColumnName="staff_id" />
@@ -1253,17 +1274,6 @@ warning 6002: The table/view 'WebsiteTTK.sales.vouchers' does not have a primary
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="wishlists">
-            <EntityTypeMapping TypeName="WebsiteTTKModel.wishlist">
-              <MappingFragment StoreEntitySet="wishlists">
-                <ScalarProperty Name="purchase_date" ColumnName="purchase_date" />
-                <ScalarProperty Name="quantity" ColumnName="quantity" />
-                <ScalarProperty Name="user_id" ColumnName="user_id" />
-                <ScalarProperty Name="product_id" ColumnName="product_id" />
-                <ScalarProperty Name="wish_id" ColumnName="wish_id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="vouchers">
             <EntityTypeMapping TypeName="WebsiteTTKModel.voucher">
               <MappingFragment StoreEntitySet="vouchers">
@@ -1281,6 +1291,17 @@ warning 6002: The table/view 'WebsiteTTK.sales.vouchers' does not have a primary
                 <ScalarProperty Name="voucher_name" ColumnName="voucher_name" />
                 <ScalarProperty Name="voucher_code" ColumnName="voucher_code" />
                 <ScalarProperty Name="voucher_id" ColumnName="voucher_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="wishlists">
+            <EntityTypeMapping TypeName="WebsiteTTKModel.wishlist">
+              <MappingFragment StoreEntitySet="wishlists">
+                <ScalarProperty Name="purchase_date" ColumnName="purchase_date" />
+                <ScalarProperty Name="quantity" ColumnName="quantity" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="product_id" ColumnName="product_id" />
+                <ScalarProperty Name="wish_id" ColumnName="wish_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

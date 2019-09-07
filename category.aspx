@@ -308,7 +308,7 @@
                         if (image_url != "") {
                             productHtml += "<a href='" + product_url + "' class='invisible'><img src='" + image_url + "' alt='' class='img-fluid'></a>";
                         }
-                        productHtml += "<div class='text'><h3><a href='" + product_url + "'>" + product.product_name + "</a></h3><p class='price'><del></del><span id='price-" + product.product_id + "'>" + GetCurrency(product.list_price, product.currency_code, 'price-' + product.product_id) + "</span></p>";
+                        productHtml += "<div class='text'><h3><a href='" + product_url + "'>" + product.product_name + "</a></h3><p class='price'><del></del><span class='price-" + product.product_id + "'>" + GetCurrency(product.list_price, product.currency_code, 'price-' + product.product_id) + "</span></p>";
                         
                         if (product.is_sale)
                         {
@@ -799,18 +799,6 @@
                 success: ShowCurrency,
                 error: ajaxFailed
             });
-        }
-
-        function ShowCurrency(data, status) {
-            var str = data.d;
-            var items = str.split('|');
-            $('#' + items[1]).text(items[0]);
-        }
-
-        function ajaxFailed(xmlRequest) {
-            console.log(xmlRequest.status + ' \n\r ' + 
-                  xmlRequest.statusText + '\n\r' + 
-                  xmlRequest.responseText);
         }
         //End: Util functions---------------------------------------------
     </script>

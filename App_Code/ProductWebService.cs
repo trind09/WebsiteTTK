@@ -74,4 +74,23 @@ public class ProductWebService : System.Web.Services.WebService
         return null;
     }
 
+    [WebMethod]
+    public string UpdateCustomerAddress(string param)
+    {
+        Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(param);
+        Newtonsoft.Json.Linq.JToken aspNetUserAddress = jObject.SelectTokens("AspNetUserAddress").FirstOrDefault();
+       
+        string email = aspNetUserAddress["Email"] + "";
+        string phoneNumber = aspNetUserAddress["PhoneNumber"] + "";
+        string firstname = aspNetUserAddress["Firstname"] + "";
+        string lastname = aspNetUserAddress["Lastname"] + "";
+        string company = aspNetUserAddress["Company"] + "";
+        string street = aspNetUserAddress["Street"] + "";
+        string city = aspNetUserAddress["City"] + "";
+        string zip = aspNetUserAddress["Zip"] + "";
+        string state = aspNetUserAddress["State"] + "";
+        string country = aspNetUserAddress["Country"] + "";
+
+        return null;
+    }
 }

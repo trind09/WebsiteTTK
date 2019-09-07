@@ -136,6 +136,16 @@ public partial class currency
     public string currency_symbol { get; set; }
 }
 
+public partial class delivery_methods
+{
+    public int delivery_id { get; set; }
+    public string delivery_name { get; set; }
+    public string delievery_description { get; set; }
+    public Nullable<int> delivery_time { get; set; }
+    public string delivery_time_unit { get; set; }
+    public Nullable<decimal> delivery_cost { get; set; }
+}
+
 public partial class order
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -154,6 +164,8 @@ public partial class order
     public int staff_id { get; set; }
     public Nullable<int> order_discount { get; set; }
     public Nullable<bool> order_discount_is_fixed { get; set; }
+    public Nullable<int> delivery_id { get; set; }
+    public Nullable<int> currency_id { get; set; }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<order_items> order_items { get; set; }

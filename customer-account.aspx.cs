@@ -99,20 +99,23 @@ public partial class customer_account : System.Web.UI.Page
 
     private void SetupCountryDropDownList(string option)
     {
+        //Refresh dropdownlist
         country.Items.Clear();
+        country.SelectedIndex = -1;
+
         country.Items.Add(new System.Web.UI.WebControls.ListItem("--Select--", ""));
         string[] countries = UserHelper.Countries();
-        foreach (var item in countries)
+        int selectedIndex = 0;
+        for (int i = 0; i < countries.Length; i++)
         {
+            var item = countries[i];
             if (item == option)
             {
-                country.Items.Add(new System.Web.UI.WebControls.ListItem(item, item, true));
+                selectedIndex = i + 1;
             }
-            else
-            {
-                country.Items.Add(new System.Web.UI.WebControls.ListItem(item, item));
-            }
+            country.Items.Add(new System.Web.UI.WebControls.ListItem(item, item));
         }
+        country.SelectedIndex = selectedIndex;
     }
     #endregion
 
@@ -177,42 +180,45 @@ public partial class customer_account : System.Web.UI.Page
                 if (addresses.Count > 0)
                 {
                     AspNetUserAddress address = addresses.FirstOrDefault();
-                    address.Firstname = Helper.StripHTML(firstname.Text);
-                    address.Lastname = Helper.StripHTML(lastname.Text);
-                    address.Company = Helper.StripHTML(company.Text);
-                    address.Street = Helper.StripHTML(street.Text);
-                    address.City = Helper.StripHTML(city.Text);
-                    address.Zip = Helper.StripHTML(zip.Text);
-                    address.State = Helper.StripHTML(state.Text);
+                    address.Firstname = Helper.GetPlainTextFromHtml(firstname.Text);
+                    address.Lastname = Helper.GetPlainTextFromHtml(lastname.Text);
+                    address.Company = Helper.GetPlainTextFromHtml(company.Text);
+                    address.Street = Helper.GetPlainTextFromHtml(street.Text);
+                    address.City = Helper.GetPlainTextFromHtml(city.Text);
+                    address.Zip = Helper.GetPlainTextFromHtml(zip.Text);
+                    address.State = Helper.GetPlainTextFromHtml(state.Text);
                     if (!Helper.IsValidEmail(Email.Text))
                     {
-                        lblChangePersonalDetails.Text = "<span style='color: red;'>Invalid email!</span>";
+                        string message = "Invalid email!";
+                        ClientScript.RegisterStartupScript(GetType(), "ShowAlert", "window.ShowMessage(0,\"" + message + "\",true);", true);
                     }
                     else
                     {
-                        address.Email = Helper.StripHTML(Email.Text);
-                        address.PhoneNumber = Helper.StripHTML(PhoneNumber.Text);
-                        address.Country = Helper.StripHTML(country.SelectedValue);
+                        address.Email = Helper.GetPlainTextFromHtml(Email.Text);
+                        address.PhoneNumber = Helper.GetPlainTextFromHtml(PhoneNumber.Text);
+                        address.Country = Helper.GetPlainTextFromHtml(country.SelectedValue);
                         try
                         {
                             string globalDateFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateFormat"];
-                            DateTime biDate = DateTime.ParseExact(Helper.StripHTML(birthday.Value), globalDateFormat, System.Globalization.CultureInfo.InvariantCulture);
+                            DateTime biDate = DateTime.ParseExact(Helper.GetPlainTextFromHtml(birthday.Value), globalDateFormat, System.Globalization.CultureInfo.InvariantCulture);
                             address.Birthday = biDate;
                         }
                         catch
                         {
                             address.Birthday = null;
                         }
-                        address.Gender = UserHelper.ConvertStringToGender(Helper.StripHTML(gender.SelectedValue));
+                        address.Gender = UserHelper.ConvertStringToGender(Helper.GetPlainTextFromHtml(gender.SelectedValue));
 
                         try
                         {
                             UserHelper.UpdateUserAddresses(new System.Collections.Generic.List<AspNetUserAddress> { address });
-                            lblChangePersonalDetails.Text = "<span style='color: green;'>Update successful!</span>";
+                            string message = "Update successful!";
+                            ClientScript.RegisterStartupScript(GetType(), "ShowAlert", "window.ShowMessage(0,\"" + message + "\",true);", true);
                         }
                         catch (Exception ex)
                         {
-                            lblChangePersonalDetails.Text = "<span style='color: red;'>Update fail! " + ex.Message + "</span>";
+                            string message = "Update fail! " + ex.Message;
+                            ClientScript.RegisterStartupScript(GetType(), "ShowAlert", "window.ShowMessage(0,\"" + message + "\",true);", true);
                         }
                     }
                 } else
@@ -221,42 +227,45 @@ public partial class customer_account : System.Web.UI.Page
                     address.UserId = user.Result.Id;
                     //Because of updating user's profile, thus it use home address.
                     address.AddressType = UserHelper.AddressType.HomeAddress.ToString();
-                    address.Firstname = Helper.StripHTML(firstname.Text);
-                    address.Lastname = Helper.StripHTML(lastname.Text);
-                    address.Company = Helper.StripHTML(company.Text);
-                    address.Street = Helper.StripHTML(street.Text);
-                    address.City = Helper.StripHTML(city.Text);
-                    address.Zip = Helper.StripHTML(zip.Text);
-                    address.State = Helper.StripHTML(state.Text);
+                    address.Firstname = Helper.GetPlainTextFromHtml(firstname.Text);
+                    address.Lastname = Helper.GetPlainTextFromHtml(lastname.Text);
+                    address.Company = Helper.GetPlainTextFromHtml(company.Text);
+                    address.Street = Helper.GetPlainTextFromHtml(street.Text);
+                    address.City = Helper.GetPlainTextFromHtml(city.Text);
+                    address.Zip = Helper.GetPlainTextFromHtml(zip.Text);
+                    address.State = Helper.GetPlainTextFromHtml(state.Text);
                     if (!Helper.IsValidEmail(Email.Text))
                     {
-                        lblChangePersonalDetails.Text = "<span style='color: red;'>Invalid email!</span>";
+                        string message = "Invalid email!";
+                        ClientScript.RegisterStartupScript(GetType(), "ShowAlert", "window.ShowMessage(0,\"" + message + "\",true);", true);
                     }
                     else
                     {
-                        address.Email = Helper.StripHTML(Email.Text);
-                        address.PhoneNumber = Helper.StripHTML(PhoneNumber.Text);
-                        address.Country = Helper.StripHTML(country.SelectedValue);
+                        address.Email = Helper.GetPlainTextFromHtml(Email.Text);
+                        address.PhoneNumber = Helper.GetPlainTextFromHtml(PhoneNumber.Text);
+                        address.Country = Helper.GetPlainTextFromHtml(country.SelectedValue);
                         try
                         {
                             string globalDateFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateFormat"];
-                            DateTime biDate = DateTime.ParseExact(Helper.StripHTML(birthday.Value), globalDateFormat, System.Globalization.CultureInfo.InvariantCulture);
+                            DateTime biDate = DateTime.ParseExact(Helper.GetPlainTextFromHtml(birthday.Value), globalDateFormat, System.Globalization.CultureInfo.InvariantCulture);
                             address.Birthday = biDate;
                         }
                         catch
                         {
                             address.Birthday = null;
                         }
-                        address.Gender = UserHelper.ConvertStringToGender(Helper.StripHTML(gender.SelectedValue));
+                        address.Gender = UserHelper.ConvertStringToGender(Helper.GetPlainTextFromHtml(gender.SelectedValue));
 
                         try
                         {
                             UserHelper.UpdateUserAddresses(new List<AspNetUserAddress> { address });
-                            lblChangePersonalDetails.Text = "<span style='color: green;'>Update successful!</span>";
+                            string message = "Update successful!";
+                            ClientScript.RegisterStartupScript(GetType(), "ShowAlert", "window.ShowMessage(0,\"" + message + "\",true);", true);
                         }
                         catch (Exception ex)
                         {
-                            lblChangePersonalDetails.Text = "<span style='color: red;'>Update fail! " + ex.Message + "</span>";
+                            string message = "Update fail! " + ex.Message;
+                            ClientScript.RegisterStartupScript(GetType(), "ShowAlert", "window.ShowMessage(0,\"" + message + "\",true);", true);
                         }
                     }
                 }
@@ -266,6 +275,6 @@ public partial class customer_account : System.Web.UI.Page
         {
             Page.Response.Redirect(Helper.GetHostURL(), true);
         }
-    } 
+    }
     #endregion
 }

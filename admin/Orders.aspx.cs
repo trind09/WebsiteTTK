@@ -61,6 +61,14 @@ public partial class admin_Orders : System.Web.UI.Page
                 bool.TryParse(Helper.GetPropValue(obj + "", "order_discount_is_fixed") + "", out order_discount_is_fixed);
                 item.order_discount_is_fixed = order_discount_is_fixed;
 
+                int delivery_id = 0;
+                Int32.TryParse(Helper.GetPropValue(obj + "", "delivery_id") + "", out delivery_id);
+                item.delivery_id = delivery_id;
+
+                int currency_id = 0;
+                Int32.TryParse(Helper.GetPropValue(obj + "", "currency_id") + "", out currency_id);
+                item.currency_id = currency_id;
+
                 orders.Add(item);
             }
         }
@@ -93,21 +101,8 @@ public partial class admin_Orders : System.Web.UI.Page
     {
         using (var context = new WebsiteTTKEntities())
         {
-            IQueryable<order> qTable = from t in context.orders
-                                          select t; // can you confirm if your context has Tables or MyTables?
-            var list = qTable.Select(s => new {
-                s.order_id,
-                s.customer_id,
-                s.order_status,
-                s.order_date,
-                s.required_date,
-                s.shipped_date,
-                s.store_id,
-                s.staff_id,
-                s.order_discount,
-                s.order_discount_is_fixed
-            }).ToList();
-            var json = new JavaScriptSerializer().Serialize(list);
+            var orders = context.orders.ToList();
+            var json = new JavaScriptSerializer().Serialize(orders);
             Server_Data.InnerText = json;
         }
     }

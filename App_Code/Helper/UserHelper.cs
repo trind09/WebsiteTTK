@@ -154,6 +154,20 @@ public class UserHelper
     }
 
     /// <summary>
+    /// Get AspNetUser by user id
+    /// </summary>
+    /// <param name="id">user id</param>
+    /// <returns></returns>
+    public static AspNetUser GetUserByUserId(string id)
+    {
+        using (var context = new WebsiteTTKEntities())
+        {
+            //Get product data
+            return context.AspNetUsers.FirstOrDefault(x => x.Id == id);
+        }
+    }
+
+    /// <summary>
     /// List of country
     /// </summary>
     /// <returns>List of countries in string</returns>

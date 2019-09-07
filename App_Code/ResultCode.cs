@@ -17,6 +17,9 @@ public class ResultCode
     public static ResultCode AddToWishlistSuccess { get { return new ResultCode(new object[] { 2, "Product added to wishlist successful!" }); } }
     public static ResultCode AddToWishlistFail { get { return new ResultCode(new object[] { 3, "Add to wishlist fail!" }); } }
     public static ResultCode ProductDoesNotExist { get { return new ResultCode(new object[] { 4, "Product doesn't exist!" }); } }
+    public static ResultCode RemoveProductFromBasketSuccessful { get { return new ResultCode(new object[] { 5, "Product removed from your basket succeful!" }); } }
+    public static ResultCode BasketUpdatedSuccessful { get { return new ResultCode(new object[] { 5, "Update your basket successful!" }); } }
+    public static ResultCode CouponApplied { get { return new ResultCode(new object[] { 7, "Coupon applied!" }); } }
 
     public static List<ResultCode> GetResultSet()
     {
@@ -26,6 +29,9 @@ public class ResultCode
         list.Add(AddToWishlistSuccess);
         list.Add(AddToWishlistFail);
         list.Add(ProductDoesNotExist);
+        list.Add(RemoveProductFromBasketSuccessful);
+        list.Add(BasketUpdatedSuccessful);
+        list.Add(CouponApplied);
         return list;
     }
 }

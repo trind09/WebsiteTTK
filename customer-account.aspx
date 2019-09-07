@@ -73,7 +73,6 @@
                                     <asp:LinkButton ID="lbnChangePassword" runat="server" CssClass="btn btn-primary" OnClick="lbnChangePassword_Click"><i class="fa fa-save"></i>Save new password</asp:LinkButton>
                                 </div>
                                 <h3 class="mt-5">Personal details</h3>
-                                <asp:Label ID="lblChangePersonalDetails" runat="server" Text=""></asp:Label>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">

@@ -60,6 +60,68 @@ public class CustomerHelper
 
     public static List<Customer> GetAllCustomer()
     {
-        throw new NotImplementedException();
+        using (var context = new WebsiteTTKEntities())
+        {
+            List<Customer> customers = new List<Customer>();
+            var users = context.AspNetUsers.ToList();
+            foreach (var user in users)
+            {
+                Customer customer = new Customer();
+                AspNetUserAddress address = context.AspNetUserAddresses.SingleOrDefault(x => x.UserId == user.Id);
+                customer.AspNetUserAddress = address;
+                customer.AspNetUser = user;
+                string globalDateFormat = System.Configuration.ConfigurationManager.AppSettings["GlobalDateFormat"];
+                customer.Birthday = address.Birthday.Value.ToString(globalDateFormat);
+                customer.City = address.City;
+                List<string> countries = Helper.GetCountries();
+                if (countries != null)
+                {
+                    customer.Countries = countries.ToArray();
+                }
+                customer.Email = user.Email;
+                customer.FirstName = address.Firstname;
+                customer.LastName = address.Lastname;
+                customer.PhoneNumber = address.PhoneNumber;
+                customer.Street = address.Street;
+                customer.ZipCode = address.Zip;
+
+                customers.Add(customer);
+            }
+            return customers;
+        }
+    }
+
+    /// <summary>
+    /// Update customer address
+    /// </summary>
+    /// <param name="customer">Customer entity</param>
+    /// <returns></returns>
+    public static string UpdateCustomerAddress(Customer customer)
+    {
+        try
+        {
+            AspNetUser user = customer.AspNetUser;
+            AspNetUserAddress address = customer.AspNetUserAddress;
+            using (var context = new WebsiteTTKEntities())
+            {
+                var existAddress = context.AspNetUserAddresses.FirstOrDefault(x => x.UserId == user.Id);
+                existAddress.Firstname = address.Firstname;
+                existAddress.Lastname = address.Lastname;
+                existAddress.Company = address.Company;
+                existAddress.Street = address.Street;
+                existAddress.City = address.City;
+                existAddress.Zip = address.Zip;
+                existAddress.State = address.State;
+                existAddress.PhoneNumber = address.PhoneNumber;
+                existAddress.Email = address.Email;
+                existAddress.Country = address.Country;
+
+                context.SaveChanges();
+                return null;
+            }
+        } catch (Exception ex)
+        {
+            return ex.Message;
+        }
     }
 }

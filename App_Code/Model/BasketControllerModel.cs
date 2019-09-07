@@ -19,4 +19,5 @@ public class BasketControllerModel
     public double TotalItem { get; set; }
     public double GrandTotal { get; set; }
     public string CurrencyCode { get; set; }
+    public double TotalDiscount { get; set; }
 }

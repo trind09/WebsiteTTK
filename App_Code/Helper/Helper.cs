@@ -68,13 +68,15 @@ public class Helper
     //Strip all html and jvascript code from html string
     public static string GetPlainTextFromHtml(string htmlString)
     {
-        string htmlTagPattern = "<.*?>";
-        var regexCss = new System.Text.RegularExpressions.Regex("(\\<script(.+?)\\</script\\>)|(\\<style(.+?)\\</style\\>)", System.Text.RegularExpressions.RegexOptions.Singleline | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-        htmlString = regexCss.Replace(htmlString, string.Empty);
-        htmlString = System.Text.RegularExpressions.Regex.Replace(htmlString, htmlTagPattern, string.Empty);
-        htmlString = System.Text.RegularExpressions.Regex.Replace(htmlString, @"^\s+$[\r\n]*", "", System.Text.RegularExpressions.RegexOptions.Multiline);
-        htmlString = htmlString.Replace("&nbsp;", string.Empty);
-
+        if (htmlString != null)
+        {
+            string htmlTagPattern = "<.*?>";
+            var regexCss = new System.Text.RegularExpressions.Regex("(\\<script(.+?)\\</script\\>)|(\\<style(.+?)\\</style\\>)", System.Text.RegularExpressions.RegexOptions.Singleline | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            htmlString = regexCss.Replace(htmlString, string.Empty);
+            htmlString = System.Text.RegularExpressions.Regex.Replace(htmlString, htmlTagPattern, string.Empty);
+            htmlString = System.Text.RegularExpressions.Regex.Replace(htmlString, @"^\s+$[\r\n]*", "", System.Text.RegularExpressions.RegexOptions.Multiline);
+            htmlString = htmlString.Replace("&nbsp;", string.Empty);
+        }
         return htmlString;
     }
 

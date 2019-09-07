@@ -163,37 +163,72 @@ public class ProductController
     public static ProductControllerModel AddProductToBasket(int product_id, string userId = null)
     {
         ProductControllerModel model = new ProductControllerModel();
-        if (product_id != 0 && userId != null)
+        if (product_id > 0 && userId != null)
         {
             using (var context = new WebsiteTTKEntities())
             {
                 try
                 {
                     var product = context.products.SingleOrDefault(w => w.product_id == product_id);
-                    var category = context.procategories.Single(w => w.category_id == product.category_id);
-                    var order = context.orders.SingleOrDefault(w => w.customer_id == userId && w.order_status == (int)OrderStatus.Status.New);
-                    if (order != null)
+                    if (product != null)
                     {
-                        var order_items = order.order_items;
-                        var isUpdate = false;
-                        foreach (var item in order_items)
+                        var category = context.procategories.Single(w => w.category_id == product.category_id);
+                        var order = context.orders.SingleOrDefault(w => w.customer_id == userId && w.order_status == (int)OrderStatus.Status.New);
+                        if (order != null)
                         {
-                            if (item.product_id == product_id)
+                            var order_items = order.order_items;
+                            var isUpdate = false;
+                            foreach (var item in order_items)
                             {
-                                item.quantity = item.quantity + 1;
-                                item.list_price = product.list_price;
-                                item.shipping_fee = product.shipping_fee;
-                                item.free_shipping_amount = product.free_shipping_amount;
-                                item.tax = product.tax;
-                                item.taxed_countries = product.taxed_countries;
-                                isUpdate = true;
+                                if (item.product_id == product_id)
+                                {
+                                    item.quantity = item.quantity + 1;
+                                    item.list_price = product.list_price;
+                                    item.shipping_fee = product.shipping_fee;
+                                    item.free_shipping_amount = product.free_shipping_amount;
+                                    item.tax = product.tax;
+                                    item.taxed_countries = product.taxed_countries;
+                                    isUpdate = true;
+                                }
                             }
+                            if (!isUpdate)
+                            {
+                                context.order_items.Add(new order_items
+                                {
+                                    order_id = order.order_id,
+                                    product_id = product_id,
+                                    quantity = 1,
+                                    list_price = product.list_price,
+                                    shipping_fee = product.shipping_fee,
+                                    free_shipping_amount = product.free_shipping_amount,
+                                    tax = product.tax,
+                                    taxed_countries = product.taxed_countries
+                                });
+                            }
+
+                            context.SaveChanges();
+
+                            model.Order = order;
+                            model.order_items = order.order_items.ToList();
                         }
-                        if (!isUpdate)
+                        else
                         {
+                            order.currency_id = product.currency_id;
+                            context.orders.Add(new order
+                            {
+                                customer_id = userId,
+                                order_status = (int)OrderStatus.Status.New,
+                                order_date = DateTime.UtcNow,
+                                required_date = DateTime.UtcNow,
+                                store_id = category.store_id == null ? 0 : category.store_id.Value,
+                                currency_id = product.currency_id //Order's currency will be defined by the first added product's currency
+                            });
+                            context.SaveChanges();
+
+                            var new_order = context.orders.SingleOrDefault(w => w.customer_id == userId && w.order_status == (int)OrderStatus.Status.New);
                             context.order_items.Add(new order_items
                             {
-                                order_id = order.order_id,
+                                order_id = new_order.order_id,
                                 product_id = product_id,
                                 quantity = 1,
                                 list_price = product.list_price,
@@ -202,42 +237,16 @@ public class ProductController
                                 tax = product.tax,
                                 taxed_countries = product.taxed_countries
                             });
+                            model.Order = new_order;
+                            model.order_items = new_order.order_items.ToList();
+                            context.SaveChanges();
                         }
-
-                        context.SaveChanges();
-
-                        model.Order = order;
-                        model.order_items = order.order_items.ToList();
-                    }
-                    else
+                        model.Success = true;
+                    } else
                     {
-                        context.orders.Add(new order
-                        {
-                            customer_id = userId,
-                            order_status = (int)OrderStatus.Status.New,
-                            order_date = DateTime.UtcNow,
-                            required_date = DateTime.UtcNow,
-                            store_id = category.store_id == null ? 0 : category.store_id.Value
-                        });
-                        context.SaveChanges();
-
-                        var new_order = context.orders.SingleOrDefault(w => w.customer_id == userId && w.order_status == (int)OrderStatus.Status.New);
-                        context.order_items.Add(new order_items
-                        {
-                            order_id = new_order.order_id,
-                            product_id = product_id,
-                            quantity = 1,
-                            list_price = product.list_price,
-                            shipping_fee = product.shipping_fee,
-                            free_shipping_amount = product.free_shipping_amount,
-                            tax = product.tax,
-                            taxed_countries = product.taxed_countries
-                        });
-                        model.Order = new_order;
-                        model.order_items = new_order.order_items.ToList();
-                        context.SaveChanges();
+                        model.Success = false;
+                        model.Message = "No product added to basket!";
                     }
-                    model.Success = true;
                 }
                 catch (Exception ex)
                 {
@@ -413,6 +422,8 @@ public class ProductController
                         order.staff_id = Int32.Parse(item["staff_id"].ToString());
                         order.order_discount = item["order_discount"].ToString() == "" ? nullableInteger : Int32.Parse(item["order_discount"].ToString());
                         order.order_discount_is_fixed = item["order_discount_is_fixed"].ToString() == "" ? nullableBool : bool.Parse(item["order_discount_is_fixed"].ToString());
+                        order.delivery_id = item["delivery_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["delivery_id"].ToString());
+                        order.currency_id = item["currency_id"].ToString() == "" ? nullableInteger : Int32.Parse(item["currency_id"].ToString());
                         model.Order = order;
                     }
 
@@ -485,6 +496,7 @@ public class ProductController
         var orderTotal = 0.0;
         var shippingTotal = 0.0;
         var taxTotal = 0.0;
+        var totalDiscount = 0.0;
         var currencyCode = "";
         var defaultCountry = Helper.GetDefaultCountry();
         var defaultTax = Helper.GetDefaultTax();
@@ -501,11 +513,8 @@ public class ProductController
                 var free_shipping_amount = order_item.free_shipping_amount == null ? 0.0 : (double)order_item.free_shipping_amount;
 
                 //Discount
-                var discount = order_item.discount;
-                if (order_item.discount == null)
-                {
-                    discount = 0;
-                }
+                var discount = order_item.discount == null ? 0.0 : (double)order_item.discount;
+                totalDiscount += discount;
 
                 //Tax
                 var tax = 0.0;
@@ -562,17 +571,21 @@ public class ProductController
                 if (order_discount_is_fixed)
                 {
                     grandTotal = grandTotal - order_discount;
+                    totalDiscount = order_discount;
                 }
                 else
                 {
-                    grandTotal = grandTotal - (grandTotal * order_discount / 100);
+                    totalDiscount = grandTotal * order_discount / 100;
+                    grandTotal = grandTotal - totalDiscount;
                 }
             }
             model.ShippingTotal = shippingTotal;
             model.TaxTotal = taxTotal;
             model.TotalItem = totalItem;
+            model.OrderTotal = orderTotal;
             model.GrandTotal = grandTotal;
             model.CurrencyCode = currencyCode;
+            model.TotalDiscount = totalDiscount;
         }
 
         return model;
@@ -761,6 +774,7 @@ public class ProductController
                                                 }
                                             }
                                         }
+                                        order.order_discount = 0; //Clear order discount if voucher applied for order items
                                         voucher.voucher_uses = voucher_uses + 1;
                                     }
                                 }
@@ -781,6 +795,13 @@ public class ProductController
                                     {
                                         order.order_discount = voucher_discount_amount;
                                         order.order_discount_is_fixed = voucher_is_fixed;
+                                        //Clear order's items discount if voucher apply for order
+                                        List<order_items> items = context.order_items.Where(w => w.order_id == orderId).ToList();
+                                        for (int i = 0; i < items.Count; i++)
+                                        {
+                                            order_items item = items[i];
+                                            item.discount = 0;
+                                        }
                                         voucher.voucher_uses = voucher_uses + 1;
                                     }
                                 }
@@ -794,15 +815,35 @@ public class ProductController
                                 {
                                     order.order_discount = voucher_discount_amount;
                                     order.order_discount_is_fixed = voucher_is_fixed;
+                                    //Clear order's items discount if voucher apply for order
+                                    List<order_items> items = context.order_items.Where(w => w.order_id == orderId).ToList();
+                                    for (int i = 0; i < items.Count; i++)
+                                    {
+                                        order_items item = items[i];
+                                        item.discount = 0;
+                                    }
                                     voucher.voucher_uses = voucher_uses + 1;
                                 }
                             }
                         }
-                    }
 
-                    context.SaveChanges();
-                    model.Success = true;
-                    model.Message = "Update order discount successful!";
+                        context.SaveChanges();
+                        model.Success = true;
+                        model.Message = "Update order discount successful!";
+                    } else
+                    {
+                        model.Success = false;
+                        if (voucher_expires_at < DateTime.UtcNow)
+                        {
+                            model.Message = "Voucher expired!";
+                        } else if (voucher_uses >= voucher_max_uses)
+                        {
+                            model.Message = "The number of vouchers has been exhausted!";
+                        } else
+                        {
+                            model.Message = "Fail to apply this voucher!";
+                        }
+                    }
                 } else
                 {
                     model.Success = false;
@@ -815,7 +856,13 @@ public class ProductController
                 model.Success = false;
                 if (ex.InnerException != null)
                 {
-                    model.Message = ex.InnerException.InnerException.Message;
+                    if (ex.InnerException.InnerException != null)
+                    {
+                        model.Message = ex.InnerException.InnerException.Message;
+                    } else
+                    {
+                        model.Message = ex.InnerException.Message;
+                    }
                 }
                 else
                 {
@@ -1287,27 +1334,28 @@ public class ProductController
                             }
 
                             homeModel.RelativeProducts = relativeProducts;
+                        }
 
-                            if (user != null)
+                        //Get relative product
+                        if (user != null)
+                        {
+                            if (user.Result != null)
                             {
-                                if (user.Result != null)
+                                var wishlistDt = ds.Tables[2];
+                                if (wishlistDt.Rows.Count > 0)
                                 {
-                                    var wishlistDt = ds.Tables[2];
-                                    if (wishlistDt.Rows.Count > 0)
+                                    List<wishlist> wishList = new List<wishlist>();
+                                    foreach (System.Data.DataRow row in wishlistDt.Rows)
                                     {
-                                        List<wishlist> wishList = new List<wishlist>();
-                                        foreach (System.Data.DataRow row in wishlistDt.Rows)
-                                        {
-                                            wishlist wis = new wishlist();
-                                            wis.wish_id = Int32.Parse(row["wish_id"] + "");
-                                            wis.product_id = Int32.Parse(row["product_id"] + "");
-                                            wis.user_id = row["user_id"] + "";
-                                            wis.quantity = Decimal.Parse(row["quantity"] + "");
-                                            wis.purchase_date = (DateTime)row["purchase_date"];
-                                            wishList.Add(wis);
-                                        }
-                                        homeModel.Wishlists = wishList;
+                                        wishlist wis = new wishlist();
+                                        wis.wish_id = Int32.Parse(row["wish_id"] + "");
+                                        wis.product_id = Int32.Parse(row["product_id"] + "");
+                                        wis.user_id = row["user_id"] + "";
+                                        wis.quantity = Decimal.Parse(row["quantity"] + "");
+                                        wis.purchase_date = (DateTime)row["purchase_date"];
+                                        wishList.Add(wis);
                                     }
+                                    homeModel.Wishlists = wishList;
                                 }
                             }
                         }

@@ -48,6 +48,8 @@ public class OrderHelper
                     result.staff_id = item.staff_id;
                     result.order_discount = item.order_discount;
                     result.order_discount_is_fixed = item.order_discount_is_fixed;
+                    result.delivery_id = item.delivery_id;
+                    result.currency_id = item.currency_id;
                     context.SaveChanges();
                 }
                 else
@@ -62,7 +64,9 @@ public class OrderHelper
                         store_id = item.store_id,
                         staff_id = item.staff_id,
                         order_discount = item.order_discount,
-                        order_discount_is_fixed = item.order_discount_is_fixed
+                        order_discount_is_fixed = item.order_discount_is_fixed,
+                        delivery_id = item.delivery_id,
+                        currency_id = item.currency_id
                     });
 
                     context.SaveChanges();
@@ -71,8 +75,23 @@ public class OrderHelper
         }
     }
 
-    public static void Updateorders()
+    /// <summary>
+    /// Get new created order of customer
+    /// </summary>
+    /// <param name="userId">user id</param>
+    /// <returns></returns>
+    public static order GetNewCreatedOrder(string userId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using (var context = new WebsiteTTKEntities())
+            {
+                return context.orders.FirstOrDefault(x => x.customer_id == userId && x.order_status == (int)OrderStatus.Status.New);
+            }
+        } catch (Exception ex)
+        {
+            LogHelper.Log("App_Code\\Helper\\OrderHelper.cs", LogHelper.ErrorType.Error, ex);
+            return null;
+        }
     }
 }

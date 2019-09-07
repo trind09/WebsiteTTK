@@ -205,50 +205,7 @@
                 error: ajaxFailed
             });
         }
-
-        function ShowCurrency(data, status) {
-            var str = data.d;
-            var items = str.split('|');
-            var priceLabels = $('.' + items[1]);
-            $.each(priceLabels, function (index, value) {
-                $(priceLabels[index]).text(items[0]);
-            });
-        }
-
-        function ajaxFailed(xmlRequest) {
-            console.log(xmlRequest.status + ' \n\r ' + 
-                  xmlRequest.statusText + '\n\r' + 
-                  xmlRequest.responseText);
-        }
         //---------------------End: Handle show recently viewed products--------------------//
-
-        //---------------------Start: Handle cookie--------------------//
-        function CreateCookie(name, value, days) {
-            if (days) {
-                var date = new Date();
-                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                var expires = "; expires=" + date.toGMTString();
-            }
-            else var expires = "";               
-
-            document.cookie = name + "=" + value + expires + "; path=/";
-        }
-
-        function ReadCookie(name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-            }
-            return null;
-        }
-
-        function EraseCookie(name) {
-            CreateCookie(name, "", -1);
-        }
-        //---------------------End: Handle cookie--------------------//
 
         function MakeupProduct(product) {
             if (product) {

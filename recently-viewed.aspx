@@ -75,7 +75,7 @@
                     if (image_url != "") {
                         relativeProductHtml += "<a href='" + product_url + "' class='invisible'><img src='" + image_url + "' alt='' class='img-fluid'></a>";
                     }
-                    relativeProductHtml += "<div class='text'><h3>" + product.product_name + "</h3><p class='price' id='price-" + product.product_id + "'>" + GetCurrency(product.list_price, product.currency_code, 'price-' + product.product_id) + "</p>";
+                    relativeProductHtml += "<div class='text'><h3>" + product.product_name + "</h3><p class='price price-" + product.product_id + "'>" + GetCurrency(product.list_price, product.currency_code, 'price-' + product.product_id) + "</p>";
                     if (product.is_sale) {
                         relativeProductHtml += "<div style='margin-left: -10px;' class='ribbon sale'><div class='theribbon'>SALE</div><div class='ribbon-background'></div></div>";
                     }
@@ -109,29 +109,6 @@
                 success: ShowCurrency,
                 error: ajaxFailed
             });
-        }
-
-        function ShowCurrency(data, status) {
-            var str = data.d;
-            var items = str.split('|');
-            $('#' + items[1]).text(items[0]);
-        }
-
-        function ReadCookie(name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-            }
-            return null;
-        }
-
-        function ajaxFailed(xmlRequest) {
-            console.log(xmlRequest.status + ' \n\r ' + 
-                  xmlRequest.statusText + '\n\r' + 
-                  xmlRequest.responseText);
         }
         //----------------Utils-----------------------------
     </script>

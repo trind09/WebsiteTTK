@@ -40,15 +40,16 @@ public partial class update_basket : System.Web.UI.Page
         Int32.TryParse(Request.QueryString["remove_product_id"], out removeProductId);
         int orderId = 0;
         Int32.TryParse(Request.QueryString["order_id"], out orderId);
-        string ids = Request.QueryString["ids"];
-        string quantities = Request.QueryString["quantities"];
-        string coupon_code = Request.QueryString["coupon_code"];
+        string ids = Helper.GetPlainTextFromHtml(Request.QueryString["ids"]);
+        string quantities = Helper.GetPlainTextFromHtml(Request.QueryString["quantities"]);
+        string coupon_code = Helper.GetPlainTextFromHtml(Request.QueryString["coupon_code"]);
         if (removeProductId > 0 && orderId > 0)
         {
             ProductControllerModel model = ProductController.RemoveProductFromOrder(removeProductId, orderId, userId, OrderStatus.Status.New);
             if (model.Success)
             {
-                Response.Redirect(basketUrl);
+                string resultMessage = ResultCode.RemoveProductFromBasketSuccessful.Value[1].ToString();
+                ClientScript.RegisterStartupScript(GetType(), "ShowAlert", "window.parent.ShowMessage(0,\"" + resultMessage + "\",true); window.parent.CloseUpdateBasket();", true);
             } else
             {
                 ClientScript.RegisterStartupScript(GetType(), "ShowAlert", "window.parent.ShowMessage(0,\"" + model.Message + "\"); window.parent.CloseUpdateBasket();", true);
@@ -58,7 +59,8 @@ public partial class update_basket : System.Web.UI.Page
             ProductControllerModel model = ProductController.UpdateOrderQuantity(ids, quantities, orderId, userId, OrderStatus.Status.New);
             if (model.Success)
             {
-                Response.Redirect(basketUrl);
+                string resultMessage = ResultCode.BasketUpdatedSuccessful.Value[1].ToString();
+                ClientScript.RegisterStartupScript(GetType(), "ShowAlert", "window.parent.ShowMessage(0,\"" + resultMessage + "\",true); window.parent.CloseUpdateBasket();", true);
             }
             else
             {
@@ -69,7 +71,8 @@ public partial class update_basket : System.Web.UI.Page
             ProductControllerModel model = ProductController.UpdateOrderDiscount(coupon_code, orderId, userId, OrderStatus.Status.New);
             if (model.Success)
             {
-                Response.Redirect(basketUrl);
+                string resultMessage = ResultCode.CouponApplied.Value[1].ToString();
+                ClientScript.RegisterStartupScript(GetType(), "ShowAlert", "window.parent.ShowMessage(0,\"" + resultMessage + "\",true); window.parent.CloseUpdateBasket();", true);
             }
             else
             {

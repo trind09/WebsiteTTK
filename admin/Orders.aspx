@@ -56,6 +56,8 @@
                                 <th>Staff ID<th>
                                 <th>Order Discount<th>
                                 <th>Order Discount Is Fixed<th>
+                                <th>Delivery Id<th>
+                                <th>Currency Id<th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -72,6 +74,8 @@
                                 <td>{{ item.staff_id }}</td>
                                 <td>{{ item.order_discount }}</td>
                                 <td>{{ item.order_discount_is_fixed }}</td>
+                                <td>{{ item.delivery_id }}</td>
+                                <td>{{ item.currency_id }}</td>
                                 <td>
                                     <a class="btn btn-warning btn-small" ng-click="editarItem(item.order_id)">
                                         <i class="icon-pencil icon-white"></i>Edit
@@ -144,6 +148,14 @@
                             <td title="If this option checked, discount be used as fixed discount. Or else discount will be used as percent.">Order Discount Is Fixed: </td>
                             <td><input type="checkbox" ng-model="item.order_discount_is_fixed" class="input-small"></td>
                             <td></td>
+                        </tr>
+                        <tr>
+                            <td>Delivery Id: </td>
+                            <td><input type="number" ng-model="item.delivery_id" placeholder="Delivery Id" style="width: 500px;"></td>
+                        </tr>
+                        <tr>
+                            <td>Currency Id: </td>
+                            <td><input type="number" ng-model="item.currency_id" placeholder="Currency Id" style="width: 500px;"></td>
                         </tr>
                         <tr>
                             <td colspan="2">
