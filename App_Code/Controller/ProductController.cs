@@ -557,10 +557,21 @@ public class ProductController
 
                 order_item.total_price = totalPrice;
             }
-            //In case this order's products do not have shipping fee, we get default shipping fee from web.config
-            if (shippingTotal == 0)
+            if (model.Order.delivery_id > 0)
             {
-                shippingTotal = (double)defaultShippingFee;
+                delivery_methods deliveryMethod = DeliveryHelper.GetDeliveryMethodById(model.Order.delivery_id);
+                if (deliveryMethod != null)
+                {
+                    shippingTotal = deliveryMethod.delivery_cost == null ? 0 : (double)deliveryMethod.delivery_cost;
+                }
+            }
+            else
+            {
+                //In case this order's products do not have shipping fee, we get default shipping fee from web.config
+                if (shippingTotal == 0)
+                {
+                    shippingTotal = (double)defaultShippingFee;
+                }
             }
 
             var grandTotal = orderTotal + shippingTotal + taxTotal;

@@ -101,9 +101,15 @@ public partial class admin_Orders : System.Web.UI.Page
     {
         using (var context = new WebsiteTTKEntities())
         {
-            var orders = context.orders.ToList();
-            var json = new JavaScriptSerializer().Serialize(orders);
-            Server_Data.InnerText = json;
+            try
+            {
+                var orders = context.orders.ToList();
+                var json = new JavaScriptSerializer().Serialize(orders);
+                Server_Data.InnerText = json;
+            }
+            catch (Exception ex) {
+                LogHelper.Log("WebsiteTTK\\admin\\Orders.aspx.cs", LogHelper.ErrorType.Error, ex);
+            }
         }
     }
 }

@@ -47,7 +47,7 @@
                         {
                             if (method.delivery_id == selectedMethod.delivery_id)
                             {
-                                deliveryMethodsHtml += "<input type='radio' name='delivery' value='" + method.delivery_id + "' selected>";
+                                deliveryMethodsHtml += "<input type='radio' name='delivery' value='" + method.delivery_id + "' checked>";
                             }
                             else
                             {
@@ -60,6 +60,7 @@
                         deliveryMethodsHtml += "</div></div></div>";
                     }
                     $('#delivery_methods_div').html(deliveryMethodsHtml);
+                    $("#<%=txtUserId.ClientID%>").val(model.UserId);
                     UpdateOrderSummary();
                 }
             }
@@ -94,6 +95,7 @@
                         if (method.delivery_id == delivery_id) {
                             basket.ShippingTotal = method.delivery_cost;
                             basket.GrandTotal = grandTotal + method.delivery_cost;
+                            $("#<%=txtDeliveryId.ClientID%>").val(method.delivery_id);
                             UpdateOrderSummary();
                         }
                     }
@@ -117,7 +119,7 @@
                     </div>
                     <div id="checkout" class="col-lg-9">
                         <div class="box">
-                            <form method="get" action="checkout3.aspx">
+                            <form id="payment_form" runat="server">
                                 <h1>Checkout - Delivery method</h1>
                                 <div class="nav flex-column flex-sm-row nav-pills"><a href="checkout1.aspx" class="nav-link flex-sm-fill text-sm-center"><i class="fa fa-map-marker"></i>Address</a><a href="checkout2.aspx" class="nav-link flex-sm-fill text-sm-center active"> <i class="fa fa-truck"></i>Delivery Method</a><a href="#" class="nav-link flex-sm-fill text-sm-center disabled"> <i class="fa fa-money"></i>Payment Method</a><a href="#" class="nav-link flex-sm-fill text-sm-center disabled"> <i class="fa fa-eye"></i>Order Review</a></div>
                                 <div class="content py-3">
@@ -125,7 +127,9 @@
                                 </div>
                                 <div class="box-footer d-flex justify-content-between">
                                     <a href="checkout1.aspx" class="btn btn-outline-secondary" id="back_to_address_link"><i class="fa fa-chevron-left"></i>Back to address</a>
-                                    <button type="submit" class="btn btn-primary">Continue to Payment Method<i class="fa fa-chevron-right"></i></button>
+                                    <asp:TextBox ID="txtDeliveryId" runat="server" CssClass="hidden"></asp:TextBox>
+                                    <asp:TextBox ID="txtUserId" runat="server" CssClass="hidden"></asp:TextBox>
+                                    <asp:LinkButton ID="btnSubmitPaymentMethod" runat="server" CssClass="btn btn-primary" OnClick="btnSubmitPaymentMethod_Click">Continue to Payment Method<i class="fa fa-chevron-right"></i></asp:LinkButton>
                                 </div>
                             </form>
                         </div>

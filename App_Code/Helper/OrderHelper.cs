@@ -66,7 +66,7 @@ public class OrderHelper
                         order_discount = item.order_discount,
                         order_discount_is_fixed = item.order_discount_is_fixed,
                         delivery_id = item.delivery_id,
-                        currency_id = item.currency_id
+                        currency_id = item.currency_id,
                     });
 
                     context.SaveChanges();
@@ -92,6 +92,31 @@ public class OrderHelper
         {
             LogHelper.Log("App_Code\\Helper\\OrderHelper.cs", LogHelper.ErrorType.Error, ex);
             return null;
+        }
+    }
+
+    public static string UpdateNewOrderShippingCost(string userId, int delivery_id)
+    {
+        try
+        {
+            using (var context = new WebsiteTTKEntities())
+            {
+                order order = context.orders.FirstOrDefault(x => x.customer_id == userId && x.order_status == (int)OrderStatus.Status.New);
+                List<order_items> orderItems = context.order_items.Where(x => x.order_id == order.order_id).ToList();
+                if (order != null)
+                {
+                    order.delivery_id = delivery_id;
+                    context.SaveChanges();
+                    return null;
+                } else
+                {
+                    return "Order doesn't exist!";
+                }
+            }
+        } catch (Exception ex)
+        {
+            LogHelper.Log("App_Code\\Helper\\OrderHelper.cs", LogHelper.ErrorType.Error, ex);
+            return "Cannot update order's shipping cost!";
         }
     }
 }
